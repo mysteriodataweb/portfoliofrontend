@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Header from "./Header";
-import Footer from "./Footer";
+import Footer from "./ui/animated-wave-footer";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
