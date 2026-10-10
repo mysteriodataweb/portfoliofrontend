@@ -1,80 +1,77 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, FlaskConical, HandHeart, Mic, Trophy } from "lucide-react";
-import AnimatedSection from "@/components/AnimatedSection";
+import { ArrowRight } from "lucide-react";
+import { ReelPanel } from "@/components/engagements/ScrollReel";
+import { useEngagementData } from "@/hooks/use-engagement-data";
+import { engagementChapters } from "@/data/engagements";
+import type { EngagementChapter } from "@/data/engagements";
 
-const items = [
-  {
-    icon: Trophy,
-    title: "Compétitions",
-    desc: "Je participe régulièrement à des compétitions de data science et d'algorithmique. Au-delà du résultat, ce qui compte, c'est le processus : formuler un problème, explorer les données, comparer des approches et apprendre de chaque itération.",
-    href: "/engagements/competitions",
-  },
-  {
-    icon: Mic,
-    title: "Conférences & meetups",
-    desc: "J'aime prendre la parole et échanger avec la communauté tech. Présenter un projet, partager un retour d'expérience ou simplement écouter, les rencontres nourrissent toujours mes idées.",
-    href: "/engagements/conferences",
-  },
-  {
-    icon: HandHeart,
-    title: "Bénévolat & mentorat",
-    desc: "Je crois à la transmission. Accompagner des débutants, contribuer à des projets communautaires et rendre la tech plus accessible font partie de mes engagements au quotidien.",
-    href: "/engagements/benevolat",
-  },
-  {
-    icon: FlaskConical,
-    title: "Recherche & veille",
-    desc: "Je consacre du temps à l'expérimentation : tester de nouveaux modèles, explorer les dernières avancées en IA et documenter ce que j'apprends pour le partager.",
-    href: "/engagements/recherche",
-  },
-];
+const ChapterStrip = ({ chapter }: { chapter: EngagementChapter }) => {
+  const { data } = useEngagementData(chapter.slug, chapter.defaults);
+  const href = `/engagements/${chapter.slug}`;
+
+  return (
+    <section className="border-t border-foreground/15 py-12 md:py-16">
+      <div className="container mx-auto grid grid-cols-1 gap-6 px-6 md:grid-cols-12 md:items-end">
+        <h2 className="font-heading text-4xl md:text-6xl font-bold tracking-[-0.03em] text-foreground md:col-span-7">
+          <Link to={href} className="transition-colors hover:text-accent">
+            {chapter.title}
+          </Link>
+        </h2>
+        <div className="md:col-span-5">
+          <p className="max-w-[40ch] text-lg leading-snug text-muted-foreground">{chapter.pitch}</p>
+          <Link to={href} className="link-arrow mt-4">
+            Ouvrir le chapitre <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
+
+      <div
+        role="region"
+        aria-label={`Aperçu : ${chapter.title}`}
+        tabIndex={0}
+        className="reel-gutter no-scrollbar mt-10 flex snap-x snap-mandatory items-start gap-5 overflow-x-auto scroll-pl-[var(--gutter)] pr-[var(--gutter)]"
+      >
+        {data.events.map((event, i) => (
+          <Link key={i} to={href} className="shrink-0 snap-start" tabIndex={-1} aria-hidden="true">
+            <ReelPanel event={event} index={i} size="sm" />
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+};
 
 const EngagementsPage = () => {
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-6">
-        <AnimatedSection>
-          <div className="mb-16">
-            <p className="text-sm font-medium tracking-wide text-accent uppercase mb-3">Mes engagements</p>
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-4">
-              Je ne fais pas <span className="text-accent">que coder</span>
-            </h1>
-            <p className="text-lg text-[#6B6B6B] max-w-2xl">
-              Compétitions, échanges, transmission et recherche : une vie tech riche, en dehors des écrans.
-            </p>
-          </div>
-        </AnimatedSection>
+    <>
+      <header className="container mx-auto px-6 pb-16 pt-12 md:pb-24 md:pt-20">
+        <h1 className="max-w-[12ch] font-heading text-[clamp(3rem,10vw,8.5rem)] font-bold leading-[0.92] tracking-[-0.045em] text-foreground">
+          Je ne fais pas que coder.
+        </h1>
+        <p className="mt-8 max-w-[52ch] text-xl md:text-2xl leading-snug text-muted-foreground">
+          Quatre terrains où j'apprends autrement : en compétition, sur scène, auprès de ceux qui
+          débutent, et seul face à un modèle qui vient de sortir.
+        </p>
+      </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          {items.map((item, i) => (
-            <AnimatedSection key={item.title} delay={i * 0.1}>
-              <Link
-                to={item.href}
-                className="block bg-card border border-border rounded-2xl p-8 h-full card-hover group"
-              >
-                <div className="p-3 rounded-xl bg-accent/10 text-accent mb-5 w-fit group-hover:scale-110 transition-transform">
-                  <item.icon size={24} />
-                </div>
-                <h2 className="text-xl font-heading font-semibold text-foreground mb-3">{item.title}</h2>
-                <p className="text-[#6B6B6B] leading-[1.7]">{item.desc}</p>
-                <p className="mt-4 text-accent text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  Découvrir →
-                </p>
-              </Link>
-            </AnimatedSection>
-          ))}
-        </div>
+      {engagementChapters.map((chapter) => (
+        <ChapterStrip key={chapter.slug} chapter={chapter} />
+      ))}
 
-        <AnimatedSection className="text-center mb-8">
-          <p className="text-[#6B6B6B] text-lg mb-8 max-w-2xl mx-auto">
-            Une envie d'échanger, de collaborer ou de partager une expérience ?
+      <section className="bg-foreground text-background">
+        <div className="container mx-auto flex flex-col gap-8 px-6 py-20 md:flex-row md:items-end md:justify-between">
+          <p className="max-w-[18ch] font-heading text-4xl md:text-6xl font-bold leading-[1] tracking-[-0.03em]">
+            Un événement, un atelier, une équipe à compléter ?
           </p>
-          <Link to="/contact" className="pill-btn">
-            Me contacter <ArrowRight size={16} />
+          <Link
+            to="/contact"
+            className="inline-flex w-fit items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-foreground transition-transform hover:-translate-y-0.5"
+          >
+            Écrivez-moi <ArrowRight size={16} />
           </Link>
-        </AnimatedSection>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 };
 

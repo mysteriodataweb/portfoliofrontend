@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Github, Linkedin, Mail, Pencil } from "lucide-react";
+import { ArrowRight, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import ProjectCard from "@/components/ProjectCard";
@@ -192,32 +192,6 @@ const Index = () => {
             <Link to="/blog" className="link-arrow">
               Voir tous les articles <ArrowRight size={16} />
             </Link>
-          </AnimatedSection>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="section-dark">
-        <div className="container mx-auto px-6 text-center">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">Travaillons <span className="text-accent">ensemble</span></h2>
-            <p className="text-white/60 max-w-lg mx-auto mb-10">
-              Vous avez un projet en tete ? Discutons de comment je peux vous aider a le concretiser.
-            </p>
-            <Link to="/contact" className="pill-btn" style={{ background: "#E07B39" }}>
-              Discutons de votre projet
-            </Link>
-            <div className="flex justify-center gap-6 mt-10">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors" aria-label="GitHub">
-                <Github size={22} />
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors" aria-label="LinkedIn">
-                <Linkedin size={22} />
-              </a>
-              <a href="mailto:contact@alex.dev" className="text-white/50 hover:text-white transition-colors" aria-label="Email">
-                <Mail size={22} />
-              </a>
-            </div>
           </AnimatedSection>
         </div>
       </section>

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Search, Plus, Pencil, Archive, ArchiveRestore } from "lucide-react";
-import AnimatedSection from "@/components/AnimatedSection";
-import BlogCard from "@/components/BlogCard";
+import { Link } from "react-router-dom";
+import { ArrowRight, Search, Plus, Pencil, Archive, ArchiveRestore } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
 import { useBlogPosts, useArchiveBlogPost, useUnarchiveBlogPost } from "@/hooks/use-blog";
+import type { BlogPost } from "@/hooks/use-blog";
 import { useAdmin } from "@/contexts/AdminContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,70 +92,181 @@ const BlogPage = () => {
     }
   };
 
+  const [featured, ...rest] = filtered;
+
+  const postMeta = (post: BlogPost) => (
+    <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+      <span className="font-medium text-foreground">{post.category}</span>
+      <time dateTime={post.date}>
+        {new Date(post.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+      </time>
+      <span>{post.readTime} de lecture</span>
+      {post.archived && (
+        <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-foreground">Archivé</span>
+      )}
+    </p>
+  );
+
+  const adminActions = (post: BlogPost) =>
+    isAdmin && (
+      <div className="mt-4 flex gap-2">
+        <Button size="sm" variant="outline" onClick={() => openEdit(post)}>
+          <Pencil size={14} className="mr-1.5" /> Modifier
+        </Button>
+        {post.archived ? (
+          <Button size="sm" variant="outline" onClick={() => handleUnarchive(post)}>
+            <ArchiveRestore size={14} className="mr-1.5" /> Restaurer
+          </Button>
+        ) : (
+          <Button size="sm" variant="outline" onClick={() => handleArchive(post)}>
+            <Archive size={14} className="mr-1.5" /> Archiver
+          </Button>
+        )}
+      </div>
+    );
+
   return (
-    <section className="py-16">
+    <section className="pb-24">
       <div className="container mx-auto px-6">
-        <AnimatedSection>
-          <div className="flex items-start justify-between mb-8">
-            <div>
-              <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-4">Blog</h1>
-              <p className="text-lg text-muted-foreground max-w-2xl">
-                Réflexions sur la data science, le développement et la tech.
-              </p>
-            </div>
+        <header className="pt-12 md:pt-20">
+          <div className="flex items-start justify-between gap-6">
+            <h1 className="font-heading text-[clamp(3.5rem,13vw,11rem)] font-bold leading-[0.85] tracking-[-0.05em] text-foreground">
+              Blog
+            </h1>
             {isAdmin && (
-              <button onClick={openAdd} className="pill-btn text-sm">
+              <button onClick={openAdd} className="pill-btn shrink-0 text-sm">
                 <Plus className="h-4 w-4 mr-2" /> Nouvel article
               </button>
             )}
           </div>
-          <div className="relative max-w-md mb-8">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B6B6B]" />
-            <input
-              type="text" placeholder="Rechercher un article..." value={search} onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white border border-border rounded-full pl-12 pr-4 py-3 text-foreground placeholder:text-[#6B6B6B] focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all outline-none"
-            />
-          </div>
-          <div className="flex flex-wrap gap-3 mb-12">
+          <p className="mt-8 max-w-[46ch] text-xl md:text-2xl leading-snug text-muted-foreground">
+            J'écris pour vérifier que j'ai compris. Des notes sur les modèles, les données et le code
+            qui les met en production.
+          </p>
+        </header>
+
+        <div className="mt-14 flex flex-col gap-5 border-b border-foreground/15 pb-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap gap-x-6 gap-y-2" role="group" aria-label="Filtrer par catégorie">
             {categories.map((c) => (
-              <button key={c} onClick={() => setActiveCategory(c)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === c ? "bg-foreground text-white" : "bg-foreground/5 text-[#6B6B6B] hover:text-foreground"}`}>
+              <button
+                key={c}
+                onClick={() => setActiveCategory(c)}
+                aria-pressed={activeCategory === c}
+                className={`text-base font-medium transition-colors ${
+                  activeCategory === c
+                    ? "text-foreground underline decoration-accent decoration-2 underline-offset-8"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
                 {c}
               </button>
             ))}
           </div>
-        </AnimatedSection>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filtered.map((post, i) => (
-            <AnimatedSection key={post.id} delay={i * 0.05}>
-              <div className={`relative group/card ${post.archived ? "opacity-50" : ""}`}>
-                <BlogCard post={post} />
-                {post.archived && (
-                  <div className="absolute top-3 left-3 z-10 px-2 py-1 bg-orange-500 text-white text-xs font-bold rounded-full">
-                    Archivé
-                  </div>
-                )}
-                {isAdmin && (
-                  <div className="absolute top-3 right-3 z-10 flex gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity">
-                    <Button size="sm" variant="secondary" className="h-8 w-8 p-0" onClick={(e) => { e.preventDefault(); openEdit(post); }}>
-                      <Pencil size={14} />
-                    </Button>
-                    {post.archived ? (
-                      <Button size="sm" variant="secondary" className="h-8 w-8 p-0" onClick={(e) => { e.preventDefault(); handleUnarchive(post); }}>
-                        <ArchiveRestore size={14} />
-                      </Button>
-                    ) : (
-                      <Button size="sm" variant="secondary" className="h-8 w-8 p-0" onClick={(e) => { e.preventDefault(); handleArchive(post); }}>
-                        <Archive size={14} />
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </AnimatedSection>
-          ))}
+          <label className="relative block md:w-72">
+            <span className="sr-only">Rechercher un article</span>
+            <Search size={16} className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              placeholder="Rechercher"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full border-b border-foreground/15 bg-transparent py-2 pl-7 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
+            />
+          </label>
         </div>
-        {filtered.length === 0 && <p className="text-center text-muted-foreground py-12">Aucun article trouvé.</p>}
+
+        {isLoading ? (
+          <div className="py-10" aria-busy="true">
+            <p className="sr-only">Chargement des articles</p>
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="grid grid-cols-12 gap-8 border-t border-foreground/10 py-8 first:border-t-0">
+                <div className="col-span-8 h-8 animate-pulse rounded bg-foreground/10" />
+                <div className="col-span-4 h-8 animate-pulse rounded bg-foreground/5" />
+              </div>
+            ))}
+          </div>
+        ) : !featured ? (
+          <div className="py-20">
+            <p className="font-heading text-2xl font-semibold text-foreground">Aucun article ne correspond.</p>
+            {(search || activeCategory !== "Tous") && (
+              <button
+                onClick={() => {
+                  setSearch("");
+                  setActiveCategory("Tous");
+                }}
+                className="link-arrow mt-4"
+              >
+                Afficher tous les articles
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            <article
+              className={`grid grid-cols-1 gap-8 py-10 md:grid-cols-12 md:gap-12 ${featured.archived ? "opacity-50" : ""}`}
+            >
+              <Link
+                to={`/blog/${featured.slug}`}
+                tabIndex={-1}
+                aria-hidden="true"
+                className="group block overflow-hidden rounded-[1.25rem] bg-secondary md:col-span-7"
+              >
+                <img
+                  src={featured.image}
+                  alt=""
+                  className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+              </Link>
+              <div className="flex flex-col justify-end md:col-span-5">
+                {postMeta(featured)}
+                <h2 className="mt-4 font-heading text-3xl md:text-5xl font-bold leading-[1.02] tracking-[-0.03em] text-foreground">
+                  <Link to={`/blog/${featured.slug}`} className="transition-colors hover:text-accent">
+                    {featured.title}
+                  </Link>
+                </h2>
+                <p className="mt-4 max-w-[44ch] text-lg leading-relaxed text-muted-foreground">{featured.excerpt}</p>
+                <Link to={`/blog/${featured.slug}`} className="link-arrow mt-6 w-fit">
+                  Lire l'article <ArrowRight size={16} />
+                </Link>
+                {adminActions(featured)}
+              </div>
+            </article>
+
+            <ul>
+              {rest.map((post) => (
+                <li key={post.id} className="border-t border-foreground/15">
+                  <article
+                    className={`grid grid-cols-1 gap-4 py-8 md:grid-cols-12 md:items-center md:gap-8 ${post.archived ? "opacity-50" : ""}`}
+                  >
+                    <div className="md:col-span-8">
+                      {postMeta(post)}
+                      <h2 className="mt-2 font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+                        <Link to={`/blog/${post.slug}`} className="transition-colors hover:text-accent">
+                          {post.title}
+                        </Link>
+                      </h2>
+                      <p className="mt-2 max-w-[60ch] leading-relaxed text-muted-foreground">{post.excerpt}</p>
+                      {adminActions(post)}
+                    </div>
+                    <Link
+                      to={`/blog/${post.slug}`}
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      className="group block overflow-hidden rounded-xl bg-secondary md:col-span-4"
+                    >
+                      <img
+                        src={post.image}
+                        alt=""
+                        loading="lazy"
+                        className="aspect-[16/9] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                      />
+                    </Link>
+                  </article>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
 
       {/* Add/Edit Dialog */}

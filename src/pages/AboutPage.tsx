@@ -1,135 +1,73 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  Brain,
-  Briefcase,
-  Camera,
-  CheckCircle2,
-  Compass,
-  Database,
-  FlaskConical,
-  Github,
-  Globe,
-  GraduationCap,
-  Hammer,
-  HandHeart,
-  Lightbulb,
-  Linkedin,
-  Mic,
-  Pencil,
-  Rocket,
-  Save,
-  Search,
-  Sparkles,
-  TrendingUp,
-  Trophy,
-  Twitter,
-  X,
-} from "lucide-react";
-import AnimatedSection from "@/components/AnimatedSection";
+import { ArrowRight, ArrowUpRight, Github, Linkedin, Pencil, Save, Twitter, X } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
+import ScrollRevealText from "@/components/ScrollRevealText";
 import { useAdmin } from "@/contexts/AdminContext";
 import { usePublicProfile } from "@/hooks/use-public-profile";
 import { useUpdateProfile } from "@/hooks/use-admin-profile";
 import { useCVData } from "@/hooks/use-admin-cv";
 import { useStats } from "@/hooks/use-stats";
+import { engagementChapters } from "@/data/engagements";
 import { toast } from "sonner";
+import profilePhoto from "@/assets/profile-photo.jpg";
+
+const MANIFESTO =
+  "Un modèle qui reste dans un notebook n'aide personne. Ce qui m'intéresse vient après : l'API, l'interface, et la personne qui s'en sert un lundi matin.";
+
+const SEED_BIO =
+  "Passionné par la data science et le développement web, je crée des solutions innovantes alliant IA et performance.";
 
 const FALLBACK_BIO = [
-  "Passionné par les données et le code depuis toujours, j'ai débuté mon parcours en explorant la programmation par curiosité avant d'en faire mon métier. Diplômé en informatique avec une spécialisation en science des données, j'ai rapidement compris que la vraie magie se produisait à l'intersection de l'analyse de données et du développement logiciel.",
-  "Aujourd'hui, je me définis comme un Data Scientist et Fullstack Developer — un profil hybride qui me permet de concevoir des solutions de bout en bout. De l'exploration des données brutes à la mise en production d'un modèle de machine learning, en passant par le développement d'interfaces utilisateur élégantes, j'aime maîtriser chaque étape de la chaîne.",
-  "Ma philosophie est simple : la technologie doit servir l'humain. Chaque ligne de code, chaque modèle entraîné, chaque interface designée doit résoudre un problème concret et apporter une valeur tangible. C'est cette conviction qui guide mes choix techniques et mes approches de résolution de problèmes.",
-  "Quand je ne code pas, j'écris des articles pour partager mes découvertes, je contribue à des projets open-source, et j'explore les dernières avancées en intelligence artificielle. Je crois fermement que le partage de connaissances est le meilleur moyen de faire progresser notre communauté.",
-];
-
-const badges = [
-  "Intelligence Artificielle",
-  "Data Science",
-  "Full Stack",
-  "Afrique & Innovation",
+  "Je suis data scientist et développeur fullstack. Concrètement, je peux partir d'un fichier de données brutes, entraîner un modèle, puis construire l'API et l'interface qui le rendent utilisable par quelqu'un d'autre que moi.",
+  "Ce double profil est un choix. Un résultat n'existe vraiment que lorsqu'une personne peut s'en servir, alors j'ai appris à construire la suite plutôt que de m'arrêter au graphique.",
+  "Je travaille depuis l'Afrique de l'Ouest, et cela oriente mes décisions : des outils sobres, qui tiennent avec une connexion moyenne et répondent à un besoin que j'ai pu observer.",
+  "Le reste du temps, j'écris ce que j'apprends, je participe à des compétitions et j'accompagne des étudiants qui débutent.",
 ];
 
 const motivations = [
   {
-    icon: Brain,
-    title: "L'intelligence artificielle",
-    desc: "Concevoir des systèmes qui apprennent, raisonnent et aident à prendre de meilleures décisions.",
+    title: "Des systèmes qui apprennent",
+    desc: "Entraîner un modèle, comprendre pourquoi il se trompe, recommencer. Je ne m'en lasse pas.",
   },
   {
-    icon: Database,
-    title: "La donnée",
-    desc: "Donner du sens aux données brutes pour éclairer des décisions concrètes et mesurables.",
+    title: "Des décisions mieux informées",
+    desc: "Une bonne analyse change une décision. Sinon, ce n'est qu'un joli graphique.",
   },
   {
-    icon: Globe,
-    title: "Des solutions pour l'Afrique",
-    desc: "Construire des outils utiles au quotidien des gens, pensés pour les réalités du terrain.",
+    title: "Des outils pensés pour ici",
+    desc: "Connexion instable, téléphones modestes, usages réels : je conçois pour le terrain que je connais.",
   },
   {
-    icon: Rocket,
-    title: "Un impact concret",
-    desc: "Un projet ne vaut que s'il améliore réellement la vie de celles et ceux qui l'utilisent.",
-  },
-];
-
-const engagements = [
-  {
-    icon: Trophy,
-    title: "Compétitions",
-    desc: "Relever des défis data et algorithmiques pour se dépasser et apprendre toujours plus.",
-  },
-  {
-    icon: Mic,
-    title: "Conférences & meetups",
-    desc: "Partager, échanger et apprendre au sein de la communauté tech.",
-  },
-  {
-    icon: HandHeart,
-    title: "Bénévolat & mentorat",
-    desc: "Transmettre ce que j'ai appris et accompagner les autres dans leur progression.",
-  },
-  {
-    icon: FlaskConical,
-    title: "Recherche & veille",
-    desc: "Suivre les avancées scientifiques et expérimenter sans cesse de nouvelles approches.",
+    title: "Quelqu'un qui s'en sert",
+    desc: "Je juge un projet à ce qu'il change pour la personne qui l'utilise, pas à sa technique.",
   },
 ];
 
 const workflow = [
   {
-    icon: Search,
     title: "Comprendre",
-    desc: "Cerner le problème, les besoins et le contexte réel avant toute ligne de code.",
+    desc: "Je reformule le problème avec la personne qui le vit. Souvent, le vrai sujet n'est pas celui du brief.",
   },
   {
-    icon: Compass,
     title: "Explorer",
-    desc: "Tester, comparer et prototyper rapidement les approches possibles.",
+    desc: "Je regarde les données avant de choisir un modèle, et je prototype deux ou trois pistes.",
   },
   {
-    icon: Hammer,
     title: "Construire",
-    desc: "Développer proprement, avec une architecture simple et maintenable.",
+    desc: "Une architecture simple, et du code que quelqu'un d'autre pourra reprendre.",
   },
   {
-    icon: CheckCircle2,
     title: "Tester",
-    desc: "Valider chaque brique, mesurer les résultats et recueillir le feedback.",
+    desc: "Je mesure, je montre tôt, et j'observe ce que les premiers utilisateurs en font.",
   },
   {
-    icon: TrendingUp,
     title: "Améliorer",
-    desc: "Itérer, optimiser et faire évoluer la solution en continu.",
+    desc: "Une mise en ligne est un début. J'itère à partir de l'usage réel.",
   },
 ];
 
-const personalMoments = [
-  { caption: "Voyages & découvertes" },
-  { caption: "Sport & défi" },
-  { caption: "Famille & amis" },
-  { caption: "Lectures & écriture" },
-];
+const plural = (n: number, one: string, many: string) => (n > 1 ? many : one);
 
 const AboutPage = () => {
   const { isAdmin } = useAdmin();
@@ -145,7 +83,7 @@ const AboutPage = () => {
       setForm({
         full_name: profile.fullName || "",
         title: profile.title || "",
-        bio: profile.bio || "",
+        bio: profile.bio && profile.bio !== SEED_BIO ? profile.bio : FALLBACK_BIO.join("\n\n"),
         photo: profile.photo || "",
       });
     }
@@ -166,336 +104,267 @@ const AboutPage = () => {
     }
   };
 
-  const bioParagraphs = profile?.bio
-    ? profile.bio.split(/\n\s*\n/).filter(Boolean)
-    : FALLBACK_BIO;
+  // The database still holds the one-line bio it was seeded with; until it is edited, show the full text.
+  const hasOwnBio = Boolean(profile?.bio) && profile?.bio !== SEED_BIO;
+  const bioParagraphs = hasOwnBio ? profile!.bio.split(/\n\s*\n/).filter(Boolean) : FALLBACK_BIO;
+  const cvSections = cv?.sections?.filter((s) => s.items?.length > 0) ?? [];
 
-  const sectionIcon = (type: string) => {
-    if (type === "experience") return <Briefcase size={16} className="text-accent" />;
-    if (type === "education") return <GraduationCap size={16} className="text-accent" />;
-    return <Sparkles size={16} className="text-accent" />;
-  };
+  const figures = stats
+    ? [
+        { value: stats.yearsExperience, label: plural(stats.yearsExperience, "an d'expérience", "ans d'expérience") },
+        { value: stats.projectsCount, label: plural(stats.projectsCount, "projet réalisé", "projets réalisés") },
+        { value: stats.articlesCount, label: plural(stats.articlesCount, "article publié", "articles publiés") },
+        { value: stats.clientsCount, label: plural(stats.clientsCount, "client accompagné", "clients accompagnés") },
+      ].filter((f) => f.value > 0)
+    : [];
+
+  const socials = [
+    { label: "GitHub", href: profile?.github || "https://github.com/mysteriodataweb", icon: Github },
+    { label: "LinkedIn", href: profile?.linkedin || "https://www.linkedin.com/in/alfredbiam", icon: Linkedin },
+    { label: "Twitter / X", href: profile?.twitter, icon: Twitter },
+  ].filter((s) => s.href);
 
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-6">
-        {/* Hero — Qui je suis */}
-        <AnimatedSection>
-          <div className="flex items-start justify-between mb-10">
-            <div>
-              <p className="text-sm font-medium tracking-wide text-accent uppercase mb-3">Qui je suis</p>
-              <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground mb-4">
-                {form.full_name || "Alfred"}<span className="text-accent">.</span>
-              </h1>
-              <p className="text-lg text-[#6B6B6B]">{profile?.title || "Data Scientist & Fullstack Developer"}</p>
-            </div>
-            {isAdmin && !editing && (
-              <button onClick={() => setEditing(true)} className="pill-btn-outline text-sm">
-                <Pencil className="h-4 w-4 mr-2" /> Modifier
-              </button>
-            )}
-          </div>
-        </AnimatedSection>
-
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-24">
-          <AnimatedSection className="lg:col-span-3 space-y-6">
-            {editing ? (
-              <div className="space-y-4">
-                <label className="text-sm font-medium">Biographie</label>
-                <textarea
-                  value={form.bio}
-                  onChange={(e) => setForm({ ...form, bio: e.target.value })}
-                  className="w-full h-64 px-3 py-2 rounded-md border border-border bg-background text-foreground"
-                />
-                <div className="flex gap-2">
-                  <button onClick={handleSave} disabled={updateProfile.isPending} className="pill-btn text-sm">
-                    <Save className="h-4 w-4 mr-2" /> Enregistrer
-                  </button>
-                  <button onClick={() => setEditing(false)} className="pill-btn-outline text-sm">
-                    <X className="h-4 w-4 mr-2" /> Annuler
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {bioParagraphs.map((p, i) => (
-                  <p key={i} className="text-muted-foreground leading-[1.8] text-lg">
-                    {p}
-                  </p>
-                ))}
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {badges.map((b) => (
-                    <span key={b} className="px-4 py-1.5 rounded-full text-sm font-medium bg-accent/10 text-accent">
-                      {b}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-4 pt-2">
-                  {profile?.github && (
-                    <a href={profile.github} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-foreground/5 text-foreground hover:text-accent hover:bg-accent/10 transition-colors" aria-label="GitHub">
-                      <Github size={18} />
-                    </a>
-                  )}
-                  {profile?.linkedin && (
-                    <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-foreground/5 text-foreground hover:text-accent hover:bg-accent/10 transition-colors" aria-label="LinkedIn">
-                      <Linkedin size={18} />
-                    </a>
-                  )}
-                  {profile?.twitter && (
-                    <a href={profile.twitter} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-foreground/5 text-foreground hover:text-accent hover:bg-accent/10 transition-colors" aria-label="Twitter / X">
-                      <Twitter size={18} />
-                    </a>
-                  )}
-                </div>
-              </>
-            )}
-          </AnimatedSection>
-
-          <AnimatedSection className="lg:col-span-2 flex justify-center" delay={0.2}>
-            <div className="w-full max-w-sm space-y-4">
-              {editing ? (
-                <>
-                  <label className="text-sm font-medium">Photo de profil</label>
-                  <ImageUpload value={form.photo} onChange={(url) => setForm({ ...form, photo: url })} />
-                </>
-              ) : (
-                <img
-                  src={form.photo || "/placeholder.svg"}
-                  alt={form.full_name || "Alfred"}
-                  className="w-full rounded-2xl object-cover border-gradient glow-blue"
-                />
+    <>
+      {/* Ouverture */}
+      <section className="container mx-auto px-6 pt-12 md:pt-20">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
+          <div className="md:col-span-8">
+            <h1 className="max-w-[16ch] font-heading text-[clamp(2.5rem,6.6vw,5.75rem)] font-bold leading-[0.98] tracking-[-0.04em] text-foreground">
+              Je fais parler les données, puis je construis l'outil qui va avec.
+            </h1>
+            <p className="mt-8 text-lg text-muted-foreground">
+              {profile?.fullName || "Alfred MysterioWebData"}
+              <span className="mx-2 text-foreground/25">/</span>
+              {profile?.title || "Data Scientist & Fullstack Developer"}
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              {socials.map(({ label, href, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="rounded-full bg-foreground/5 p-2.5 text-foreground transition-colors hover:bg-foreground hover:text-background"
+                >
+                  <Icon size={18} />
+                </a>
+              ))}
+              {isAdmin && !editing && (
+                <button onClick={() => setEditing(true)} className="pill-btn-outline !px-5 !py-2 text-sm">
+                  <Pencil className="mr-2 h-4 w-4" /> Modifier le profil
+                </button>
               )}
             </div>
-          </AnimatedSection>
+          </div>
+          <div className="md:col-span-4">
+            {editing ? (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Photo de profil</label>
+                <ImageUpload value={form.photo} onChange={(url) => setForm({ ...form, photo: url })} />
+              </div>
+            ) : (
+              <img
+                src={profile?.photo || profilePhoto}
+                alt={profile?.fullName || "Alfred MysterioWebData"}
+                className="aspect-[4/5] w-full max-w-sm rounded-[1.25rem] object-cover md:ml-auto"
+              />
+            )}
+          </div>
         </div>
+      </section>
 
-        {/* Mon parcours */}
-        <AnimatedSection className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-4">Mon parcours</h2>
-          <p className="text-[#6B6B6B] mb-10 max-w-2xl">
-            Une trajectoire guidée par la curiosité : de la découverte du code à l'ingénierie des données et de l'IA.
-          </p>
-        </AnimatedSection>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
-          <div className="lg:col-span-2 space-y-10">
-            {cv?.sections?.map((section) => (
-              <AnimatedSection key={section.id}>
-                <h3 className="flex items-center gap-2 font-heading font-semibold text-foreground mb-6">
-                  {sectionIcon(section.type)}
-                  {section.title}
-                </h3>
-                <div className="space-y-8">
-                  {section.items?.map((item) => (
-                    <div key={item.id} className="relative pl-8 border-l-2 border-accent/30">
-                      <div className="absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full bg-accent" />
-                      <div className="flex flex-wrap items-baseline justify-between gap-2">
-                        <h4 className="font-medium text-foreground">{item.title}</h4>
-                        <span className="text-sm text-[#6B6B6B] whitespace-nowrap">
-                          {item.date_start}{item.date_end ? ` — ${item.date_end}` : ""}
-                        </span>
-                      </div>
-                      {item.subtitle && <p className="text-sm text-accent">{item.subtitle}</p>}
-                      {item.description && <p className="text-sm text-[#6B6B6B] mt-1">{item.description}</p>}
+      {/* Manifeste */}
+      <section className="container mx-auto px-6 py-24 md:py-40">
+        <ScrollRevealText
+          text={MANIFESTO}
+          className="max-w-[26ch] font-heading text-[clamp(1.9rem,4.6vw,4rem)] font-medium leading-[1.12] tracking-[-0.025em] text-foreground"
+        />
+      </section>
+
+      {/* Biographie */}
+      <section className="container mx-auto grid grid-cols-1 gap-8 px-6 pb-24 md:grid-cols-12">
+        <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground md:col-span-4">
+          Qui je suis
+        </h2>
+        <div className="md:col-span-8">
+          {editing ? (
+            <div className="space-y-4">
+              <label className="text-sm font-medium" htmlFor="bio">
+                Biographie (une ligne vide sépare deux paragraphes)
+              </label>
+              <textarea
+                id="bio"
+                value={form.bio}
+                onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                className="h-64 w-full rounded-xl border border-border bg-white px-4 py-3 text-foreground"
+              />
+              <div className="flex gap-2">
+                <button onClick={handleSave} disabled={updateProfile.isPending} className="pill-btn text-sm">
+                  <Save className="mr-2 h-4 w-4" /> Enregistrer
+                </button>
+                <button onClick={() => setEditing(false)} className="pill-btn-outline text-sm">
+                  <X className="mr-2 h-4 w-4" /> Annuler
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-[64ch] space-y-6">
+              {bioParagraphs.map((p, i) => (
+                <p key={i} className="text-lg leading-[1.75] text-foreground/80">
+                  {p}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Ce qui me fait avancer */}
+      <section className="container mx-auto px-6 pb-24">
+        <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+          Ce qui me fait avancer
+        </h2>
+        <dl className="mt-10">
+          {motivations.map((m) => (
+            <div
+              key={m.title}
+              className="grid grid-cols-1 gap-2 border-t border-foreground/15 py-7 md:grid-cols-12 md:gap-8"
+            >
+              <dt className="font-heading text-2xl md:text-3xl font-semibold tracking-tight text-foreground md:col-span-6">
+                {m.title}
+              </dt>
+              <dd className="max-w-[48ch] text-lg leading-relaxed text-muted-foreground md:col-span-6">{m.desc}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {/* Parcours */}
+      {cvSections.length > 0 && (
+        <section className="container mx-auto px-6 pb-24">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">Mon parcours</h2>
+            <Link to="/cv" className="link-arrow">
+              Voir le CV complet <ArrowRight size={16} />
+            </Link>
+          </div>
+          {cvSections.map((section) => (
+            <div key={section.id} className="mt-12">
+              <h3 className="font-heading text-xl font-semibold text-foreground">{section.title}</h3>
+              <ol className="mt-4">
+                {section.items.map((item) => (
+                  <li
+                    key={item.id}
+                    className="grid grid-cols-1 gap-2 border-t border-foreground/15 py-6 md:grid-cols-12 md:gap-8"
+                  >
+                    <p className="text-sm tabular-nums text-muted-foreground md:col-span-3 md:pt-1">
+                      {item.date_start}
+                      {item.date_end ? ` – ${item.date_end}` : ""}
+                    </p>
+                    <div className="md:col-span-9">
+                      <h4 className="font-heading text-xl font-semibold text-foreground">{item.title}</h4>
+                      {item.subtitle && <p className="text-accent">{item.subtitle}</p>}
+                      {item.description && (
+                        <p className="mt-2 max-w-[64ch] leading-relaxed text-muted-foreground">{item.description}</p>
+                      )}
                       {item.highlights?.length > 0 && (
-                        <ul className="mt-2 text-sm text-[#6B6B6B] space-y-1">
+                        <ul className="mt-3 max-w-[64ch] list-disc space-y-1 pl-5 text-muted-foreground marker:text-accent">
                           {item.highlights.map((h, j) => (
-                            <li key={j} className="flex items-start gap-2">
-                              <span className="text-accent mt-1">•</span>
-                              {h}
-                            </li>
+                            <li key={j}>{h}</li>
                           ))}
                         </ul>
                       )}
                     </div>
-                  ))}
-                </div>
-              </AnimatedSection>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {/* Méthode */}
+      <section className="bg-foreground text-background">
+        <div className="container mx-auto px-6 py-24">
+          <h2 className="max-w-[18ch] font-heading text-3xl md:text-5xl font-bold leading-[1.02] tracking-[-0.03em]">
+            Cinq étapes, toujours dans cet ordre.
+          </h2>
+          <ol className="mt-12">
+            {workflow.map((step, i) => (
+              <li
+                key={step.title}
+                className="grid grid-cols-[3rem_1fr] gap-x-4 gap-y-1 border-t border-background/15 py-6 md:grid-cols-12 md:gap-8"
+              >
+                <span className="font-heading text-2xl font-medium tabular-nums text-accent md:col-span-1">
+                  {i + 1}
+                </span>
+                <h3 className="font-heading text-2xl md:text-3xl font-semibold tracking-tight md:col-span-4">
+                  {step.title}
+                </h3>
+                <p className="col-start-2 max-w-[48ch] text-lg leading-relaxed text-background/70 md:col-span-7 md:col-start-auto">
+                  {step.desc}
+                </p>
+              </li>
             ))}
-          </div>
-          <AnimatedSection className="lg:col-span-1" delay={0.15}>
-            <div className="bg-card border border-border rounded-2xl p-6 h-full">
-              <h3 className="flex items-center gap-2 font-heading font-semibold text-foreground mb-4">
-                <Lightbulb size={16} className="text-accent" />
-                En bref
-              </h3>
-              <ul className="space-y-3 text-sm text-[#6B6B6B]">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
-                  Diplômé en informatique, spécialité science des données
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
-                  Profil hybride Data Scientist & Fullstack
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
-                  De l'EDA au MLOps, de la donnée brute à l'interface
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
-                  Conviction : la tech doit servir l'humain
-                </li>
-              </ul>
-              <Link to="/cv" className="link-arrow mt-6">
-                Voir mon CV complet <ArrowRight size={16} />
+          </ol>
+
+          {figures.length > 0 && (
+            <dl className="mt-20 grid grid-cols-2 gap-x-8 gap-y-10 border-t border-background/15 pt-12 md:grid-cols-4">
+              {figures.map((f) => (
+                <div key={f.label} className="flex flex-col-reverse">
+                  <dt className="mt-1 text-background/70">{f.label}</dt>
+                  <dd className="font-heading text-5xl md:text-7xl font-bold tracking-[-0.04em] tabular-nums">
+                    {f.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </div>
+      </section>
+
+      {/* Hors du code */}
+      <section className="container mx-auto px-6 py-24">
+        <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">Hors du code</h2>
+        <ul className="mt-10">
+          {engagementChapters.map((chapter) => (
+            <li key={chapter.slug}>
+              <Link
+                to={`/engagements/${chapter.slug}`}
+                className="group grid grid-cols-1 gap-2 border-t border-foreground/15 py-7 md:grid-cols-12 md:items-baseline md:gap-8"
+              >
+                <span className="font-heading text-2xl md:text-3xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-accent md:col-span-5">
+                  {chapter.title}
+                </span>
+                <span className="max-w-[48ch] text-lg leading-relaxed text-muted-foreground md:col-span-6">
+                  {chapter.pitch}
+                </span>
+                <ArrowUpRight className="hidden h-6 w-6 justify-self-end text-foreground transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 md:col-span-1 md:block" />
               </Link>
-            </div>
-          </AnimatedSection>
-        </div>
-
-        {/* Ce qui me motive */}
-        <AnimatedSection className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-4">Ce qui me motive</h2>
-          <p className="text-[#6B6B6B] mb-10 max-w-2xl">
-            Ce qui me pousse à me lever le matin, au-delà des lignes de code.
-          </p>
-        </AnimatedSection>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
-          {motivations.map((m, i) => (
-            <AnimatedSection key={m.title} delay={i * 0.1}>
-              <div className="bg-card border border-border rounded-2xl p-6 h-full card-hover">
-                <div className="p-2 rounded-xl bg-accent/10 text-accent mb-4 w-fit">
-                  <m.icon size={20} />
-                </div>
-                <h3 className="font-heading font-semibold text-foreground mb-2">{m.title}</h3>
-                <p className="text-sm text-[#6B6B6B]">{m.desc}</p>
-              </div>
-            </AnimatedSection>
+            </li>
           ))}
-        </div>
+        </ul>
+      </section>
 
-        {/* Je ne fais pas que coder */}
-        <AnimatedSection className="section-light rounded-3xl px-6 md:px-12 py-14 mb-20">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-4">Je ne fais pas que coder</h2>
-          <p className="text-[#6B6B6B] mb-10 max-w-2xl">
-            Ma vie tech ne se limite pas aux écrans : compétitions, échanges, transmission et recherche rythment mon quotidien.
+      {/* Suite */}
+      <section className="container mx-auto px-6 pb-24">
+        <div className="flex flex-col gap-8 border-t border-foreground/15 pt-12 md:flex-row md:items-end md:justify-between">
+          <p className="max-w-[20ch] font-heading text-4xl md:text-6xl font-bold leading-[1] tracking-[-0.03em] text-foreground">
+            Un projet data, IA ou web en tête ?
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {engagements.map((e, i) => (
-              <AnimatedSection key={e.title} delay={i * 0.1}>
-                <div className="bg-white border border-border rounded-2xl p-6 h-full card-hover">
-                  <div className="p-2 rounded-xl bg-accent/10 text-accent mb-4 w-fit">
-                    <e.icon size={20} />
-                  </div>
-                  <h3 className="font-heading font-semibold text-foreground mb-2">{e.title}</h3>
-                  <p className="text-sm text-[#6B6B6B]">{e.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-          <div className="mt-10">
-            <Link to="/engagements" className="pill-btn text-sm">
-              Découvrir mes engagements <ArrowRight size={16} />
-            </Link>
-          </div>
-        </AnimatedSection>
-
-        {/* Ma manière de travailler */}
-        <AnimatedSection className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-4">Ma manière de travailler</h2>
-          <p className="text-[#6B6B6B] mb-10 max-w-2xl">
-            Une méthode simple, du brief au produit final, en passant par chaque itération.
-          </p>
-        </AnimatedSection>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-20">
-          {workflow.map((step, i) => (
-            <AnimatedSection key={step.title} delay={i * 0.1}>
-              <div className="relative">
-                <div className="bg-card border border-border rounded-2xl p-6 h-full card-hover">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="p-2 rounded-xl bg-accent/10 text-accent">
-                      <step.icon size={20} />
-                    </div>
-                    <span className="text-xs font-bold text-[#6B6B6B]">Étape {i + 1}</span>
-                  </div>
-                  <h3 className="font-heading font-semibold text-foreground mb-2">{step.title}</h3>
-                  <p className="text-sm text-[#6B6B6B]">{step.desc}</p>
-                </div>
-                {i < workflow.length - 1 && (
-                  <ArrowRight
-                    size={20}
-                    className="hidden lg:block absolute top-1/2 -right-3 translate-x-1/2 -translate-y-1/2 text-accent z-10 bg-background rounded-full"
-                  />
-                )}
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-
-        {/* Quelques chiffres */}
-        <AnimatedSection className="mb-20">
-          <div className="bg-[#171717] text-white rounded-3xl px-6 md:px-12 py-14">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold mb-2">Quelques chiffres</h2>
-            <p className="text-white/70 mb-10 max-w-2xl">Des chiffres réels, issus de ce site et de mon activité.</p>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-              <div>
-                <p className="text-4xl md:text-5xl font-heading font-bold text-accent mb-1">
-                  {stats?.yearsExperience ?? "–"}
-                </p>
-                <p className="text-sm text-white/70">Années d'expérience</p>
-              </div>
-              <div>
-                <p className="text-4xl md:text-5xl font-heading font-bold text-accent mb-1">
-                  {stats?.projectsCount ?? "–"}
-                </p>
-                <p className="text-sm text-white/70">Projets réalisés</p>
-              </div>
-              <div>
-                <p className="text-4xl md:text-5xl font-heading font-bold text-accent mb-1">
-                  {stats?.articlesCount ?? "–"}
-                </p>
-                <p className="text-sm text-white/70">Articles publiés</p>
-              </div>
-              <div>
-                <p className="text-4xl md:text-5xl font-heading font-bold text-accent mb-1">
-                  {stats?.clientsCount ?? "–"}
-                </p>
-                <p className="text-sm text-white/70">Clients accompagnés</p>
-              </div>
-            </div>
-          </div>
-        </AnimatedSection>
-
-        {/* En dehors de l'écran */}
-        <AnimatedSection className="mb-20">
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-4">En dehors de l'écran</h2>
-          <p className="text-[#6B6B6B] mb-10 max-w-2xl">
-            La vie ne s'arrête pas au terminal. Voici quelques moments qui m'animent — photos à venir.
-          </p>
-        </AnimatedSection>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
-          {personalMoments.map((p, i) => (
-            <AnimatedSection key={p.caption} delay={i * 0.1}>
-              <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-gradient-to-br from-accent/15 via-accent/5 to-foreground/5 border border-border card-hover">
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-4">
-                  <div className="p-2 rounded-xl bg-white/70 text-foreground">
-                    <Camera size={20} />
-                  </div>
-                  <p className="text-sm font-medium text-foreground">{p.caption}</p>
-                  <p className="text-xs text-[#6B6B6B]">Photo à venir</p>
-                </div>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-
-        {/* CTA final */}
-        <AnimatedSection className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-4">Et maintenant ?</h2>
-          <p className="text-[#6B6B6B] text-lg mb-8 max-w-2xl mx-auto">
-            Envie de collaborer, d'échanger ou de discuter d'un projet ? Je suis toujours curieux de nouveaux défis.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/projets" className="pill-btn">
-              Voir mes projets <ArrowRight size={16} />
-            </Link>
-            <Link to="/contact" className="pill-btn-outline">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <Link to="/contact" className="pill-btn">
               Me contacter
             </Link>
+            <Link to="/projets" className="pill-btn-outline">
+              Voir mes projets
+            </Link>
           </div>
-        </AnimatedSection>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 };
 
