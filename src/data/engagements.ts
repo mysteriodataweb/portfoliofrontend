@@ -172,5 +172,12 @@ export const engagementChapters: EngagementChapter[] = [
   },
 ];
 
+/** The photo and video feed of life outside work, published from the admin form. */
+export const activitiesSection = {
+  path: "/engagements/hors-ecran",
+  title: "Hors écran",
+  pitch: "Le sport, les sorties, les voyages : ce qui recharge la tête entre deux projets.",
+};
+
 export const getEngagementChapter = (slug?: string) =>
   engagementChapters.find((c) => c.slug === slug);

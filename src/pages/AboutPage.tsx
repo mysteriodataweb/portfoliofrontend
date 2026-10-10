@@ -8,7 +8,7 @@ import { usePublicProfile } from "@/hooks/use-public-profile";
 import { useUpdateProfile } from "@/hooks/use-admin-profile";
 import { useCVData } from "@/hooks/use-admin-cv";
 import { useStats } from "@/hooks/use-stats";
-import { engagementChapters } from "@/data/engagements";
+import { activitiesSection, engagementChapters } from "@/data/engagements";
 import { toast } from "sonner";
 import profilePhoto from "@/assets/profile-photo.jpg";
 
@@ -329,10 +329,13 @@ const AboutPage = () => {
       <section className="container mx-auto px-6 py-24">
         <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">Hors du code</h2>
         <ul className="mt-10">
-          {engagementChapters.map((chapter) => (
+          {[
+            ...engagementChapters.map((c) => ({ ...c, path: `/engagements/${c.slug}` })),
+            { ...activitiesSection, slug: "hors-ecran" },
+          ].map((chapter) => (
             <li key={chapter.slug}>
               <Link
-                to={`/engagements/${chapter.slug}`}
+                to={chapter.path}
                 className="group grid grid-cols-1 gap-2 border-t border-foreground/15 py-7 md:grid-cols-12 md:items-baseline md:gap-8"
               >
                 <span className="font-heading text-2xl md:text-3xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-accent md:col-span-5">

@@ -14,6 +14,7 @@ import SkillsPage from "./pages/SkillsPage";
 import AboutPage from "./pages/AboutPage";
 import EngagementsPage from "./pages/EngagementsPage";
 import EngagementChapterPage from "./pages/engagements/EngagementChapterPage";
+import ActivitiesPage from "./pages/engagements/ActivitiesPage";
 import ContactPage from "./pages/ContactPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
@@ -39,6 +40,7 @@ const App = () => (
             <Route element={<Layout><SkillsPage /></Layout>} path="/competences" />
             <Route element={<Layout><AboutPage /></Layout>} path="/about" />
             <Route element={<Layout><EngagementsPage /></Layout>} path="/engagements" />
+            <Route element={<Layout><ActivitiesPage /></Layout>} path="/engagements/hors-ecran" />
             <Route element={<Layout><EngagementChapterPage /></Layout>} path="/engagements/:slug" />
             <Route element={<Layout><ContactPage /></Layout>} path="/contact" />
             <Route element={<Layout><PublicCVPage /></Layout>} path="/cv" />
