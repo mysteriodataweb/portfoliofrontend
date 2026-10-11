@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,36 +6,35 @@
 
 @layer base {
   :root {
-    /* New design system */
-    --background: 40 30% 96%;        /* #F7F4EE cream */
-    --foreground: 0 0% 9%;           /* #171717 black */
+    --background: 60 9% 98%;         /* #FAFAF9 paper */
+    --foreground: 0 0% 4%;           /* #0A0A0A ink */
 
-    --card: 40 30% 94%;              /* slightly darker cream */
-    --card-foreground: 0 0% 9%;      /* #171717 black */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
 
-    --popover: 40 30% 94%;
-    --popover-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 4%;
 
-    --primary: 0 0% 9%;              /* #171717 black */
-    --primary-foreground: 0 0% 100%; /* #FFFFFF white */
+    --primary: 0 0% 9%;              /* #171717 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 15% 90%;         /* light warm gray */
-    --secondary-foreground: 0 0% 9%; /* #171717 black */
+    --secondary: 240 5% 96%;         /* #F4F4F5 tile grey */
+    --secondary-foreground: 0 0% 4%;
 
-    --muted: 40 15% 90%;
-    --muted-foreground: 0 0% 42%;    /* #6B6B6B gray */
+    --muted: 240 5% 96%;
+    --muted-foreground: 215 14% 34%; /* #4B5563 */
 
-    --accent: 25 72% 55%;            /* #E07B39 orange */
-    --accent-foreground: 0 0% 100%;  /* white */
+    --accent: 25 72% 55%;            /* #E07B39 orange, the only colour */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 15% 85%;            /* warm light border */
-    --input: 40 15% 85%;
-    --ring: 25 72% 55%;              /* orange ring */
+    --border: 0 0% 90%;              /* #E5E5E5 */
+    --input: 0 0% 90%;
+    --ring: 0 0% 9%;
 
-    --radius: 1rem;
+    --radius: 0.375rem;
   }
 }
 
@@ -130,11 +129,6 @@
     gap: 0.75rem;
   }
 
-  .stats-band {
-    @apply w-full py-6;
-    background: #171717;
-  }
-
   .section-dark {
     @apply w-full py-24;
     background: #171717;
@@ -143,7 +137,7 @@
 
   .section-light {
     @apply w-full py-24;
-    background: #F7F4EE;
+    background: #FAFAF9;
   }
 
   /* Left gutter matching .container, for strips that bleed off the right edge */
@@ -164,20 +158,42 @@
     display: none;
   }
 
-  .glass-header {
-    background: rgba(247, 244, 238, 0.9);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  /* White block with the hard offset shadow */
+  .panel {
+    @apply border border-border bg-card;
+    box-shadow: 4px 4px 0 0 #E7E7E5;
+  }
+
+  .panel-active {
+    @apply border-foreground;
+  }
+
+  .btn-ink {
+    @apply inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-semibold text-primary-foreground transition-colors hover:bg-black;
+  }
+
+  .btn-paper {
+    @apply inline-flex h-11 items-center justify-center rounded-md border border-border bg-card px-8 text-base font-medium text-foreground transition-colors hover:border-foreground;
+  }
+
+  .btn-sm {
+    height: 2.5rem;
+    padding-inline: 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .link-plain {
+    @apply underline decoration-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground;
   }
 }
 
 /* Code blocks styling */
 pre code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
 }
 
 code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'IBM Plex Mono', monospace;
   @apply bg-secondary px-1.5 py-0.5 rounded text-sm;
 }
 
@@ -187,21 +203,21 @@ code {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F7F4EE;
+  background: #FAFAF9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D4D0C8;
+  background: #D4D4D4;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #B8B4AC;
+  background: #A3A3A3;
 }
 
 /* Focus visible */
 :focus-visible {
-  outline: 2px solid #E07B39;
+  outline: 2px solid #0A0A0A;
   outline-offset: 2px;
 }
 
@@ -236,216 +252,6 @@ code {
 /* Hidden stars - we don't need them for this design */
 .nav-star {
   display: none;
-}
-
-/* ===== Morph CTA Buttons ===== */
-.morph-btn {
-  position: relative;
-  padding: 18px 48px;
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #FFFFFF;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  overflow: visible;
-  isolation: isolate;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-}
-
-.morph-btn .morph-btn-fill {
-  position: absolute;
-  inset: 0;
-  background: #171717;
-  border: none;
-  border-radius: 9999px;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  z-index: 1;
-}
-
-.morph-btn:hover .morph-btn-fill {
-  background: #333333;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-
-.morph-btn .morph-btn-shadow {
-  display: none;
-}
-
-.morph-btn .morph-orbit-dots,
-.morph-btn .morph-corners {
-  display: none;
-}
-
-.morph-btn .morph-btn-text {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  z-index: 3;
-}
-
-.morph-btn .morph-btn-text span {
-  display: inline-block;
-}
-
-/* ===== Identity Flip Card ===== */
-.flip-card {
-  background-color: transparent;
-  width: 300px;
-  height: 190px;
-  perspective: 1000px;
-  color: white;
-}
-
-.flip-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  transition: transform 0.8s;
-  transform-style: preserve-3d;
-}
-
-.flip-card:hover .flip-card-inner {
-  transform: rotateY(180deg);
-}
-
-.flip-card-front,
-.flip-card-back {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  border-radius: 1.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-.flip-card-front {
-  background-color: #171717;
-  border: none;
-}
-
-.flip-card-back {
-  background-color: #171717;
-  border: none;
-  transform: rotateY(180deg);
-}
-
-.id-heading {
-  position: absolute;
-  letter-spacing: 0.2em;
-  font-size: 0.6em;
-  font-weight: 700;
-  top: 1.2em;
-  right: 1.5em;
-  color: #E07B39;
-  text-transform: uppercase;
-}
-
-.id-photo {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 50%;
-  height: 100%;
-  border-radius: 1.5rem 0 0 1.5rem;
-  overflow: hidden;
-  border-right: 2px solid rgba(255, 255, 255, 0.1);
-}
-
-.id-photo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.id-contactless {
-  position: absolute;
-  top: 1.2em;
-  right: 1.5em;
-  opacity: 0.5;
-}
-
-.id-function {
-  position: absolute;
-  font-weight: 600;
-  font-size: 0.55em;
-  top: 7em;
-  right: 2em;
-  left: auto;
-  letter-spacing: 0.15em;
-  color: #E07B39;
-  text-transform: uppercase;
-}
-
-.id-name {
-  position: absolute;
-  font-weight: 700;
-  font-size: 0.65em;
-  bottom: 1em;
-  right: 2em;
-  left: auto;
-  letter-spacing: 0.1em;
-  color: #FFFFFF;
-}
-
-.id-back-strip {
-  position: absolute;
-  top: 1.8em;
-  left: 0;
-  width: 100%;
-  height: 1.5em;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.05) 10px,
-    rgba(255, 255, 255, 0.02) 10px,
-    rgba(255, 255, 255, 0.02) 20px
-  );
-}
-
-.id-back-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 85%;
-  padding-top: 1em;
-}
-
-.id-quote {
-  font-size: 0.48em;
-  font-style: italic;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.7);
-  text-align: center;
-}
-
-.id-quote-author {
-  font-size: 0.42em;
-  font-weight: 600;
-  color: #E07B39;
-  text-align: center;
-  margin-top: 0.8em;
-}
-
-@media (min-width: 768px) {
-  .flip-card {
-    width: 360px;
-    height: 228px;
-  }
 }
 
 /* ===== Neumorphic Form Fields ===== */

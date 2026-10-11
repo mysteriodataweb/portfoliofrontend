@@ -1,59 +1,74 @@
 import { Link } from "react-router-dom";
-import { Github, Linkedin, Mail, ArrowUpRight } from "lucide-react";
 
-const Footer = () => {
-  return (
-    <footer className="bg-foreground py-16">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-          <div>
-            <Link to="/" className="font-heading text-xl font-bold text-white">
-              Alfred<span className="text-accent">.</span>Mysteriowebdata
-            </Link>
-            <p className="mt-4 text-sm text-white/60 max-w-xs leading-relaxed">
-              Data Scientist & Fullstack Developer passionne par l'IA, le machine learning et les applications web modernes.
-            </p>
-          </div>
-          <div>
-            <h4 className="font-heading font-semibold text-white mb-4">Navigation</h4>
-            <div className="flex flex-col gap-3">
-              {["Projets", "Competences", "Blog", "CV", "A propos", "Contact"].map((item) => (
-                <Link
-                  key={item}
-                  to={`/${item.toLowerCase().replace("a propos", "about").replace("competences", "competences")}`}
-                  className="text-sm text-white/60 hover:text-white transition-colors inline-flex items-center gap-1"
-                >
-                  {item}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h4 className="font-heading font-semibold text-white mb-4">Contact</h4>
-            <div className="flex flex-col gap-3">
-              <a href="https://github.com/mysteriodataweb" target="_blank" rel="noopener noreferrer" className="text-sm text-white/60 hover:text-white transition-colors inline-flex items-center gap-2" aria-label="GitHub">
-                <Github size={16} /> GitHub alf<ArrowUpRight size={12} />
-              </a>
-              <a href="https://www.linkedin.com/in/alfredbiam" target="_blank" rel="noopener noreferrer" className="text-sm text-white/60 hover:text-white transition-colors inline-flex items-center gap-2" aria-label="LinkedIn">
-                <Linkedin size={16} /> LinkedIn <ArrowUpRight size={12} />
-              </a>
-              <a href="mailto:fredbiam9@gmail.com" className="text-sm text-white/60 hover:text-white transition-colors inline-flex items-center gap-2" aria-label="Email">
-                <Mail size={16} /> Email <ArrowUpRight size={12} />
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="mt-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-white/40">
-            © {new Date().getFullYear()} Alfred.Mysteriowebdata — Tous droits reserves
-          </p>
-          <div className="flex gap-1 text-xs text-white/30">
-            <span className="text-accent">●</span> Made with passion
-          </div>
-        </div>
+type FooterLink = { label: string; to?: string; href?: string };
+
+const columns: { title: string; links: FooterLink[] }[] = [
+  {
+    title: "Site",
+    links: [
+      { label: "Projets", to: "/projets" },
+      { label: "Compétences", to: "/competences" },
+      { label: "Engagements", to: "/engagements" },
+      { label: "Blog", to: "/blog" },
+      { label: "CV", to: "/cv" },
+      { label: "À propos", to: "/about" },
+    ],
+  },
+  {
+    title: "Contact",
+    links: [
+      { label: "Me contacter", to: "/contact" },
+      { label: "Email", href: "mailto:fredbiam9@gmail.com" },
+    ],
+  },
+  {
+    title: "Suivre",
+    links: [
+      { label: "GitHub", href: "https://github.com/mysteriodataweb" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/alfredbiam" },
+    ],
+  },
+];
+
+const linkClass = "text-muted-foreground transition-colors hover:text-foreground";
+
+const Footer = () => (
+  <footer className="border-t border-border bg-secondary/50">
+    <div className="container mx-auto flex flex-col gap-10 px-6 py-10 md:flex-row md:justify-between">
+      <div>
+        <Link to="/" className="text-xl font-semibold tracking-tight text-foreground">
+          Alfred<span className="text-accent">.</span>MysteriowebData
+        </Link>
+        <p className="mt-3 text-sm text-muted-foreground">© {new Date().getFullYear()}</p>
       </div>
-    </footer>
-  );
-};
+      <div className="grid grid-cols-2 gap-x-16 gap-y-8 sm:grid-cols-3">
+        {columns.map((column) => (
+          <nav key={column.title} aria-label={column.title}>
+            <h2 className="text-sm font-semibold text-foreground">{column.title}</h2>
+            <ul className="mt-4 space-y-2 text-sm">
+              {column.links.map(({ label, to, href }) => (
+                <li key={label}>
+                  {to ? (
+                    <Link to={to} className={linkClass}>
+                      {label}
+                    </Link>
+                  ) : (
+                    <a
+                      href={href}
+                      className={linkClass}
+                      {...(href?.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    >
+                      {label}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+      </div>
+    </div>
+  </footer>
+);
 
 export default Footer;

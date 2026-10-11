@@ -17,7 +17,7 @@ export default function AdminLoginButton() {
     return (
       <button
         onClick={logout}
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-[#6B6B6B] hover:text-foreground hover:bg-foreground/5 transition-all"
+        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-sm font-medium text-foreground transition-colors hover:border-foreground"
       >
         <LogOut size={14} /> Admin
       </button>
@@ -41,13 +41,13 @@ export default function AdminLoginButton() {
     <div className="relative">
       <button
         onClick={() => setShowForm(!showForm)}
-        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium text-[#6B6B6B] hover:text-foreground hover:bg-foreground/5 transition-all"
+        className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-sm font-medium text-foreground transition-colors hover:border-foreground"
       >
         <LogIn size={14} /> Admin
       </button>
 
       {showForm && (
-        <div className="absolute right-0 top-full mt-3 w-72 p-5 rounded-2xl bg-background border border-border shadow-xl z-50">
+        <div className="panel absolute right-0 top-full z-50 mt-3 w-72 p-5 max-xl:left-0 max-xl:right-auto">
           <form onSubmit={handleLogin} className="space-y-3">
             {error && <p className="text-xs text-destructive">{error}</p>}
             <Input
@@ -55,7 +55,7 @@ export default function AdminLoginButton() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="h-10 text-sm rounded-full border-border"
+              className="h-10 text-sm"
             />
             <Input
               type="password"
@@ -63,12 +63,12 @@ export default function AdminLoginButton() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="h-10 text-sm rounded-full border-border"
+              className="h-10 text-sm"
             />
             <Button
               type="submit"
               size="sm"
-              className="w-full rounded-full bg-foreground text-white hover:bg-foreground/90"
+              className="w-full"
             >
               Se connecter
             </Button>

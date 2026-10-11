@@ -1,19 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Bell } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, Bell, Github } from "lucide-react";
 import AdminLoginButton from "./AdminLoginButton";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useUnreadCount } from "@/hooks/use-messages";
 
 const navLinks = [
   { label: "Projets", href: "/projets" },
-  { label: "Competences", href: "/competences" },
+  { label: "Compétences", href: "/competences" },
   { label: "Engagements", href: "/engagements" },
   { label: "Blog", href: "/blog" },
   { label: "CV", href: "/cv" },
-  { label: "A propos", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "À propos", href: "/about" },
 ];
 
 const Header = () => {
@@ -25,7 +23,7 @@ const Header = () => {
   const unreadCount = unreadData?.count || 0;
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -34,102 +32,108 @@ const Header = () => {
     setIsOpen(false);
   }, [location]);
 
+  const isActive = (href: string) => location.pathname.startsWith(href);
+
+  const unreadBadge = unreadCount > 0 && (
+    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-semibold text-white">
+      {unreadCount > 9 ? "9+" : unreadCount}
+    </span>
+  );
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass-header ${scrolled ? "py-3" : "py-5"}`}
+      className={`fixed inset-x-0 top-0 z-50 border-b bg-background ${
+        scrolled || isOpen ? "border-border" : "border-transparent"
+      }`}
     >
-      <div className="container mx-auto px-6 flex items-center justify-between">
-        <Link to="/" className="font-heading text-xl font-bold text-foreground hover:text-foreground/80 transition-colors">
+      <div className="container mx-auto flex h-16 items-center px-6">
+        <Link to="/" className="text-lg font-semibold tracking-tight text-foreground">
           Alfred<span className="text-accent">.</span>MysteriowebData
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-2">
+        <nav aria-label="Navigation principale" className="ml-10 hidden items-center gap-7 xl:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                location.pathname.startsWith(link.href)
-                  ? "text-foreground bg-foreground/5"
-                  : "text-[#6B6B6B] hover:text-foreground"
+              aria-current={isActive(link.href) ? "page" : undefined}
+              className={`text-base transition-colors hover:text-foreground ${
+                isActive(link.href) ? "font-medium text-foreground" : "text-foreground/70"
               }`}
             >
               {link.label}
             </Link>
           ))}
-          <div className="ml-4 flex items-center gap-2">
+        </nav>
+
+        <div className="ml-auto hidden items-center gap-2 xl:flex">
+          <a
+            href="https://github.com/mysteriodataweb"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mr-2 inline-flex h-9 items-center gap-1.5 text-sm font-medium text-foreground hover:underline"
+          >
+            <Github size={16} /> GitHub
+          </a>
+          {isAdmin && (
+            <Link
+              to="/notifications"
+              aria-label="Messages reçus"
+              className="relative inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-sm font-medium hover:border-foreground"
+            >
+              <Bell size={15} />
+              {unreadBadge}
+            </Link>
+          )}
+          <AdminLoginButton />
+          <Link
+            to="/contact"
+            className="inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-black"
+          >
+            Me contacter
+          </Link>
+        </div>
+
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="-mr-2 ml-auto p-2 text-foreground xl:hidden"
+          aria-label={isOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+
+      {isOpen && (
+        <nav
+          aria-label="Navigation principale"
+          className="container mx-auto flex max-h-[calc(100vh-4rem)] flex-col overflow-y-auto px-6 pb-6 xl:hidden"
+        >
+          {[...navLinks, { label: "Contact", href: "/contact" }].map((link) => (
+            <Link
+              key={link.href}
+              to={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              className={`border-b border-border py-3 text-base ${
+                isActive(link.href) ? "font-medium text-foreground" : "text-foreground/70"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
             {isAdmin && (
               <Link
                 to="/notifications"
-                className="relative p-2 rounded-full text-[#6B6B6B] hover:text-foreground hover:bg-foreground/5 transition-all"
+                className="inline-flex h-9 items-center gap-2 rounded-md border border-border bg-card px-3 text-sm font-medium"
               >
-                <Bell className="w-5 h-5" />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
+                <Bell size={15} /> Messages {unreadBadge}
               </Link>
             )}
             <AdminLoginButton />
           </div>
         </nav>
-
-        {/* Mobile Toggle */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-foreground p-2"
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden overflow-hidden bg-background"
-          >
-            <nav className="container mx-auto px-6 py-6 flex flex-col gap-2">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className={`px-4 py-3 rounded-xl text-base font-medium transition-colors ${
-                    location.pathname.startsWith(link.href)
-                      ? "text-foreground bg-foreground/5"
-                      : "text-[#6B6B6B] hover:text-foreground"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <div className="mt-4 pt-4 border-t border-border">
-                {isAdmin && (
-                  <Link
-                    to="/notifications"
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-[#6B6B6B] hover:text-foreground transition-colors"
-                  >
-                    <Bell className="w-5 h-5" />
-                    Messages
-                    {unreadCount > 0 && (
-                      <span className="ml-auto w-6 h-6 bg-accent text-white text-xs font-bold rounded-full flex items-center justify-center">
-                        {unreadCount > 9 ? "9+" : unreadCount}
-                      </span>
-                    )}
-                  </Link>
-                )}
-                <AdminLoginButton />
-              </div>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      )}
     </header>
   );
 };

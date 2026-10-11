@@ -1,36 +1,159 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Pencil } from "lucide-react";
-import { motion } from "framer-motion";
-import AnimatedSection from "@/components/AnimatedSection";
-import ProjectCard from "@/components/ProjectCard";
-import BlogCard from "@/components/BlogCard";
-import MorphButton from "@/components/MorphButton";
-import IdentityCard from "@/components/IdentityCard";
+import { Briefcase, FolderGit2, Handshake, PenLine, Pencil } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import profilePhoto from "@/assets/profile-photo.jpg";
 import { useFeaturedProjects } from "@/hooks/use-projects";
+import type { Project } from "@/hooks/use-projects";
 import { useBlogPosts } from "@/hooks/use-blog";
+import { useSkills } from "@/hooks/use-skills";
+import { useTools } from "@/hooks/use-tools";
 import { useStats } from "@/hooks/use-stats";
 import { useAdmin } from "@/contexts/AdminContext";
+import { categoryLabel } from "@/data/project-categories";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { api } from "@/api/client";
 import { toast } from "sonner";
 
+const sectionTitle = "text-2xl font-normal text-foreground";
+
+const formatMonth = (date: string) => {
+  const parsed = new Date(`${date.slice(0, 7)}-01T00:00:00`);
+  return Number.isNaN(parsed.getTime())
+    ? date
+    : parsed.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+};
+
+const shortUrl = (url: string) => url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+
+/** Featured projects, one per tab: a reading pane and the project's spec sheet as a terminal. */
+const ProjectShowcase = ({ projects }: { projects: Project[] }) => {
+  const [selected, setSelected] = useState(0);
+  const project = projects[Math.min(selected, projects.length - 1)];
+
+  const sheet: [string, React.ReactNode][] = [
+    ["catégorie", categoryLabel(project.category)],
+    ["date", formatMonth(project.date)],
+    [
+      "stack",
+      <ul>
+        {project.techStack.map((tech) => (
+          <li key={tech}>{tech}</li>
+        ))}
+      </ul>,
+    ],
+  ];
+  if (project.demoUrl) sheet.push(["démo", <ExternalLink href={project.demoUrl} />]);
+  if (project.githubUrl) sheet.push(["code", <ExternalLink href={project.githubUrl} />]);
+
+  return (
+    <div className="border border-border bg-card">
+      <div role="tablist" aria-label="Projets sélectionnés" className="no-scrollbar flex gap-1 overflow-x-auto p-3">
+        {projects.map((p, i) => (
+          <button
+            key={p.id}
+            role="tab"
+            id={`project-tab-${p.id}`}
+            aria-selected={i === selected}
+            aria-controls="project-panel"
+            onClick={() => setSelected(i)}
+            className={`h-9 shrink-0 px-4 text-sm font-semibold transition-colors ${
+              i === selected ? "bg-foreground text-background" : "text-foreground hover:bg-secondary"
+            }`}
+          >
+            {p.title}
+          </button>
+        ))}
+      </div>
+
+      <div
+        role="tabpanel"
+        id="project-panel"
+        aria-labelledby={`project-tab-${project.id}`}
+        className="relative border-t border-border bg-secondary"
+      >
+        <img
+          src={project.image}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover contrast-125 grayscale"
+        />
+        <div className="relative mx-auto grid max-w-[920px] grid-cols-1 px-4 py-10 md:grid-cols-[5fr_4fr] md:px-0 md:py-12">
+          <div className="flex min-h-[26rem] flex-col bg-[#F7F7F7]">
+            <p className="border-b border-border px-4 py-3 text-sm font-medium text-foreground">
+              {categoryLabel(project.category)}
+            </p>
+            <div className="flex flex-1 flex-col justify-center px-6 py-8 md:px-10">
+              <h3 className="text-2xl font-medium text-foreground">{project.title}</h3>
+              <p className="mt-4 max-w-[46ch] leading-relaxed text-muted-foreground">{project.shortDescription}</p>
+              <div className="mt-8">
+                <Link to={`/projet/${project.slug}`} className="btn-ink btn-sm">
+                  Voir le projet
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#1A1A1A] font-mono text-[13px] leading-6 text-white">
+            <p className="flex justify-between gap-4 border-b border-white/10 px-4 py-3">
+              <span>fiche</span>
+              <span className="truncate text-white/60">{project.slug}</span>
+            </p>
+            <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-6 gap-y-3 px-4 py-5">
+              {sheet.map(([label, value]) => (
+                <div key={label} className="contents">
+                  <dt className="text-white/50">{label}</dt>
+                  <dd className="min-w-0 break-words">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ExternalLink = ({ href }: { href: string }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="underline decoration-white/40 decoration-dashed underline-offset-4 hover:decoration-white"
+  >
+    {shortUrl(href)}
+  </a>
+);
+
+// Column count follows the number of figures shown, so no slot is left empty.
+const figureColumns: Record<number, string> = {
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+  4: "sm:grid-cols-2 lg:grid-cols-4",
+};
+
 const Index = () => {
   const { data: featured = [] } = useFeaturedProjects();
   const { data: allPosts = [] } = useBlogPosts();
+  const { data: tools = [] } = useTools();
+  const { data: skillsData } = useSkills();
   const { data: stats, refetch: refetchStats } = useStats();
   const { isAdmin } = useAdmin();
-  const featuredSliced = featured.slice(0, 4);
+
+  const projects = featured.slice(0, 4);
   const latestPosts = allPosts.slice(0, 3);
+  const skillCategories = skillsData?.skillCategories ?? [];
+
+  const [skillIndex, setSkillIndex] = useState(0);
+  const activeCategory = skillCategories[Math.min(skillIndex, skillCategories.length - 1)];
 
   const [showStatsDialog, setShowStatsDialog] = useState(false);
-  const [statsForm, setStatsForm] = useState({ yearsExperience: 5, clientsCount: 15 });
+  const [statsForm, setStatsForm] = useState({ yearsExperience: 0, clientsCount: 0 });
 
   const openEditStats = () => {
     setStatsForm({
-      yearsExperience: stats?.yearsExperience ?? 5,
-      clientsCount: stats?.clientsCount ?? 15,
+      yearsExperience: stats?.yearsExperience ?? 0,
+      clientsCount: stats?.clientsCount ?? 0,
     });
     setShowStatsDialog(true);
   };
@@ -38,182 +161,276 @@ const Index = () => {
   const saveStats = async () => {
     try {
       await api.put("/admin/stats", statsForm);
-      toast.success("Statistiques mises à jour !");
+      toast.success("Statistiques mises à jour");
       setShowStatsDialog(false);
       refetchStats();
-    } catch (err: any) {
-      toast.error(err.message || "Erreur");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "L'enregistrement a échoué");
     }
   };
 
-  const years = stats?.yearsExperience ?? 5;
-  const clients = stats?.clientsCount ?? 15;
-  const projectsCount = stats?.projectsCount ?? 0;
-  const articlesCount = stats?.articlesCount ?? 0;
+  const plural = (n: number, one: string, many: string) => `${n} ${n > 1 ? many : one}`;
+
+  // A figure still at zero is left out rather than shown as "0".
+  const figures: { icon: LucideIcon; title: string; text: string; to: string; count: number }[] = stats
+    ? [
+        {
+          icon: FolderGit2,
+          count: stats.projectsCount,
+          title: plural(stats.projectsCount, "projet réalisé", "projets réalisés"),
+          text: "Data science, IA et applications web.",
+          to: "/projets",
+        },
+        {
+          icon: PenLine,
+          count: stats.articlesCount,
+          title: plural(stats.articlesCount, "article publié", "articles publiés"),
+          text: "Notes et tutoriels sur le blog.",
+          to: "/blog",
+        },
+        {
+          icon: Briefcase,
+          count: stats.yearsExperience,
+          title: plural(stats.yearsExperience, "an d'expérience", "ans d'expérience"),
+          text: "Le parcours complet est dans le CV.",
+          to: "/cv",
+        },
+        {
+          icon: Handshake,
+          count: stats.clientsCount,
+          title: plural(stats.clientsCount, "client accompagné", "clients accompagnés"),
+          text: "Parlons de votre projet.",
+          to: "/contact",
+        },
+      ].filter((figure) => figure.count > 0)
+    : [];
 
   return (
-    <>
+    <div className="container mx-auto px-6 pb-32">
       {/* Hero */}
-      <section className="min-h-[90vh] flex items-center relative overflow-hidden bg-background">
-        <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #171717 1px, transparent 0)", backgroundSize: "40px 40px" }} />
-
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
-            <div className="lg:col-span-3">
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-[#6B6B6B] font-medium mb-4"
-              >
-                Bonjour, je suis
-              </motion.p>
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-5xl md:text-7xl font-heading font-bold text-foreground mb-4 leading-tight"
-              >
-                Alfred <span className="text-accent">Mysterio</span>WebData
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-xl md:text-2xl font-heading font-medium text-foreground mb-6"
-              >
-                Data Scientist & <span className="text-accent">Fullstack Developer</span>
-              </motion.p>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="text-lg text-[#6B6B6B] max-w-lg mb-10 leading-relaxed"
-              >
-                Je transforme les donnees en insights actionnables et les idees en applications web performantes. Passionne par l'IA et le developpement moderne.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex flex-col sm:flex-row gap-4"
-              >
-                <MorphButton to="/projets">Voir mes projets</MorphButton>
-                <Link to="/contact" className="pill-btn-outline">
-                  Contact Me
-                </Link>
-              </motion.div>
-            </div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="lg:col-span-2 flex justify-center items-center"
-            >
-              <IdentityCard />
-            </motion.div>
+      <section className="flex flex-col gap-10 pb-20 pt-14 md:pt-24 lg:flex-row lg:items-end lg:justify-between">
+        <div className="order-2 lg:order-1">
+          <h1 className="text-2xl font-normal text-foreground">Data scientist et développeur fullstack</h1>
+          <p className="mt-5 max-w-[46rem] text-base leading-relaxed text-foreground">
+            Je suis Alfred. Je transforme les données en décisions et les idées en applications web, du modèle de
+            machine learning jusqu'à l'interface.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Link to="/projets" className="btn-ink">
+              Voir mes projets
+            </Link>
+            <Link to="/cv" className="btn-paper">
+              Lire mon CV
+            </Link>
           </div>
+          <p className="mt-5 text-sm text-foreground">
+            Ou{" "}
+            <Link to="/contact" className="link-plain">
+              écrivez-moi directement
+            </Link>
+            .
+          </p>
+        </div>
+        <div className="panel order-1 w-40 shrink-0 p-1.5 lg:order-2 lg:w-60">
+          <img src={profilePhoto} alt="Portrait d'Alfred" className="aspect-[4/5] w-full object-cover object-bottom" />
         </div>
       </section>
 
-      {/* Stats Band */}
-      <div className="stats-band relative">
-        {isAdmin && (
-          <button
-            onClick={openEditStats}
-            className="absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-white/70 bg-white/10 hover:bg-white/20 hover:text-white transition-colors"
-            title="Modifier les statistiques"
-          >
-            <Pencil size={12} /> Modifier
-          </button>
-        )}
-        <div className="container mx-auto px-6">
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-            <div className="text-center">
-              <p className="text-3xl font-bold text-white">{years}<span className="text-accent">+</span></p>
-              <p className="text-xs text-white/60 mt-1 uppercase tracking-wider">Annees d'experience</p>
-            </div>
-            <div className="w-px h-10 bg-white/20 hidden md:block" />
-            <div className="text-center">
-              <p className="text-3xl font-bold text-white">{projectsCount}<span className="text-accent">+</span></p>
-              <p className="text-xs text-white/60 mt-1 uppercase tracking-wider">Projets realises</p>
-            </div>
-            <div className="w-px h-10 bg-white/20 hidden md:block" />
-            <div className="text-center">
-              <p className="text-3xl font-bold text-white">{clients}<span className="text-accent">+</span></p>
-              <p className="text-xs text-white/60 mt-1 uppercase tracking-wider">Clients satisfaits</p>
-            </div>
-            <div className="w-px h-10 bg-white/20 hidden md:block" />
-            <div className="text-center">
-              <p className="text-3xl font-bold text-white">{articlesCount}<span className="text-accent">+</span></p>
-              <p className="text-xs text-white/60 mt-1 uppercase tracking-wider">Articles publies</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Outils */}
+      {tools.length > 0 && (
+        <section aria-label="Outils du quotidien">
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+            {tools.slice(0, 8).map((tool) => (
+              <li
+                key={tool.id}
+                className="flex h-20 items-center justify-center gap-2.5 rounded-md bg-secondary px-3 text-sm font-semibold text-foreground"
+              >
+                <img src={tool.image} alt="" loading="lazy" className="h-5 w-5 shrink-0 brightness-0" />
+                <span className="truncate">{tool.name}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
-      {/* Featured Projects */}
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-6">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">Projets <span className="text-accent">selectionnes</span></h2>
-            <p className="text-[#6B6B6B] mb-12">Une selection de mes travaux les plus recents.</p>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {featuredSliced.map((project, i) => (
-              <AnimatedSection key={project.id} delay={i * 0.1}>
-                <ProjectCard project={project} />
-              </AnimatedSection>
+      {/* Projets */}
+      {projects.length > 0 && (
+        <section className="mt-24">
+          <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
+            <h2 className={sectionTitle}>Projets sélectionnés</h2>
+            <Link to="/projets" className="link-plain text-sm">
+              Tous les projets
+            </Link>
+          </div>
+          <ProjectShowcase projects={projects} />
+        </section>
+      )}
+
+      {/* Chiffres */}
+      {(figures.length > 0 || isAdmin) && (
+        <section className="mt-20" aria-label="En chiffres">
+          {isAdmin && (
+            <div className="mb-4 flex justify-end">
+              <button
+                onClick={openEditStats}
+                className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-sm font-medium hover:border-foreground"
+              >
+                <Pencil size={14} /> Modifier les chiffres
+              </button>
+            </div>
+          )}
+          <div className={`grid grid-cols-1 gap-5 ${figureColumns[figures.length] ?? ""}`}>
+            {figures.map(({ icon: Icon, title, text, to }) => (
+              <Link key={to} to={to} className="panel block p-5 transition-colors hover:border-foreground">
+                <Icon size={40} strokeWidth={1.25} aria-hidden="true" />
+                <p className="mt-6 text-sm font-semibold text-foreground">{title}</p>
+                <p className="mt-4 text-sm text-foreground">{text}</p>
+              </Link>
             ))}
           </div>
-          <AnimatedSection className="mt-12 text-center">
-            <Link to="/projets" className="link-arrow">
-              Voir tous les projets <ArrowRight size={16} />
-            </Link>
-          </AnimatedSection>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* Compétences */}
+      {activeCategory && (
+        <section className="mt-32">
+          <h2 className={sectionTitle}>Compétences</h2>
+          <div className="mt-6 grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+            <div role="tablist" aria-label="Domaines de compétences" className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
+              {skillCategories.map((category, i) => {
+                const active = category.name === activeCategory.name;
+                return (
+                  <button
+                    key={category.name}
+                    role="tab"
+                    aria-selected={active}
+                    aria-controls="skills-panel"
+                    onClick={() => setSkillIndex(i)}
+                    className={`flex items-center justify-between gap-4 border bg-card px-6 py-5 text-left transition-colors ${
+                      active ? "border-foreground" : "border-border hover:border-foreground/40"
+                    }`}
+                  >
+                    <span>
+                      <span className="block font-semibold text-foreground">{category.name}</span>
+                      <span className="mt-1 block text-sm text-muted-foreground">
+                        {plural(category.skills.length, "compétence", "compétences")}
+                      </span>
+                    </span>
+                    {active && <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-foreground" />}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div id="skills-panel" role="tabpanel" className="flex flex-col border border-foreground bg-card font-mono">
+              <div className="flex border-b border-foreground">
+                <p className="bg-foreground px-4 py-2.5 font-semibold text-background">{activeCategory.name}</p>
+                <Link
+                  to="/competences"
+                  className="ml-auto border-l border-foreground px-4 py-2.5 text-sm hover:bg-secondary"
+                >
+                  Tout voir
+                </Link>
+              </div>
+              <div className="px-6 py-6 text-[13px] leading-7">
+                <p className="mb-3 text-muted-foreground">// niveau sur 100</p>
+                <ul>
+                  {activeCategory.skills.map((skill) => (
+                    <li
+                      key={skill.name}
+                      className="grid grid-cols-[minmax(0,1fr)_3ch] items-center gap-x-4 sm:grid-cols-[minmax(0,38ch)_10rem_3ch]"
+                    >
+                      <span className="truncate text-foreground">{skill.name}</span>
+                      <span aria-hidden="true" className="hidden h-2 bg-foreground/10 sm:block">
+                        <span className="block h-full bg-foreground" style={{ width: `${skill.level}%` }} />
+                      </span>
+                      <span className="text-right text-foreground">{skill.level}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Blog */}
-      <section className="py-24 bg-card border-y border-border">
-        <div className="container mx-auto px-6">
-          <AnimatedSection>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">Du <span className="text-accent">blog</span></h2>
-            <p className="text-[#6B6B6B] mb-12">Reflexions et tutoriels sur la data science et le developpement.</p>
-          </AnimatedSection>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {latestPosts.map((post, i) => (
-              <AnimatedSection key={post.id} delay={i * 0.1}>
-                <BlogCard post={post} />
-              </AnimatedSection>
-            ))}
-          </div>
-          <AnimatedSection className="mt-12 text-center">
-            <Link to="/blog" className="link-arrow">
-              Voir tous les articles <ArrowRight size={16} />
+      {latestPosts.length > 0 && (
+        <section className="mt-32">
+          <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
+            <h2 className={sectionTitle}>Derniers articles</h2>
+            <Link to="/blog" className="link-plain text-sm">
+              Tous les articles
             </Link>
-          </AnimatedSection>
-        </div>
-      </section>
+          </div>
+          <ul className="space-y-3">
+            {latestPosts.map((post) => (
+              <li key={post.id}>
+                <Link
+                  to={`/blog/${post.slug}`}
+                  className="grid grid-cols-1 gap-x-8 gap-y-2 border border-border bg-card px-6 py-5 transition-colors hover:border-foreground md:grid-cols-[9rem_minmax(0,1fr)_auto] md:items-baseline"
+                >
+                  <time dateTime={post.date} className="font-mono text-[13px] text-muted-foreground">
+                    {new Date(post.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
+                  </time>
+                  <span>
+                    <span className="block font-semibold text-foreground">{post.title}</span>
+                    <span className="mt-1 block text-sm text-muted-foreground">{post.excerpt}</span>
+                  </span>
+                  <span className="font-mono text-[13px] text-muted-foreground">
+                    {post.category}, {post.readTime}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Stats Dialog */}
       <Dialog open={showStatsDialog} onOpenChange={setShowStatsDialog}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Modifier les statistiques</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Modifier les chiffres</DialogTitle>
+          </DialogHeader>
           <div className="space-y-4 py-4">
-            <div><label className="text-sm font-medium">Annees d'experience</label><Input type="number" value={statsForm.yearsExperience} onChange={(e) => setStatsForm({ ...statsForm, yearsExperience: Number(e.target.value) })} className="rounded-full" /></div>
-            <div><label className="text-sm font-medium">Clients satisfaits</label><Input type="number" value={statsForm.clientsCount} onChange={(e) => setStatsForm({ ...statsForm, clientsCount: Number(e.target.value) })} className="rounded-full" /></div>
-            <p className="text-xs text-[#6B6B6B]">
-              Projets realises et Articles publies sont calcules automatiquement depuis le site.
+            <div>
+              <label htmlFor="stats-years" className="text-sm font-medium">
+                Années d'expérience
+              </label>
+              <Input
+                id="stats-years"
+                type="number"
+                value={statsForm.yearsExperience}
+                onChange={(e) => setStatsForm({ ...statsForm, yearsExperience: Number(e.target.value) })}
+              />
+            </div>
+            <div>
+              <label htmlFor="stats-clients" className="text-sm font-medium">
+                Clients accompagnés
+              </label>
+              <Input
+                id="stats-clients"
+                type="number"
+                value={statsForm.clientsCount}
+                onChange={(e) => setStatsForm({ ...statsForm, clientsCount: Number(e.target.value) })}
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Les projets et les articles sont comptés automatiquement. Un chiffre à zéro n'est pas affiché.
             </p>
           </div>
           <DialogFooter>
-            <button onClick={() => setShowStatsDialog(false)} className="pill-btn-outline text-sm">Annuler</button>
-            <button onClick={saveStats} className="pill-btn text-sm">Enregistrer</button>
+            <button onClick={() => setShowStatsDialog(false)} className="btn-paper btn-sm">
+              Annuler
+            </button>
+            <button onClick={saveStats} className="btn-ink btn-sm">
+              Enregistrer
+            </button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 
