@@ -130,7 +130,7 @@ const AboutPage = () => {
       <section className="container mx-auto px-6 pt-12 md:pt-20">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
-            <h1 className="max-w-[16ch] font-heading text-[clamp(2.5rem,6.6vw,5.75rem)] font-bold leading-[0.98] tracking-[-0.04em] text-foreground">
+            <h1 className="text-3xl font-normal text-foreground">
               Je fais parler les données, puis je construis l'outil qui va avec.
             </h1>
             <p className="mt-8 text-lg text-muted-foreground">
@@ -146,7 +146,7 @@ const AboutPage = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="rounded-full bg-foreground/5 p-2.5 text-foreground transition-colors hover:bg-foreground hover:text-background"
+                  className="rounded-md bg-foreground/5 p-2.5 text-foreground transition-colors hover:bg-foreground hover:text-background"
                 >
                   <Icon size={18} />
                 </a>
@@ -168,7 +168,7 @@ const AboutPage = () => {
               <img
                 src={profile?.photo || profilePhoto}
                 alt={profile?.fullName || "Alfred MysterioWebData"}
-                className="aspect-[4/5] w-full max-w-sm rounded-[1.25rem] object-cover md:ml-auto"
+                className="aspect-[4/5] w-full max-w-sm rounded-none object-cover md:ml-auto"
               />
             )}
           </div>
@@ -179,13 +179,13 @@ const AboutPage = () => {
       <section className="container mx-auto px-6 py-24 md:py-40">
         <ScrollRevealText
           text={MANIFESTO}
-          className="max-w-[26ch] font-heading text-[clamp(1.9rem,4.6vw,4rem)] font-medium leading-[1.12] tracking-[-0.025em] text-foreground"
+          className="max-w-[34ch] text-[clamp(1.5rem,3vw,2.5rem)] font-normal leading-[1.25] tracking-tight text-foreground"
         />
       </section>
 
       {/* Biographie */}
       <section className="container mx-auto grid grid-cols-1 gap-8 px-6 pb-24 md:grid-cols-12">
-        <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground md:col-span-4">
+        <h2 className="text-2xl font-normal text-foreground md:col-span-4">
           Qui je suis
         </h2>
         <div className="md:col-span-8">
@@ -198,7 +198,7 @@ const AboutPage = () => {
                 id="bio"
                 value={form.bio}
                 onChange={(e) => setForm({ ...form, bio: e.target.value })}
-                className="h-64 w-full rounded-xl border border-border bg-white px-4 py-3 text-foreground"
+                className="h-64 w-full rounded-none border border-border bg-white px-4 py-3 text-foreground"
               />
               <div className="flex gap-2">
                 <button onClick={handleSave} disabled={updateProfile.isPending} className="pill-btn text-sm">
@@ -223,7 +223,7 @@ const AboutPage = () => {
 
       {/* Ce qui me fait avancer */}
       <section className="container mx-auto px-6 pb-24">
-        <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+        <h2 className="text-2xl font-normal text-foreground">
           Ce qui me fait avancer
         </h2>
         <dl className="mt-10">
@@ -232,7 +232,7 @@ const AboutPage = () => {
               key={m.title}
               className="grid grid-cols-1 gap-2 border-t border-foreground/15 py-7 md:grid-cols-12 md:gap-8"
             >
-              <dt className="font-heading text-2xl md:text-3xl font-semibold tracking-tight text-foreground md:col-span-6">
+              <dt className="text-lg font-semibold text-foreground md:col-span-6">
                 {m.title}
               </dt>
               <dd className="max-w-[48ch] text-lg leading-relaxed text-muted-foreground md:col-span-6">{m.desc}</dd>
@@ -245,7 +245,7 @@ const AboutPage = () => {
       {cvSections.length > 0 && (
         <section className="container mx-auto px-6 pb-24">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">Mon parcours</h2>
+            <h2 className="text-2xl font-normal text-foreground">Mon parcours</h2>
             <Link to="/cv" className="link-arrow">
               Voir le CV complet <ArrowRight size={16} />
             </Link>
@@ -265,12 +265,12 @@ const AboutPage = () => {
                     </p>
                     <div className="md:col-span-9">
                       <h4 className="font-heading text-xl font-semibold text-foreground">{item.title}</h4>
-                      {item.subtitle && <p className="text-accent">{item.subtitle}</p>}
+                      {item.subtitle && <p className="text-foreground">{item.subtitle}</p>}
                       {item.description && (
                         <p className="mt-2 max-w-[64ch] leading-relaxed text-muted-foreground">{item.description}</p>
                       )}
                       {item.highlights?.length > 0 && (
-                        <ul className="mt-3 max-w-[64ch] list-disc space-y-1 pl-5 text-muted-foreground marker:text-accent">
+                        <ul className="mt-3 max-w-[64ch] list-disc space-y-1 pl-5 text-muted-foreground marker:text-foreground">
                           {item.highlights.map((h, j) => (
                             <li key={j}>{h}</li>
                           ))}
@@ -288,7 +288,7 @@ const AboutPage = () => {
       {/* Méthode */}
       <section className="bg-foreground text-background">
         <div className="container mx-auto px-6 py-24">
-          <h2 className="max-w-[18ch] font-heading text-3xl md:text-5xl font-bold leading-[1.02] tracking-[-0.03em]">
+          <h2 className="text-2xl font-normal">
             Cinq étapes, toujours dans cet ordre.
           </h2>
           <ol className="mt-12">
@@ -297,10 +297,10 @@ const AboutPage = () => {
                 key={step.title}
                 className="grid grid-cols-[3rem_1fr] gap-x-4 gap-y-1 border-t border-background/15 py-6 md:grid-cols-12 md:gap-8"
               >
-                <span className="font-heading text-2xl font-medium tabular-nums text-accent md:col-span-1">
+                <span className="font-mono text-sm tabular-nums text-background/60 md:col-span-1">
                   {i + 1}
                 </span>
-                <h3 className="font-heading text-2xl md:text-3xl font-semibold tracking-tight md:col-span-4">
+                <h3 className="text-lg font-semibold md:col-span-4">
                   {step.title}
                 </h3>
                 <p className="col-start-2 max-w-[48ch] text-lg leading-relaxed text-background/70 md:col-span-7 md:col-start-auto">
@@ -315,7 +315,7 @@ const AboutPage = () => {
               {figures.map((f) => (
                 <div key={f.label} className="flex flex-col-reverse">
                   <dt className="mt-1 text-background/70">{f.label}</dt>
-                  <dd className="font-heading text-5xl md:text-7xl font-bold tracking-[-0.04em] tabular-nums">
+                  <dd className="text-3xl font-medium tabular-nums">
                     {f.value}
                   </dd>
                 </div>
@@ -327,7 +327,7 @@ const AboutPage = () => {
 
       {/* Hors du code */}
       <section className="container mx-auto px-6 py-24">
-        <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight text-foreground">Hors du code</h2>
+        <h2 className="text-2xl font-normal text-foreground">Hors du code</h2>
         <ul className="mt-10">
           {[
             ...engagementChapters.map((c) => ({ ...c, path: `/engagements/${c.slug}` })),
@@ -338,7 +338,7 @@ const AboutPage = () => {
                 to={chapter.path}
                 className="group grid grid-cols-1 gap-2 border-t border-foreground/15 py-7 md:grid-cols-12 md:items-baseline md:gap-8"
               >
-                <span className="font-heading text-2xl md:text-3xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-accent md:col-span-5">
+                <span className="text-lg font-semibold text-foreground transition-colors group-hover:underline md:col-span-5">
                   {chapter.title}
                 </span>
                 <span className="max-w-[48ch] text-lg leading-relaxed text-muted-foreground md:col-span-6">
@@ -354,7 +354,7 @@ const AboutPage = () => {
       {/* Suite */}
       <section className="container mx-auto px-6 pb-24">
         <div className="flex flex-col gap-8 border-t border-foreground/15 pt-12 md:flex-row md:items-end md:justify-between">
-          <p className="max-w-[20ch] font-heading text-4xl md:text-6xl font-bold leading-[1] tracking-[-0.03em] text-foreground">
+          <p className="max-w-[30ch] text-2xl md:text-3xl font-normal tracking-tight text-foreground">
             Un projet data, IA ou web en tête ?
           </p>
           <div className="flex flex-col gap-4 sm:flex-row">

@@ -102,7 +102,7 @@ const BlogPage = () => {
       </time>
       <span>{post.readTime} de lecture</span>
       {post.archived && (
-        <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-foreground">Archivé</span>
+        <span className="rounded-md bg-foreground px-2 py-0.5 text-xs font-semibold text-background">Archivé</span>
       )}
     </p>
   );
@@ -130,7 +130,7 @@ const BlogPage = () => {
       <div className="container mx-auto px-6">
         <header className="pt-12 md:pt-20">
           <div className="flex items-start justify-between gap-6">
-            <h1 className="font-heading text-[clamp(3.5rem,13vw,11rem)] font-bold leading-[0.85] tracking-[-0.05em] text-foreground">
+            <h1 className="text-3xl font-normal text-foreground">
               Blog
             </h1>
             {isAdmin && (
@@ -154,7 +154,7 @@ const BlogPage = () => {
                 aria-pressed={activeCategory === c}
                 className={`text-base font-medium transition-colors ${
                   activeCategory === c
-                    ? "text-foreground underline decoration-accent decoration-2 underline-offset-8"
+                    ? "text-foreground underline decoration-foreground decoration-2 underline-offset-8"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -209,7 +209,7 @@ const BlogPage = () => {
                 to={`/blog/${featured.slug}`}
                 tabIndex={-1}
                 aria-hidden="true"
-                className="group block overflow-hidden rounded-[1.25rem] bg-secondary md:col-span-7"
+                className="group block overflow-hidden rounded-none bg-secondary md:col-span-7"
               >
                 <img
                   src={featured.image}
@@ -219,8 +219,8 @@ const BlogPage = () => {
               </Link>
               <div className="flex flex-col justify-end md:col-span-5">
                 {postMeta(featured)}
-                <h2 className="mt-4 font-heading text-3xl md:text-5xl font-bold leading-[1.02] tracking-[-0.03em] text-foreground">
-                  <Link to={`/blog/${featured.slug}`} className="transition-colors hover:text-accent">
+                <h2 className="text-2xl font-normal mt-4 text-foreground">
+                  <Link to={`/blog/${featured.slug}`} className="transition-colors hover:text-foreground">
                     {featured.title}
                   </Link>
                 </h2>
@@ -240,8 +240,8 @@ const BlogPage = () => {
                   >
                     <div className="md:col-span-8">
                       {postMeta(post)}
-                      <h2 className="mt-2 font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-                        <Link to={`/blog/${post.slug}`} className="transition-colors hover:text-accent">
+                      <h2 className="text-2xl font-normal mt-2 text-foreground">
+                        <Link to={`/blog/${post.slug}`} className="transition-colors hover:text-foreground">
                           {post.title}
                         </Link>
                       </h2>
@@ -252,7 +252,7 @@ const BlogPage = () => {
                       to={`/blog/${post.slug}`}
                       tabIndex={-1}
                       aria-hidden="true"
-                      className="group block overflow-hidden rounded-xl bg-secondary md:col-span-4"
+                      className="group block overflow-hidden rounded-none bg-secondary md:col-span-4"
                     >
                       <img
                         src={post.image}

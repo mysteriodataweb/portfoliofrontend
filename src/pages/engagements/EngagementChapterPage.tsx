@@ -29,7 +29,7 @@ const Chapter = ({ chapter }: { chapter: EngagementChapter }) => {
         >
           <ArrowLeft size={16} /> Tous les engagements
         </Link>
-        <h1 className="mt-8 font-heading text-[clamp(2.75rem,8vw,6.5rem)] font-bold leading-[0.95] tracking-[-0.04em] text-foreground">
+        <h1 className="text-3xl font-normal mt-8 text-foreground">
           {chapter.title}
         </h1>
         <p className="mt-6 max-w-[38ch] text-xl md:text-2xl leading-snug text-muted-foreground">
@@ -54,7 +54,7 @@ const Chapter = ({ chapter }: { chapter: EngagementChapter }) => {
               <div key={i} className="[&>article]:w-full">
                 <ReelPanel event={event} index={i} />
                 <div className="mt-3 flex gap-4 text-sm">
-                  <button onClick={() => setEditingIndex(i)} className="text-accent hover:underline">
+                  <button onClick={() => setEditingIndex(i)} className="text-foreground hover:underline">
                     Modifier
                   </button>
                   <button onClick={() => removeEvent(i)} className="text-destructive hover:underline">
@@ -86,7 +86,7 @@ const Chapter = ({ chapter }: { chapter: EngagementChapter }) => {
         >
           <span>
             <span className="block text-sm text-muted-foreground">Chapitre suivant</span>
-            <span className="mt-1 block font-heading text-3xl md:text-5xl font-bold tracking-tight text-foreground transition-colors group-hover:text-accent">
+            <span className="mt-1 block text-xl font-semibold text-foreground transition-colors group-hover:underline">
               {next.title}
             </span>
           </span>
@@ -97,7 +97,7 @@ const Chapter = ({ chapter }: { chapter: EngagementChapter }) => {
       {isAdmin && !isEditing && (
         <button
           onClick={() => setIsEditing(true)}
-          className="fixed bottom-8 right-8 z-50 flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-accent/80"
+          className="fixed bottom-8 right-8 z-50 flex items-center gap-2 rounded-md bg-foreground px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black"
         >
           <Pencil size={14} /> Modifier les images
         </button>
@@ -107,7 +107,7 @@ const Chapter = ({ chapter }: { chapter: EngagementChapter }) => {
         <div className="fixed bottom-8 right-8 z-50 flex items-center gap-3">
           <button
             onClick={() => setAdding(true)}
-            className="flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-accent/80"
+            className="flex items-center gap-2 rounded-md bg-foreground px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black"
           >
             <Plus size={14} /> Ajouter
           </button>
@@ -117,7 +117,7 @@ const Chapter = ({ chapter }: { chapter: EngagementChapter }) => {
               setAdding(false);
               setEditingIndex(null);
             }}
-            className="flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-semibold text-white shadow-lg transition-colors hover:bg-foreground/80"
+            className="flex items-center gap-2 rounded-md bg-foreground px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-foreground/80"
           >
             <Save size={14} /> Enregistrer
           </button>

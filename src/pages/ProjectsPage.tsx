@@ -17,7 +17,7 @@ const emptyProject = {
   featured: false, published: true, context: "", approach: "", results: "", challenges: "",
 };
 
-const chipBase = "px-4 py-1.5 rounded-full text-sm font-medium border transition-colors";
+const chipBase = "px-4 py-1.5 rounded-md text-sm font-medium border transition-colors";
 
 const ProjectsPage = () => {
   const { data: projects = [], isLoading } = useProjects();
@@ -36,7 +36,7 @@ const ProjectsPage = () => {
     title: project.title,
     description: project.fullDescription || project.shortDescription,
     image: project.image || "/placeholder.svg",
-    bgColor: "#F7F4EE",
+    bgColor: "#FAFAF9",
     textColor: "#000000",
     badge: categoryLabel(project.category),
     ctaHref: `/projet/${project.slug}`,
@@ -105,10 +105,10 @@ const ProjectsPage = () => {
     if (!project) return null;
     return (
       <>
-        <Button size="sm" variant="secondary" className="h-9 w-9 p-0 rounded-full bg-white/90 hover:bg-white" onClick={() => openEdit(project)}>
+        <Button size="sm" variant="secondary" className="h-9 w-9 p-0 rounded-md bg-white/90 hover:bg-white" onClick={() => openEdit(project)}>
           <Pencil size={14} />
         </Button>
-        <Button size="sm" variant="secondary" className="h-9 w-9 p-0 rounded-full bg-white/90 hover:bg-white" onClick={() => handleArchive(project)}>
+        <Button size="sm" variant="secondary" className="h-9 w-9 p-0 rounded-md bg-white/90 hover:bg-white" onClick={() => handleArchive(project)}>
           <Archive size={14} />
         </Button>
       </>
@@ -118,7 +118,7 @@ const ProjectsPage = () => {
   return (
     <section className="h-[calc(100vh-80px)] relative flex flex-col">
       {/* Category filter bar */}
-      <div className="shrink-0 bg-[#F7F4EE] border-b border-black/5 px-4 py-3 flex flex-wrap items-center justify-center gap-2 z-10">
+      <div className="shrink-0 bg-background border-b border-black/5 px-4 py-3 flex flex-wrap items-center justify-center gap-2 z-10">
         <button
           onClick={() => setActiveCategory("all")}
           className={`${chipBase} ${
@@ -143,7 +143,7 @@ const ProjectsPage = () => {
           </button>
         ))}
         {isAdmin && (
-          <button onClick={openAdd} className={`${chipBase} border-accent/40 text-foreground hover:border-accent`}>
+          <button onClick={openAdd} className={`${chipBase} border-border text-foreground hover:border-foreground`}>
             <Plus className="h-4 w-4 mr-1 inline" /> Nouveau projet
           </button>
         )}
@@ -151,9 +151,9 @@ const ProjectsPage = () => {
 
       <div className="flex-1 relative min-h-0">
         {isLoading && slides.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-[#6B6B6B]">Chargement...</div>
+          <div className="h-full flex items-center justify-center text-muted-foreground">Chargement...</div>
         ) : slides.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center gap-4 text-[#6B6B6B]">
+          <div className="h-full flex flex-col items-center justify-center gap-4 text-muted-foreground">
             <p>{activeCategory === "all" ? "Aucun projet publié pour le moment." : "Aucun projet dans cette catégorie."}</p>
             {isAdmin && (
               <button onClick={openAdd} className="pill-btn text-sm">

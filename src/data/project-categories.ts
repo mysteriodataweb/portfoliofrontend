@@ -11,10 +11,12 @@ export type ProjectCategory = (typeof PROJECT_CATEGORIES)[number]["value"];
 export const categoryLabel = (value: string): string =>
   PROJECT_CATEGORIES.find((c) => c.value === value)?.label ?? value;
 
+const chip = "bg-card text-foreground border-border";
+
 export const categoryColors: Record<string, string> = {
-  ia: "bg-accent/10 text-accent border-accent/20",
-  "data-science": "bg-foreground/5 text-foreground border-foreground/10",
-  "data-engineering": "bg-accent/5 text-accent border-accent/15",
-  "data-analyst": "bg-foreground/5 text-foreground border-foreground/10",
-  "web-app": "bg-accent/10 text-accent border-accent/20",
+  ia: chip,
+  "data-science": chip,
+  "data-engineering": chip,
+  "data-analyst": chip,
+  "web-app": chip,
 };

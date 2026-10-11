@@ -15,10 +15,10 @@ export default function EngagementEventEditor({ event, onSave, onCancel }: Props
   const [form, setForm] = useState(event);
 
   return (
-    <div className="bg-card border border-accent/30 rounded-xl p-6">
+    <div className="bg-card border border-border rounded-none p-6">
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-medium text-[#6B6B6B] uppercase tracking-wider">Date</label>
+          <label className="text-xs font-medium text-muted-foreground">Date</label>
           <Input
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
@@ -27,7 +27,7 @@ export default function EngagementEventEditor({ event, onSave, onCancel }: Props
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-[#6B6B6B] uppercase tracking-wider">Titre</label>
+          <label className="text-xs font-medium text-muted-foreground">Titre</label>
           <Input
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -35,7 +35,7 @@ export default function EngagementEventEditor({ event, onSave, onCancel }: Props
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-[#6B6B6B] uppercase tracking-wider">Description</label>
+          <label className="text-xs font-medium text-muted-foreground">Description</label>
           <textarea
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -43,7 +43,7 @@ export default function EngagementEventEditor({ event, onSave, onCancel }: Props
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-[#6B6B6B] uppercase tracking-wider">Image (optionnel)</label>
+          <label className="text-xs font-medium text-muted-foreground">Image (optionnel)</label>
           <ImageUpload
             value={form.image || ""}
             onChange={(url) => setForm({ ...form, image: url })}

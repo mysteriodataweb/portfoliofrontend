@@ -24,7 +24,7 @@ const panelWidth = (size: PanelSize, index: number, hasImage: boolean) => {
 
 // Panels without a photo become a typographic plate; inks alternate so two never look the same in a row.
 const plateTone = (index: number) =>
-  index % 2 === 0 ? "bg-foreground text-background" : "bg-accent text-foreground";
+  index % 2 === 0 ? "bg-foreground text-background" : "bg-secondary text-foreground";
 
 export const ReelPanel = ({
   event,
@@ -41,15 +41,15 @@ export const ReelPanel = ({
   if (!hasImage) {
     return (
       <article
-        className={`${width} ${mediaHeight[size]} ${plateTone(index)} shrink-0 snap-start rounded-[1.25rem] p-6 md:p-8 flex flex-col justify-between`}
+        className={`${width} ${mediaHeight[size]} ${plateTone(index)} shrink-0 snap-start rounded-none p-6 md:p-8 flex flex-col justify-between`}
       >
         <p className="text-sm font-medium opacity-70">{event.date}</p>
         <div>
           <h3
             className={
               size === "lg"
-                ? "font-heading font-bold leading-[1.05] tracking-tight text-2xl md:text-[2.25rem]"
-                : "font-heading font-bold leading-tight text-xl md:text-2xl"
+                ? "font-semibold leading-snug text-xl md:text-2xl"
+                : "font-semibold leading-snug text-lg"
             }
           >
             {event.title}
@@ -66,7 +66,7 @@ export const ReelPanel = ({
 
   return (
     <article className={`${width} shrink-0 snap-start`}>
-      <div className={`${mediaHeight[size]} overflow-hidden rounded-[1.25rem] bg-secondary`}>
+      <div className={`${mediaHeight[size]} overflow-hidden rounded-none bg-secondary`}>
         <img
           src={event.image!}
           alt={event.title}
@@ -79,7 +79,7 @@ export const ReelPanel = ({
       <h3
         className={
           size === "lg"
-            ? "mt-1 font-heading text-xl md:text-2xl font-bold text-foreground"
+            ? "mt-1 text-lg font-semibold text-foreground"
             : "mt-1 font-heading text-lg font-semibold text-foreground"
         }
       >

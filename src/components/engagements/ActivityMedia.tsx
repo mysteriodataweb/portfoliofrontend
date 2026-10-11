@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowUpRight, Play } from "lucide-react";
 import type { Media } from "@/lib/media";
 
-const frame = "overflow-hidden rounded-[1.25rem] bg-secondary";
+const frame = "overflow-hidden rounded-none bg-secondary";
 
 const ActivityMedia = ({
   media,
@@ -42,10 +42,10 @@ const ActivityMedia = ({
         href={media.href}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex aspect-[4/3] flex-col justify-between rounded-[1.25rem] bg-foreground p-6 text-background transition-colors hover:bg-foreground/90"
+        className="flex aspect-[4/3] flex-col justify-between rounded-none bg-foreground p-6 text-background transition-colors hover:bg-foreground/90"
       >
         <span className="text-sm opacity-70">{media.host}</span>
-        <span className="inline-flex items-center gap-2 font-heading text-2xl font-bold leading-tight">
+        <span className="inline-flex items-center gap-2 text-lg font-semibold">
           Voir la publication <ArrowUpRight className="h-6 w-6 shrink-0" />
         </span>
       </a>
@@ -73,7 +73,7 @@ const ActivityMedia = ({
       >
         <img src={media.poster} alt="" loading="lazy" className="h-full w-full object-cover" />
         <span className="absolute inset-0 flex items-center justify-center bg-foreground/20 transition-colors group-hover:bg-foreground/35">
-          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-background text-foreground">
+          <span className="flex h-16 w-16 items-center justify-center rounded-md bg-background text-foreground">
             <Play className="ml-1 h-6 w-6 fill-current" />
           </span>
         </span>

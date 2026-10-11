@@ -59,74 +59,24 @@
 }
 
 @layer utilities {
-  .gradient-primary {
-    background: #171717;
-  }
-
-  .gradient-accent {
-    background: #E07B39;
-  }
-
-  .gradient-text {
-    color: #E07B39;
-  }
-
-  .text-accent-orange {
-    color: #E07B39;
-  }
-
-  .bg-accent-orange {
-    background-color: #E07B39;
-  }
-
-  .border-accent-orange {
-    border-color: #E07B39;
-  }
-
-  .glow-accent {
-    box-shadow: 0 8px 32px rgba(224, 123, 57, 0.2);
-  }
-
   .card-hover {
-    @apply transition-all duration-300 ease-out;
+    @apply transition-colors;
   }
 
   .card-hover:hover {
-    transform: translateY(-4px);
-    border-color: #E07B39;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    @apply border-foreground;
   }
 
   .pill-btn {
-    @apply inline-flex items-center justify-center px-7 py-3.5 rounded-full font-semibold text-sm transition-all duration-300;
-    background: #171717;
-    color: #FFFFFF;
-  }
-
-  .pill-btn:hover {
-    background: #333333;
-    transform: translateY(-1px);
+    @apply inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-black;
   }
 
   .pill-btn-outline {
-    @apply inline-flex items-center justify-center px-7 py-3.5 rounded-full font-semibold text-sm transition-all duration-300;
-    background: transparent;
-    color: #171717;
-    border: 2px solid #171717;
-  }
-
-  .pill-btn-outline:hover {
-    background: #171717;
-    color: #FFFFFF;
+    @apply inline-flex h-11 items-center justify-center rounded-md border border-border bg-card px-6 text-sm font-semibold text-foreground transition-colors hover:border-foreground;
   }
 
   .link-arrow {
-    @apply inline-flex items-center gap-2 font-medium text-sm transition-all duration-300;
-    color: #E07B39;
-  }
-
-  .link-arrow:hover {
-    gap: 0.75rem;
+    @apply inline-flex items-center gap-2 text-sm font-medium text-foreground underline decoration-foreground/40 underline-offset-4 hover:decoration-foreground;
   }
 
   .section-dark {
@@ -180,6 +130,10 @@
     height: 2.5rem;
     padding-inline: 1.25rem;
     font-size: 0.875rem;
+  }
+
+  .field {
+    @apply block h-11 w-full rounded-md border border-border bg-card px-3 text-base text-foreground transition-colors focus:border-foreground focus:outline-none;
   }
 
   .link-plain {
@@ -252,74 +206,6 @@ code {
 /* Hidden stars - we don't need them for this design */
 .nav-star {
   display: none;
-}
-
-/* ===== Neumorphic Form Fields ===== */
-.neo-field {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  position: relative;
-}
-
-.neo-field .neo-label {
-  font-size: 15px;
-  padding-left: 10px;
-  position: absolute;
-  top: 13px;
-  transition: 0.3s;
-  pointer-events: none;
-  color: #6B6B6B;
-}
-
-.neo-input {
-  width: 100%;
-  height: 48px;
-  border: 2px solid #E8E4DC;
-  outline: none;
-  padding: 0px 16px;
-  border-radius: 9999px;
-  color: #171717;
-  font-size: 15px;
-  background-color: #FFFFFF;
-  transition: all 0.3s ease;
-}
-
-.neo-textarea {
-  width: 100%;
-  border: 2px solid #E8E4DC;
-  outline: none;
-  padding: 16px;
-  border-radius: 1rem;
-  color: #171717;
-  font-size: 15px;
-  background-color: #FFFFFF;
-  resize: none;
-  transition: all 0.3s ease;
-}
-
-.neo-input:focus,
-.neo-textarea:focus {
-  border-color: #E07B39;
-  box-shadow: 0 0 0 3px rgba(224, 123, 57, 0.1);
-}
-
-.neo-field .neo-input:valid ~ .neo-label,
-.neo-field .neo-input:focus ~ .neo-label {
-  transition: 0.3s;
-  padding-left: 2px;
-  transform: translateY(-35px);
-  font-size: 13px;
-  color: #E07B39;
-}
-
-.neo-field .neo-textarea:valid ~ .neo-label,
-.neo-field .neo-textarea:focus ~ .neo-label {
-  transition: 0.3s;
-  padding-left: 2px;
-  transform: translateY(-35px);
-  font-size: 13px;
-  color: #E07B39;
 }
 
 /* Reduced motion */

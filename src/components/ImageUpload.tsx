@@ -58,8 +58,8 @@ const ImageUpload = ({ value, onChange, className = "" }: ImageUploadProps) => {
           onClick={() => setMode("upload")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
             mode === "upload"
-              ? "bg-[#171717] text-white"
-              : "bg-[#171717]/10 text-[#6B6B6B] hover:text-[#171717]"
+              ? "bg-foreground text-white"
+              : "bg-foreground/10 text-muted-foreground hover:text-[#171717]"
           }`}
         >
           <Upload className="w-3.5 h-3.5" />
@@ -70,8 +70,8 @@ const ImageUpload = ({ value, onChange, className = "" }: ImageUploadProps) => {
           onClick={() => setMode("url")}
           className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-colors ${
             mode === "url"
-              ? "bg-[#171717] text-white"
-              : "bg-[#171717]/10 text-[#6B6B6B] hover:text-[#171717]"
+              ? "bg-foreground text-white"
+              : "bg-foreground/10 text-muted-foreground hover:text-[#171717]"
           }`}
         >
           <Link className="w-3.5 h-3.5" />
@@ -81,7 +81,7 @@ const ImageUpload = ({ value, onChange, className = "" }: ImageUploadProps) => {
           <button
             type="button"
             onClick={handleRemove}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors"
           >
             <X className="w-3.5 h-3.5" />
             Supprimer
@@ -116,12 +116,12 @@ const ImageUpload = ({ value, onChange, className = "" }: ImageUploadProps) => {
             className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:border-[#E07B39] transition-colors"
           >
             {uploading ? (
-              <div className="text-sm text-[#6B6B6B]">Upload en cours...</div>
+              <div className="text-sm text-muted-foreground">Upload en cours...</div>
             ) : (
               <>
-                <ImageIcon className="w-8 h-8 mb-2 text-[#6B6B6B]/50" />
-                <span className="text-sm text-[#6B6B6B]">Cliquer pour ajouter une image</span>
-                <span className="text-xs text-[#6B6B6B]/60 mt-1">JPG, PNG, GIF, WebP (max 5MB)</span>
+                <ImageIcon className="w-8 h-8 mb-2 text-muted-foreground/50" />
+                <span className="text-sm text-muted-foreground">Cliquer pour ajouter une image</span>
+                <span className="text-xs text-muted-foreground/60 mt-1">JPG, PNG, GIF, WebP (max 5MB)</span>
               </>
             )}
           </label>
@@ -136,13 +136,13 @@ const ImageUpload = ({ value, onChange, className = "" }: ImageUploadProps) => {
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
             placeholder="https://example.com/image.jpg"
-            className="flex-1 h-10 px-3 rounded-lg border border-border bg-white text-[#171717] placeholder:text-[#6B6B6B]/50 focus:border-[#E07B39] focus:ring-2 focus:ring-[#E07B39]/10 transition-all outline-none text-sm"
+            className="flex-1 h-10 px-3 rounded-lg border border-border bg-white text-[#171717] placeholder:text-muted-foreground/50 focus:border-[#E07B39] focus:ring-2 focus:ring-[#E07B39]/10 transition-all outline-none text-sm"
           />
           <button
             type="button"
             onClick={handleUrlSubmit}
             disabled={!urlInput.trim()}
-            className="px-4 py-2 bg-[#171717] text-white text-sm font-medium rounded-lg hover:bg-[#171717]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-foreground text-white text-sm font-medium rounded-lg hover:bg-foreground/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Valider
           </button>

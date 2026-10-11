@@ -86,7 +86,7 @@ const ActivitiesPage = () => {
         <ArrowLeft size={16} /> Tous les engagements
       </Link>
       <div className="mt-8 flex flex-wrap items-start justify-between gap-6">
-        <h1 className="font-heading text-[clamp(2.75rem,8vw,6.5rem)] font-bold leading-[0.95] tracking-[-0.04em] text-foreground">
+        <h1 className="text-3xl font-normal text-foreground">
           {activitiesSection.title}
         </h1>
         {isAdmin && (
@@ -110,7 +110,7 @@ const ActivitiesPage = () => {
               aria-pressed={category === c}
               className={`text-base font-medium transition-colors ${
                 category === c
-                  ? "text-foreground underline decoration-accent decoration-2 underline-offset-8"
+                  ? "text-foreground underline decoration-foreground decoration-2 underline-offset-8"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -148,7 +148,7 @@ const ActivitiesPage = () => {
                   {activity.category && <span className="font-medium text-foreground">{activity.category}</span>}
                   {activity.date && <time dateTime={activity.date}>{formatDate(activity.date)}</time>}
                 </p>
-                <h2 className="mt-1 font-heading text-xl md:text-2xl font-bold tracking-tight text-foreground">
+                <h2 className="text-2xl font-normal mt-1 text-foreground">
                   {activity.title}
                 </h2>
                 {activity.description && (
@@ -176,7 +176,7 @@ const ActivitiesPage = () => {
           <DialogHeader className="sr-only">
             <DialogTitle>Photo agrandie</DialogTitle>
           </DialogHeader>
-          {lightbox && <img src={lightbox} alt="" className="max-h-[85vh] w-full rounded-xl object-contain" />}
+          {lightbox && <img src={lightbox} alt="" className="max-h-[85vh] w-full rounded-none object-contain" />}
         </DialogContent>
       </Dialog>
 

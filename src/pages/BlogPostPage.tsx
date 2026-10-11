@@ -23,7 +23,7 @@ const renderContent = (content: string) =>
         <h2
           key={i}
           id={headingId(i)}
-          className="mt-14 mb-5 scroll-mt-28 font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground"
+          className="mt-14 mb-5 scroll-mt-28 text-2xl font-medium tracking-tight text-foreground"
         >
           {block.replace("## ", "")}
         </h2>
@@ -38,7 +38,7 @@ const renderContent = (content: string) =>
     }
     if (block.startsWith("- ")) {
       return (
-        <ul key={i} className="mb-6 list-disc space-y-2 pl-6 text-lg leading-[1.7] text-foreground/80 marker:text-accent">
+        <ul key={i} className="mb-6 list-disc space-y-2 pl-6 text-lg leading-[1.7] text-foreground/80 marker:text-foreground">
           {block.split("\n").filter(Boolean).map((item, j) => (
             <li key={j} dangerouslySetInnerHTML={{ __html: inline(item.replace(/^- /, "")) }} />
           ))}
@@ -122,13 +122,13 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
 
   const shareUrl = encodeURIComponent(window.location.href);
   const shareClass =
-    "inline-flex items-center gap-2 rounded-full bg-foreground/5 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background";
+    "inline-flex items-center gap-2 rounded-md bg-foreground/5 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-foreground hover:text-background";
 
   return (
     <article className="pb-24">
       <motion.div
         aria-hidden="true"
-        className="fixed left-0 right-0 top-0 z-[60] h-1 origin-left bg-accent"
+        className="fixed left-0 right-0 top-0 z-[60] h-1 origin-left bg-foreground"
         style={{ scaleX: scrollYProgress }}
       />
 
@@ -151,10 +151,10 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
             aria-label="Titre"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="mt-4 w-full rounded-xl border border-border bg-white px-4 py-3 font-heading text-3xl md:text-4xl font-bold text-foreground"
+            className="mt-4 w-full rounded-none border border-border bg-white px-4 py-3 font-heading text-3xl md:text-4xl font-bold text-foreground"
           />
         ) : (
-          <h1 className="mt-4 max-w-[20ch] font-heading text-[clamp(2.25rem,6vw,5rem)] font-bold leading-[1] tracking-[-0.035em] text-foreground">
+          <h1 className="text-3xl font-normal mt-4 text-foreground">
             {post.title}
           </h1>
         )}
@@ -183,7 +183,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
 
       {post.image && (
         <div className="container mx-auto mt-12 px-6">
-          <img src={post.image} alt="" className="aspect-[16/9] md:aspect-[21/9] w-full rounded-[1.25rem] bg-secondary object-cover" />
+          <img src={post.image} alt="" className="aspect-[16/9] md:aspect-[21/9] w-full rounded-none bg-secondary object-cover" />
         </div>
       )}
 
@@ -200,7 +200,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
                       aria-current={activeId === h.id ? "location" : undefined}
                       className={`-ml-px block border-l py-1.5 pl-4 text-sm leading-snug transition-colors ${
                         activeId === h.id
-                          ? "border-accent font-medium text-foreground"
+                          ? "border-border font-medium text-foreground"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -219,11 +219,11 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
               <div className="space-y-4">
                 <div>
                   <label htmlFor="excerpt" className="mb-1 block text-sm font-medium text-foreground">Extrait</label>
-                  <textarea id="excerpt" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="h-20 w-full rounded-xl border border-border bg-white px-4 py-3 text-foreground" />
+                  <textarea id="excerpt" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="h-20 w-full rounded-none border border-border bg-white px-4 py-3 text-foreground" />
                 </div>
                 <div>
                   <label htmlFor="content" className="mb-1 block text-sm font-medium text-foreground">Contenu (Markdown supporté)</label>
-                  <textarea id="content" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} className="h-[400px] w-full rounded-xl border border-border bg-white px-4 py-3 font-mono text-sm text-foreground" />
+                  <textarea id="content" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} className="h-[400px] w-full rounded-none border border-border bg-white px-4 py-3 font-mono text-sm text-foreground" />
                 </div>
               </div>
             ) : (
@@ -257,12 +257,12 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
           </div>
 
           <div className="mt-10 flex max-w-[68ch] items-center gap-5">
-            <img src={profilePhoto} alt="" className="h-16 w-16 rounded-full object-cover" />
+            <img src={profilePhoto} alt="" className="h-16 w-16 rounded-md object-cover" />
             <div>
               <p className="font-heading font-semibold text-foreground">Alfred MysterioWebData</p>
               <p className="text-sm text-muted-foreground">
                 Data scientist et développeur fullstack.{" "}
-                <Link to="/about" className="text-foreground underline decoration-accent underline-offset-4 hover:text-accent">
+                <Link to="/about" className="text-foreground underline decoration-foreground underline-offset-4 hover:text-foreground">
                   En savoir plus
                 </Link>
               </p>
@@ -278,7 +278,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
               <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
                 <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" /> Article précédent
               </span>
-              <span className="mt-2 block font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground transition-colors group-hover:text-accent">
+              <span className="mt-2 block text-xl font-semibold text-foreground transition-colors group-hover:underline">
                 {prev.title}
               </span>
             </Link>
@@ -290,7 +290,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
               <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
                 Article suivant <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </span>
-              <span className="mt-2 block font-heading text-2xl md:text-3xl font-bold tracking-tight text-foreground transition-colors group-hover:text-accent">
+              <span className="mt-2 block text-xl font-semibold text-foreground transition-colors group-hover:underline">
                 {next.title}
               </span>
             </Link>
@@ -317,7 +317,7 @@ const BlogPostPage = () => {
   if (!post) {
     return (
       <div className="container mx-auto px-6 py-32">
-        <h1 className="font-heading text-4xl font-bold tracking-tight text-foreground">Cet article est introuvable.</h1>
+        <h1 className="text-3xl font-normal text-foreground">Cet article est introuvable.</h1>
         <Link to="/blog" className="link-arrow mt-6">
           <ArrowLeft size={16} /> Voir tous les articles
         </Link>

@@ -147,12 +147,12 @@ export function InteractiveScrollingStory({
                     }`}
                   >
                     {slide.badge && (
-                      <span className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/25 text-white border border-white/40 backdrop-blur md:bg-black md:text-white md:border-transparent">
+                      <span className="inline-block mb-4 px-3 py-1 rounded-md text-xs font-semibold bg-white/25 text-white border border-white/40 backdrop-blur md:bg-black md:text-white md:border-transparent">
                         {slide.badge}
                       </span>
                     )}
-                    <h2 className="text-4xl md:text-6xl font-bold tracking-tighter">{slide.title}</h2>
-                    <p className="mt-6 text-lg md:text-xl max-w-md">{slide.description}</p>
+                    <h2 className="text-3xl md:text-4xl font-medium tracking-tight">{slide.title}</h2>
+                    <p className="mt-5 text-base md:text-lg max-w-md">{slide.description}</p>
                   </div>
                 ))}
               </div>
@@ -161,7 +161,7 @@ export function InteractiveScrollingStory({
               <div className="absolute bottom-24 left-8 md:bottom-28 md:left-16">
                 <a
                   href={activeSlide.ctaHref || ctaHref}
-                  className="px-10 py-4 bg-black text-white font-semibold rounded-full uppercase tracking-wider hover:bg-gray-800 transition-colors border border-white/40 md:border-black/10"
+                  className="px-8 py-3 bg-black text-white text-sm font-semibold rounded-md hover:bg-gray-800 transition-colors border border-white/40 md:border-black/10"
                 >
                   {ctaLabel}
                 </a>
@@ -170,7 +170,7 @@ export function InteractiveScrollingStory({
 
             {/* Right Column: Image Content with Grid Background */}
             <div className="hidden md:flex items-center justify-center p-8" style={gridPatternStyle}>
-              <div className="relative w-[50%] h-[80vh] rounded-2xl overflow-hidden shadow-2xl border-4 border-black/5">
+              <div className="relative w-[50%] h-[80vh] overflow-hidden border border-black/10 bg-white">
                 <div
                   className="absolute top-0 left-0 w-full h-full transition-transform duration-700 ease-in-out"
                   style={{ transform: `translateY(-${activeIndex * 100}%)` }}
