@@ -208,10 +208,15 @@ const Index = () => {
       {/* Hero */}
       <section className="flex flex-col gap-10 pb-20 pt-14 md:pt-24 lg:flex-row lg:items-end lg:justify-between">
         <div className="order-2 lg:order-1">
-          <h1 className="text-2xl font-normal text-foreground">Data scientist et développeur fullstack</h1>
+          <h1 className="text-2xl font-normal text-foreground">Data &amp; AI Engineer</h1>
           <p className="mt-5 max-w-[46rem] text-base leading-relaxed text-foreground">
-            Je suis Alfred. Je transforme les données en décisions et les idées en applications web, du modèle de
-            machine learning jusqu'à l'interface.
+            Je suis Alfred, étudiant en dernière année. Je construis des pipelines de données et des applications d'IA
+            qui sortent du notebook : de la donnée brute au modèle, puis à l'API et à l'interface qu'une personne utilise
+            vraiment.
+          </p>
+          <p className="mt-4 max-w-[46rem] text-sm leading-relaxed text-muted-foreground">
+            Je cherche un stage de fin d'études de 4 à 6 mois, avec une embauche possible ensuite. Ouvert aux missions
+            freelance. Basé à Casablanca, mobile, télétravail possible.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link to="/projets" className="btn-ink">

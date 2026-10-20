@@ -19,10 +19,10 @@ const SEED_BIO =
   "Passionné par la data science et le développement web, je crée des solutions innovantes alliant IA et performance.";
 
 const FALLBACK_BIO = [
-  "Je suis data scientist et développeur fullstack. Concrètement, je peux partir d'un fichier de données brutes, entraîner un modèle, puis construire l'API et l'interface qui le rendent utilisable par quelqu'un d'autre que moi.",
-  "Ce double profil est un choix. Un résultat n'existe vraiment que lorsqu'une personne peut s'en servir, alors j'ai appris à construire la suite plutôt que de m'arrêter au graphique.",
-  "Je travaille depuis l'Afrique de l'Ouest, et cela oriente mes décisions : des outils sobres, qui tiennent avec une connexion moyenne et répondent à un besoin que j'ai pu observer.",
-  "Le reste du temps, j'écris ce que j'apprends, je participe à des compétitions et j'accompagne des étudiants qui débutent.",
+  "Je suis Data & AI Engineer, en dernière année d'études. Concrètement, je construis toute la chaîne : collecter et nettoyer les données, entraîner un modèle ou brancher un LLM, puis livrer l'API et l'interface qui le rendent utilisable par quelqu'un d'autre que moi.",
+  "Ce profil est un choix. Un modèle n'existe vraiment que lorsqu'il tourne en production et qu'une personne s'en sert, alors j'ai appris à construire la suite plutôt que de m'arrêter au notebook.",
+  "Je suis basé à Casablanca, mobile et ouvert au télétravail. Je conçois des outils sobres, qui tiennent avec une connexion moyenne et répondent à un besoin que j'ai pu observer.",
+  "Je cherche un stage de fin d'études, avec une embauche possible ensuite, et j'accepte des missions freelance. Le reste du temps, j'écris ce que j'apprends, je participe à des compétitions et j'accompagne des étudiants qui débutent.",
 ];
 
 const motivations = [
@@ -131,12 +131,12 @@ const AboutPage = () => {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
             <h1 className="text-3xl font-normal text-foreground">
-              Je fais parler les données, puis je construis l'outil qui va avec.
+              Je fais passer la donnée et l'IA du notebook à la production.
             </h1>
             <p className="mt-8 text-lg text-muted-foreground">
               {profile?.fullName || "Alfred MysterioWebData"}
               <span className="mx-2 text-foreground/25">/</span>
-              {profile?.title || "Data Scientist & Fullstack Developer"}
+              {profile?.title || "Data & AI Engineer"}
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3">
               {socials.map(({ label, href, icon: Icon }) => (

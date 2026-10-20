@@ -270,7 +270,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
             <div>
               <p className="font-heading font-semibold text-foreground">Alfred MysterioWebData</p>
               <p className="text-sm text-muted-foreground">
-                Data scientist et développeur fullstack.{" "}
+                Data &amp; AI Engineer.{" "}
                 <Link to="/about" className="text-foreground underline decoration-foreground underline-offset-4 hover:text-foreground">
                   En savoir plus
                 </Link>
