@@ -48,7 +48,7 @@ const Header = () => {
     >
       <div className="container mx-auto flex h-16 items-center px-6">
         <Link to="/" className="text-lg font-semibold tracking-tight text-foreground">
-          Alfred<span className="text-accent">.</span>MysteriowebData
+          Alfred BIAM<span className="text-accent">.</span>
         </Link>
 
         <nav aria-label="Navigation principale" className="ml-10 hidden items-center gap-7 xl:flex">

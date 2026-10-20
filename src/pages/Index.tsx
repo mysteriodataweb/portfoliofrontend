@@ -235,7 +235,7 @@ const Index = () => {
           </p>
         </div>
         <div className="panel order-1 w-40 shrink-0 p-1.5 lg:order-2 lg:w-60">
-          <img src={profilePhoto} alt="Portrait d'Alfred" className="aspect-[4/5] w-full object-cover object-bottom" />
+          <img src={profilePhoto} alt="Portrait d'Alfred BIAM" className="aspect-[4/5] w-full object-cover object-bottom" />
         </div>
       </section>
 

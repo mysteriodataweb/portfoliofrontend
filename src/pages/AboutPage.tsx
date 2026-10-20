@@ -134,7 +134,7 @@ const AboutPage = () => {
               Je fais passer la donnée et l'IA du notebook à la production.
             </h1>
             <p className="mt-8 text-lg text-muted-foreground">
-              {profile?.fullName || "Alfred MysterioWebData"}
+              {profile?.fullName || "Alfred BIAM"}
               <span className="mx-2 text-foreground/25">/</span>
               {profile?.title || "Data & AI Engineer"}
             </p>
@@ -167,7 +167,7 @@ const AboutPage = () => {
             ) : (
               <img
                 src={profile?.photo || profilePhoto}
-                alt={profile?.fullName || "Alfred MysterioWebData"}
+                alt={profile?.fullName || "Alfred BIAM"}
                 className="aspect-[4/5] w-full max-w-sm rounded-none object-cover md:ml-auto"
               />
             )}

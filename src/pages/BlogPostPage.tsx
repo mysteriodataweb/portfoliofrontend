@@ -268,7 +268,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
           <div className="mt-10 flex max-w-[68ch] items-center gap-5">
             <img src={profilePhoto} alt="" className="h-16 w-16 rounded-md object-cover" />
             <div>
-              <p className="font-heading font-semibold text-foreground">Alfred MysterioWebData</p>
+              <p className="font-heading font-semibold text-foreground">Alfred BIAM</p>
               <p className="text-sm text-muted-foreground">
                 Data &amp; AI Engineer.{" "}
                 <Link to="/about" className="text-foreground underline decoration-foreground underline-offset-4 hover:text-foreground">

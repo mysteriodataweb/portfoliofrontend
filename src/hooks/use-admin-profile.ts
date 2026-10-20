@@ -27,6 +27,7 @@ export function useUpdateProfile() {
       api.put<Profile>("/admin/profile", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "profile"] });
+      queryClient.invalidateQueries({ queryKey: ["public-profile"] });
     },
   });
 }

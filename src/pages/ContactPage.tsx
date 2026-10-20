@@ -161,20 +161,20 @@ const ContactPage = () => {
                     <Mail size={18} /> fredbiam9@gmail.com
                   </a>
                   <a
-                    href="https://github.com/Mysteriowebdata"
+                    href="https://github.com/mysteriodataweb"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <Github size={18} /> github.com/Mysteriowebdata
+                    <Github size={18} /> github.com/mysteriodataweb
                   </a>
                   <a
-                    href="https://linkedin.com"
+                    href="https://www.linkedin.com/in/alfredbiam"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    <Linkedin size={18} /> linkedin.com/in/AlfredMysteriowebdata
+                    <Linkedin size={18} /> linkedin.com/in/alfredbiam
                   </a>
                 </div>
               </div>

@@ -37,7 +37,7 @@ const Footer = () => (
     <div className="container mx-auto flex flex-col gap-10 px-6 py-10 md:flex-row md:justify-between">
       <div>
         <Link to="/" className="text-xl font-semibold tracking-tight text-foreground">
-          Alfred<span className="text-accent">.</span>MysteriowebData
+          Alfred BIAM<span className="text-accent">.</span>
         </Link>
         <p className="mt-3 text-sm text-muted-foreground">© {new Date().getFullYear()}</p>
       </div>
