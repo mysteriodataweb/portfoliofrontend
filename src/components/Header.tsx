@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Bell, Github } from "lucide-react";
-import AdminLoginButton from "./AdminLoginButton";
+import AdminLogoutButton from "./AdminLogoutButton";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useUnreadCount } from "@/hooks/use-messages";
 
@@ -85,7 +85,7 @@ const Header = () => {
               {unreadBadge}
             </Link>
           )}
-          <AdminLoginButton />
+          <AdminLogoutButton />
           <Link
             to="/contact"
             className="inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-black"
@@ -130,7 +130,7 @@ const Header = () => {
                 <Bell size={15} /> Messages {unreadBadge}
               </Link>
             )}
-            <AdminLoginButton />
+            <AdminLogoutButton />
           </div>
         </nav>
       )}

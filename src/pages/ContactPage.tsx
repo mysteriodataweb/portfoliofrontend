@@ -10,6 +10,7 @@ const ContactPage = () => {
     email: "",
     subject: "",
     message: "",
+    website: "",
   });
   const contactMutation = useContact();
 
@@ -20,7 +21,7 @@ const ContactPage = () => {
         toast.success(
           "Message envoyé avec succès ! Je vous répondrai rapidement.",
         );
-        setForm({ name: "", email: "", subject: "", message: "" });
+        setForm({ name: "", email: "", subject: "", message: "", website: "" });
       },
       onError: (error) => {
         toast.error(error.message || "Erreur lors de l'envoi du message.");
@@ -56,6 +57,7 @@ const ContactPage = () => {
                     id="name"
                     type="text"
                     required
+                    maxLength={100}
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                     className="field"
@@ -72,6 +74,7 @@ const ContactPage = () => {
                     id="email"
                     type="email"
                     required
+                    maxLength={254}
                     value={form.email}
                     onChange={(e) =>
                       setForm({ ...form, email: e.target.value })
@@ -91,6 +94,7 @@ const ContactPage = () => {
                   id="subject"
                   type="text"
                   required
+                  maxLength={200}
                   value={form.subject}
                   onChange={(e) =>
                     setForm({ ...form, subject: e.target.value })
@@ -108,12 +112,25 @@ const ContactPage = () => {
                 <textarea
                   id="message"
                   required
+                  maxLength={5000}
                   rows={6}
                   value={form.message}
                   onChange={(e) =>
                     setForm({ ...form, message: e.target.value })
                   }
                   className="field h-auto py-3"
+                />
+              </div>
+              {/* Anti-spam trap: hidden from people, only bots fill it in. */}
+              <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                <label htmlFor="website">Site web</label>
+                <input
+                  id="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={form.website}
+                  onChange={(e) => setForm({ ...form, website: e.target.value })}
                 />
               </div>
               <button

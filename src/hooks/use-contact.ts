@@ -6,6 +6,8 @@ interface ContactFormData {
   email: string;
   subject: string;
   message: string;
+  /** Anti-spam trap, always empty when a person fills in the form. */
+  website: string;
 }
 
 interface ContactResponse {

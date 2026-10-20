@@ -9,8 +9,17 @@ import { api } from "@/api/client";
 import { toast } from "sonner";
 import profilePhoto from "@/assets/profile-photo.jpg";
 
-const inline = (text: string) =>
+const escapeHtml = (text: string) =>
   text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+// The text is escaped first, so only the bold and code markup below can produce HTML.
+const inline = (text: string) =>
+  escapeHtml(text)
     .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
     .replace(/`(.*?)`/g, "<code>$1</code>");
 

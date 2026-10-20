@@ -19,6 +19,7 @@ import ContactPage from "./pages/ContactPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
 import PublicCVPage from "./pages/PublicCVPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
             <Route element={<Layout><ContactPage /></Layout>} path="/contact" />
             <Route element={<Layout><PublicCVPage /></Layout>} path="/cv" />
             <Route element={<Layout><NotificationsPage /></Layout>} path="/notifications" />
+            <Route element={<Layout><AdminLoginPage /></Layout>} path="/admin" />
 
             {/* 404 */}
             <Route path="*" element={<Layout><NotFound /></Layout>} />
