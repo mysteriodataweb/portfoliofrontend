@@ -9,6 +9,7 @@ import { useUpdateProfile } from "@/hooks/use-admin-profile";
 import { useCVData } from "@/hooks/use-admin-cv";
 import { useStats } from "@/hooks/use-stats";
 import { activitiesSection, engagementChapters } from "@/data/engagements";
+import { internship } from "@/data/availability";
 import { toast } from "sonner";
 import profilePhoto from "@/assets/profile-photo.jpg";
 
@@ -22,7 +23,7 @@ const FALLBACK_BIO = [
   "Je suis Data & AI Engineer, en dernière année d'études. Concrètement, je construis toute la chaîne : collecter et nettoyer les données, entraîner un modèle ou brancher un LLM, puis livrer l'API et l'interface qui le rendent utilisable par quelqu'un d'autre que moi.",
   "Ce profil est un choix. Un modèle n'existe vraiment que lorsqu'il tourne en production et qu'une personne s'en sert, alors j'ai appris à construire la suite plutôt que de m'arrêter au notebook.",
   "Je suis basé à Casablanca, mobile et ouvert au télétravail. Je conçois des outils sobres, qui tiennent avec une connexion moyenne et répondent à un besoin que j'ai pu observer.",
-  "Je cherche un stage de fin d'études, avec une embauche possible ensuite, et j'accepte des missions freelance. Le reste du temps, j'écris ce que j'apprends, je participe à des compétitions et j'accompagne des étudiants qui débutent.",
+  `Je cherche un stage de fin d'études de ${internship.duration} à partir de ${internship.start}, avec une embauche possible ensuite, et j'accepte des missions freelance. Le reste du temps, j'écris ce que j'apprends, je participe à des compétitions et j'accompagne des étudiants qui débutent.`,
 ];
 
 const motivations = [

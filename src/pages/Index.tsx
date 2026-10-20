@@ -12,6 +12,7 @@ import { useTools } from "@/hooks/use-tools";
 import { useStats } from "@/hooks/use-stats";
 import { useAdmin } from "@/contexts/AdminContext";
 import { categoryLabel } from "@/data/project-categories";
+import { internship } from "@/data/availability";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { api } from "@/api/client";
@@ -215,8 +216,8 @@ const Index = () => {
             vraiment.
           </p>
           <p className="mt-4 max-w-[46rem] text-sm leading-relaxed text-muted-foreground">
-            Je cherche un stage de fin d'études de 4 à 6 mois, avec une embauche possible ensuite. Ouvert aux missions
-            freelance. Basé à Casablanca, mobile, télétravail possible.
+            Je cherche un stage de fin d'études de {internship.duration} à partir de {internship.start}, avec une
+            embauche possible ensuite. Ouvert aux missions freelance. {internship.location}.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link to="/projets" className="btn-ink">

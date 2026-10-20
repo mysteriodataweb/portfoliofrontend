@@ -2,6 +2,7 @@ import { ReactNode, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
+import InternshipPopup from "./InternshipPopup";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { pathname } = useLocation();
@@ -16,6 +17,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       <Header />
       <main className="flex-1 pt-16">{children}</main>
       <Footer />
+      <InternshipPopup />
     </div>
   );
 };
