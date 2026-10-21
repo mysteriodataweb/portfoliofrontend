@@ -11,6 +11,8 @@ export interface Message {
   archived: boolean;
   archivedAt: string | null;
   createdAt: string;
+  /** How the sender first found the site, null for messages sent before it was recorded. */
+  source: string | null;
 }
 
 export function useMessages(enabled = true) {

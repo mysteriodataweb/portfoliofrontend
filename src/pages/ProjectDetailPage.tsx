@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Github, ExternalLink, Pencil, Save, X } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useProject, useAllProjects } from "@/hooks/use-projects";
+import { track } from "@/lib/analytics";
 import { useAdmin } from "@/contexts/AdminContext";
 import { categoryLabel } from "@/data/project-categories";
 import { Button } from "@/components/ui/button";
@@ -175,12 +176,12 @@ const ProjectDetailPage = () => {
                 </div>
                 <div className="space-y-3 pt-2">
                   {project.githubUrl && (
-                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 w-full px-4 py-3 rounded-md border border-foreground/10 text-sm font-medium text-foreground hover:bg-foreground hover:text-white transition-all">
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" onClick={() => track("projet-code", { projet: project.slug })} className="flex items-center gap-2 w-full px-4 py-3 rounded-md border border-foreground/10 text-sm font-medium text-foreground hover:bg-foreground hover:text-white transition-all">
                       <Github size={16} /> Voir le code
                     </a>
                   )}
                   {project.demoUrl && (
-                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 w-full px-4 py-3 rounded-md bg-foreground text-white text-sm font-medium hover:bg-black transition-all">
+                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" onClick={() => track("projet-demo", { projet: project.slug })} className="flex items-center gap-2 w-full px-4 py-3 rounded-md bg-foreground text-white text-sm font-medium hover:bg-black transition-all">
                       <ExternalLink size={16} /> Demo live
                     </a>
                   )}

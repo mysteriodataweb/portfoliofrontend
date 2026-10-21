@@ -1,6 +1,7 @@
 import { useCVData } from "@/hooks/use-admin-cv";
 import { Download, ExternalLink } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import { track } from "@/lib/analytics";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
@@ -27,11 +28,17 @@ export default function PublicCVPage() {
               <p className="text-muted-foreground">Téléchargez mon CV en PDF ou consultez la version HTML.</p>
             </div>
             <div className="flex gap-3">
-              <a href={`${API_BASE}/cv/html`} target="_blank" rel="noopener noreferrer" className="pill-btn-outline text-sm">
+              <a
+                href={`${API_BASE}/cv/html`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => track("cv", { format: "html" })}
+                className="pill-btn-outline text-sm"
+              >
                 <ExternalLink className="h-4 w-4 mr-2" />
                 Voir HTML
               </a>
-              <a href={`${API_BASE}/cv/pdf`} download className="pill-btn text-sm">
+              <a href={`${API_BASE}/cv/pdf`} download onClick={() => track("cv", { format: "pdf" })} className="pill-btn text-sm">
                 <Download className="h-4 w-4 mr-2" />
                 Télécharger le PDF
               </a>

@@ -3,6 +3,8 @@ import { Github, Linkedin, Mail, MapPin, Send } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { toast } from "sonner";
 import { useContact } from "@/hooks/use-contact";
+import { track } from "@/lib/analytics";
+import { getArrival } from "@/lib/attribution";
 
 const ContactPage = () => {
   const [form, setForm] = useState({
@@ -16,8 +18,10 @@ const ContactPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    contactMutation.mutate(form, {
+    const source = getArrival();
+    contactMutation.mutate({ ...form, source }, {
       onSuccess: () => {
+        track("contact-envoye", source ? { provenance: source } : undefined);
         toast.success(
           "Message envoyé avec succès ! Je vous répondrai rapidement.",
         );

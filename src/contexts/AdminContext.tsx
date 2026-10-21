@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { excludeThisBrowser } from "@/lib/analytics";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
@@ -21,6 +22,11 @@ const AdminContext = createContext<AdminContextType>({
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // The owner's browser stays out of the audience statistics from the first sign-in on.
+  useEffect(() => {
+    if (isAdmin) excludeThisBrowser();
+  }, [isAdmin]);
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { internship } from "@/data/availability";
+import { track } from "@/lib/analytics";
 
 const DURATION = 10_000;
 const TICK = 100;
@@ -66,10 +67,24 @@ const InternshipPopup = () => {
           </DialogDescription>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{internship.experience}</p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/cv" onClick={() => setOpen(false)} className="btn-ink btn-sm">
+            <Link
+              to="/cv"
+              onClick={() => {
+                track("popup-stage", { action: "cv" });
+                setOpen(false);
+              }}
+              className="btn-ink btn-sm"
+            >
               Voir mon CV
             </Link>
-            <Link to="/contact" onClick={() => setOpen(false)} className="btn-paper btn-sm">
+            <Link
+              to="/contact"
+              onClick={() => {
+                track("popup-stage", { action: "contact" });
+                setOpen(false);
+              }}
+              className="btn-paper btn-sm"
+            >
               Me contacter
             </Link>
           </div>

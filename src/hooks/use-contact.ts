@@ -8,6 +8,8 @@ interface ContactFormData {
   message: string;
   /** Anti-spam trap, always empty when a person fills in the form. */
   website: string;
+  /** How the visitor first found the site, e.g. "LinkedIn, arrivé sur /projets". */
+  source?: string;
 }
 
 interface ContactResponse {

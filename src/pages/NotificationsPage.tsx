@@ -168,6 +168,9 @@ const NotificationsPage = () => {
                     <div>
                       <h2 className="text-2xl font-normal text-[#171717]">{selectedMessage.name}</h2>
                       <p className="text-sm text-muted-foreground">{selectedMessage.email}</p>
+                      {selectedMessage.source && (
+                        <p className="mt-1 text-xs text-muted-foreground">Provenance : {selectedMessage.source}</p>
+                      )}
                     </div>
                     <div className="flex gap-2">
                       {selectedMessage.archived ? (
