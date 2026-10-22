@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Award,
+  ArrowUpRight,
   Pencil,
   Plus,
   Trash2,
@@ -10,6 +11,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import ImageUpload from "@/components/ImageUpload";
 import { useSkills } from "@/hooks/use-skills";
 import { useTools } from "@/hooks/use-tools";
+import { track } from "@/lib/analytics";
 import CollectionSurfer from "@/components/ui/collection-surfer";
 import { useAdmin } from "@/contexts/AdminContext";
 import { Input } from "@/components/ui/input";
@@ -27,7 +29,7 @@ const SkillsPage = () => {
   // Certification dialog
   const [showCertDialog, setShowCertDialog] = useState(false);
   const [editingCert, setEditingCert] = useState<any>(null);
-  const [certForm, setCertForm] = useState({ name: "", org: "", year: new Date().getFullYear() });
+  const [certForm, setCertForm] = useState({ name: "", org: "", year: new Date().getFullYear(), url: "" });
 
   // Tool dialog
   const [showToolDialog, setShowToolDialog] = useState(false);
@@ -39,13 +41,13 @@ const SkillsPage = () => {
 
   const openAddCert = () => {
     setEditingCert(null);
-    setCertForm({ name: "", org: "", year: new Date().getFullYear() });
+    setCertForm({ name: "", org: "", year: new Date().getFullYear(), url: "" });
     setShowCertDialog(true);
   };
 
   const openEditCert = (cert: any) => {
     setEditingCert(cert);
-    setCertForm({ name: cert.name, org: cert.org, year: cert.year });
+    setCertForm({ name: cert.name, org: cert.org, year: cert.year, url: cert.url || "" });
     setShowCertDialog(true);
   };
 
@@ -143,14 +145,34 @@ const SkillsPage = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
             {certifications.map((cert) => (
-              <div key={cert.name} className="group/cert bg-white border border-border rounded-none p-6 flex items-start gap-4 card-hover">
+              <div key={cert.id} className="group/cert relative bg-white border border-border rounded-none p-6 flex items-start gap-4 card-hover">
                 <div className="p-2 rounded-none bg-secondary text-foreground"><Award size={20} /></div>
                 <div className="flex-1">
-                  <h3 className="font-heading font-semibold text-foreground text-sm">{cert.name}</h3>
+                  <h3 className="font-heading font-semibold text-foreground text-sm">
+                    {cert.url ? (
+                      // The link covers the whole card, so a click anywhere opens the certificate.
+                      <a
+                        href={cert.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => track("certification", { nom: cert.name })}
+                        className="after:absolute after:inset-0 hover:underline"
+                      >
+                        {cert.name}
+                      </a>
+                    ) : (
+                      cert.name
+                    )}
+                  </h3>
                   <p className="text-xs text-muted-foreground mt-1">{cert.org} · {cert.year}</p>
+                  {cert.url && (
+                    <p className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-foreground">
+                      Voir le certificat <ArrowUpRight size={12} aria-hidden="true" />
+                    </p>
+                  )}
                 </div>
                 {isAdmin && (
-                  <div className="flex gap-1 opacity-0 group-hover/cert:opacity-100 transition-opacity">
+                  <div className="relative z-10 flex gap-1 opacity-0 group-hover/cert:opacity-100 transition-opacity">
                     <button className="p-1 rounded hover:bg-foreground/5" onClick={() => openEditCert(cert)}><Pencil size={12} className="text-muted-foreground" /></button>
                     <button className="p-1 rounded hover:bg-red-50" onClick={() => deleteCert(cert)}><Trash2 size={12} className="text-red-500" /></button>
                   </div>
@@ -190,6 +212,11 @@ const SkillsPage = () => {
             <div><label className="text-sm font-medium">Nom *</label><Input value={certForm.name} onChange={(e) => setCertForm({ ...certForm, name: e.target.value })} className="rounded-md" /></div>
             <div><label className="text-sm font-medium">Organisme</label><Input value={certForm.org} onChange={(e) => setCertForm({ ...certForm, org: e.target.value })} className="rounded-md" /></div>
             <div><label className="text-sm font-medium">Année</label><Input type="number" value={certForm.year} onChange={(e) => setCertForm({ ...certForm, year: Number(e.target.value) })} className="rounded-md" /></div>
+            <div>
+              <label className="text-sm font-medium" htmlFor="cert-url">Lien du certificat</label>
+              <Input id="cert-url" type="url" placeholder="https://www.credly.com/badges/..." value={certForm.url} onChange={(e) => setCertForm({ ...certForm, url: e.target.value })} className="rounded-md" />
+              <p className="mt-1 text-xs text-muted-foreground">Facultatif. La carte s'ouvrira sur ce lien dans un nouvel onglet.</p>
+            </div>
           </div>
           <DialogFooter>
             <button onClick={() => setShowCertDialog(false)} className="pill-btn-outline text-sm">Annuler</button>

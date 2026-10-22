@@ -15,9 +15,12 @@ export interface SkillCategory {
 }
 
 export interface Certification {
+  id: number;
   name: string;
   org: string;
   year: string;
+  /** Link to the certificate online (Credly, Coursera…), opened when the card is clicked. */
+  url: string | null;
 }
 
 interface SkillsData {
