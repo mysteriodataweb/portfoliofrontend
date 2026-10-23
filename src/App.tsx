@@ -21,6 +21,7 @@ import NotFound from "./pages/NotFound";
 import PublicCVPage from "./pages/PublicCVPage";
 import AdminOnly from "@/components/AdminOnly";
 import AdminLoginPage from "./pages/AdminLoginPage";
+import BackendWakeNotice from "@/components/BackendWakeNotice";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
       <AdminProvider>
         <Toaster />
         <Sonner />
+        <BackendWakeNotice />
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
