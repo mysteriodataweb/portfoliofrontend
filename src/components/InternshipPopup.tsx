@@ -63,7 +63,7 @@ const InternshipPopup = () => {
           <p className="text-sm font-medium text-muted-foreground">{internship.role}</p>
           <DialogTitle className="mt-2 text-xl font-normal text-foreground">Je cherche un stage de fin d'études</DialogTitle>
           <DialogDescription className="mt-3 text-base leading-relaxed text-foreground">
-            {internship.duration} à partir de {internship.start}. {internship.location}.
+            {internship.duration}. {internship.location}.
           </DialogDescription>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{internship.experience}</p>
           <div className="mt-6 flex flex-wrap gap-3">

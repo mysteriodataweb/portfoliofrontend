@@ -19,6 +19,7 @@ import ContactPage from "./pages/ContactPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
 import PublicCVPage from "./pages/PublicCVPage";
+import AdminOnly from "@/components/AdminOnly";
 import AdminLoginPage from "./pages/AdminLoginPage";
 
 const queryClient = new QueryClient();
@@ -40,9 +41,10 @@ const App = () => (
             <Route element={<Layout><BlogPostPage /></Layout>} path="/blog/:slug" />
             <Route element={<Layout><SkillsPage /></Layout>} path="/competences" />
             <Route element={<Layout><AboutPage /></Layout>} path="/about" />
-            <Route element={<Layout><EngagementsPage /></Layout>} path="/engagements" />
-            <Route element={<Layout><ActivitiesPage /></Layout>} path="/engagements/hors-ecran" />
-            <Route element={<Layout><EngagementChapterPage /></Layout>} path="/engagements/:slug" />
+            {/* Engagements: visible to the admin only for now */}
+            <Route element={<Layout><AdminOnly><EngagementsPage /></AdminOnly></Layout>} path="/engagements" />
+            <Route element={<Layout><AdminOnly><ActivitiesPage /></AdminOnly></Layout>} path="/engagements/hors-ecran" />
+            <Route element={<Layout><AdminOnly><EngagementChapterPage /></AdminOnly></Layout>} path="/engagements/:slug" />
             <Route element={<Layout><ContactPage /></Layout>} path="/contact" />
             <Route element={<Layout><PublicCVPage /></Layout>} path="/cv" />
             <Route element={<Layout><NotificationsPage /></Layout>} path="/notifications" />

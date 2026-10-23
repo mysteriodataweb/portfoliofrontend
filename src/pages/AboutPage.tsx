@@ -326,31 +326,33 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Hors du code */}
-      <section className="container mx-auto px-6 py-24">
-        <h2 className="text-2xl font-normal text-foreground">Hors du code</h2>
-        <ul className="mt-10">
-          {[
-            ...engagementChapters.map((c) => ({ ...c, path: `/engagements/${c.slug}` })),
-            { ...activitiesSection, slug: "hors-ecran" },
-          ].map((chapter) => (
-            <li key={chapter.slug}>
-              <Link
-                to={chapter.path}
-                className="group grid grid-cols-1 gap-2 border-t border-foreground/15 py-7 md:grid-cols-12 md:items-baseline md:gap-8"
-              >
-                <span className="text-lg font-semibold text-foreground transition-colors group-hover:underline md:col-span-5">
-                  {chapter.title}
-                </span>
-                <span className="max-w-[48ch] text-lg leading-relaxed text-muted-foreground md:col-span-6">
-                  {chapter.pitch}
-                </span>
-                <ArrowUpRight className="hidden h-6 w-6 justify-self-end text-foreground transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 md:col-span-1 md:block" />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* Hors du code: links to the Engagements pages, visible to the admin only for now */}
+      {isAdmin && (
+        <section className="container mx-auto px-6 py-24">
+          <h2 className="text-2xl font-normal text-foreground">Hors du code</h2>
+          <ul className="mt-10">
+            {[
+              ...engagementChapters.map((c) => ({ ...c, path: `/engagements/${c.slug}` })),
+              { ...activitiesSection, slug: "hors-ecran" },
+            ].map((chapter) => (
+              <li key={chapter.slug}>
+                <Link
+                  to={chapter.path}
+                  className="group grid grid-cols-1 gap-2 border-t border-foreground/15 py-7 md:grid-cols-12 md:items-baseline md:gap-8"
+                >
+                  <span className="text-lg font-semibold text-foreground transition-colors group-hover:underline md:col-span-5">
+                    {chapter.title}
+                  </span>
+                  <span className="max-w-[48ch] text-lg leading-relaxed text-muted-foreground md:col-span-6">
+                    {chapter.pitch}
+                  </span>
+                  <ArrowUpRight className="hidden h-6 w-6 justify-self-end text-foreground transition-transform group-hover:-translate-y-1 group-hover:translate-x-1 md:col-span-1 md:block" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Suite */}
       <section className="container mx-auto px-6 pb-24">

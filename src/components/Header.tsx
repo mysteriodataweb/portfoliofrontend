@@ -8,7 +8,7 @@ import { useUnreadCount } from "@/hooks/use-messages";
 const navLinks = [
   { label: "Projets", href: "/projets" },
   { label: "Compétences", href: "/competences" },
-  { label: "Engagements", href: "/engagements" },
+  { label: "Engagements", href: "/engagements", adminOnly: true },
   { label: "Blog", href: "/blog" },
   { label: "CV", href: "/cv" },
   { label: "À propos", href: "/about" },
@@ -21,6 +21,7 @@ const Header = () => {
   const { isAdmin } = useAdmin();
   const { data: unreadData } = useUnreadCount(isAdmin);
   const unreadCount = unreadData?.count || 0;
+  const links = navLinks.filter((link) => isAdmin || !link.adminOnly);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 8);
@@ -52,7 +53,7 @@ const Header = () => {
         </Link>
 
         <nav aria-label="Navigation principale" className="ml-10 hidden items-center gap-7 xl:flex">
-          {navLinks.map((link) => (
+          {links.map((link) => (
             <Link
               key={link.href}
               to={link.href}
@@ -109,7 +110,7 @@ const Header = () => {
           aria-label="Navigation principale"
           className="container mx-auto flex max-h-[calc(100vh-4rem)] flex-col overflow-y-auto px-6 pb-6 xl:hidden"
         >
-          {[...navLinks, { label: "Contact", href: "/contact" }].map((link) => (
+          {[...links, { label: "Contact", href: "/contact" }].map((link) => (
             <Link
               key={link.href}
               to={link.href}
