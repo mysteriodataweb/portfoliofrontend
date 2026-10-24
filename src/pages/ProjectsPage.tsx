@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus, Pencil, Archive } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Plus, PencilSimple, Archive } from "@phosphor-icons/react";
 import { useProjects, useArchiveProject } from "@/hooks/use-projects";
 import { useAdmin } from "@/contexts/AdminContext";
 import ImageUpload from "@/components/ImageUpload";
@@ -8,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { api } from "@/api/client";
 import { toast } from "sonner";
-import { InteractiveScrollingStory, StorySlide } from "@/components/ui/interactive-scrolling-story";
 import { PROJECT_CATEGORIES, categoryLabel } from "@/data/project-categories";
 
 const emptyProject = {
@@ -17,7 +17,11 @@ const emptyProject = {
   featured: false, published: true, context: "", approach: "", results: "", challenges: "",
 };
 
-const chipBase = "px-4 py-1.5 rounded-md text-sm font-medium border transition-colors";
+const chipBase = "border px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest transition-colors";
+const chipActive = "border-dutch-orange bg-dutch-orange text-deep-black";
+const chipIdle = "border-off-white/30 text-off-white hover:border-off-white";
+
+const pad = (n: number) => String(n).padStart(2, "0");
 
 const ProjectsPage = () => {
   const { data: projects = [], isLoading } = useProjects();
@@ -32,15 +36,7 @@ const ProjectsPage = () => {
   const filtered =
     activeCategory === "all" ? projects : projects.filter((p) => p.category === activeCategory);
 
-  const slides: StorySlide[] = filtered.map((project) => ({
-    title: project.title,
-    description: project.fullDescription || project.shortDescription,
-    image: project.image || "/placeholder.svg",
-    bgColor: "#FAFAF9",
-    textColor: "#000000",
-    badge: categoryLabel(project.category),
-    ctaHref: `/projet/${project.slug}`,
-  }));
+  const countOf = (category: string) => projects.filter((p) => p.category === category).length;
 
   const openAdd = () => {
     setEditingProject(null);
@@ -100,76 +96,101 @@ const ProjectsPage = () => {
     }
   };
 
-  const renderActions = (activeIndex: number) => {
-    const project = filtered[activeIndex];
-    if (!project) return null;
-    return (
-      <>
-        <Button size="sm" variant="secondary" className="h-9 w-9 p-0 rounded-md bg-white/90 hover:bg-white" onClick={() => openEdit(project)}>
-          <Pencil size={14} />
-        </Button>
-        <Button size="sm" variant="secondary" className="h-9 w-9 p-0 rounded-md bg-white/90 hover:bg-white" onClick={() => handleArchive(project)}>
-          <Archive size={14} />
-        </Button>
-      </>
-    );
-  };
-
   return (
-    <section className="h-[calc(100vh-80px)] relative flex flex-col">
+    <section data-dark className="min-h-screen bg-deep-black px-4 pb-24 pt-28 text-off-white md:px-8 md:pb-32 md:pt-36">
+      <div className="flex flex-wrap items-end justify-between gap-6 border-b border-off-white/30 pb-8">
+        <div>
+          <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">
+            (Projets) {projects.length} réalisations
+          </p>
+          <h1 data-reveal className="mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tighter md:text-8xl">
+            La <span className="text-dutch-orange">collection</span>
+          </h1>
+        </div>
+        {isAdmin && (
+          <button
+            onClick={openAdd}
+            className="inline-flex items-center gap-2 border border-off-white px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest transition-colors hover:bg-off-white hover:text-deep-black"
+          >
+            <Plus size={14} aria-hidden="true" /> Nouveau projet
+          </button>
+        )}
+      </div>
+
       {/* Category filter bar */}
-      <div className="shrink-0 bg-background border-b border-black/5 px-4 py-3 flex flex-wrap items-center justify-center gap-2 z-10">
+      <div role="group" aria-label="Filtrer par catégorie" className="mt-8 flex flex-wrap gap-2">
         <button
           onClick={() => setActiveCategory("all")}
-          className={`${chipBase} ${
-            activeCategory === "all"
-              ? "bg-black text-white border-black"
-              : "bg-white/70 text-black border-black/10 hover:border-black/40"
-          }`}
+          aria-pressed={activeCategory === "all"}
+          className={`${chipBase} ${activeCategory === "all" ? chipActive : chipIdle}`}
         >
-          Tout
+          Tout ({projects.length})
         </button>
         {PROJECT_CATEGORIES.map((c) => (
           <button
             key={c.value}
             onClick={() => setActiveCategory(c.value)}
-            className={`${chipBase} ${
-              activeCategory === c.value
-                ? "bg-black text-white border-black"
-                : "bg-white/70 text-black border-black/10 hover:border-black/40"
-            }`}
+            aria-pressed={activeCategory === c.value}
+            className={`${chipBase} ${activeCategory === c.value ? chipActive : chipIdle}`}
           >
-            {c.label}
+            {c.label} ({countOf(c.value)})
           </button>
         ))}
-        {isAdmin && (
-          <button onClick={openAdd} className={`${chipBase} border-border text-foreground hover:border-foreground`}>
-            <Plus className="h-4 w-4 mr-1 inline" /> Nouveau projet
-          </button>
-        )}
       </div>
 
-      <div className="flex-1 relative min-h-0">
-        {isLoading && slides.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-muted-foreground">Chargement...</div>
-        ) : slides.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center gap-4 text-muted-foreground">
-            <p>{activeCategory === "all" ? "Aucun projet publié pour le moment." : "Aucun projet dans cette catégorie."}</p>
-            {isAdmin && (
-              <button onClick={openAdd} className="pill-btn text-sm">
-                <Plus className="h-4 w-4 mr-2" /> Nouveau projet
-              </button>
-            )}
-          </div>
-        ) : (
-          <InteractiveScrollingStory
-            key={activeCategory}
-            slides={slides}
-            ctaLabel="Voir le projet"
-            renderActions={isAdmin ? renderActions : undefined}
-          />
-        )}
-      </div>
+      {isLoading && filtered.length === 0 ? (
+        <p className="mt-16 font-mono text-xs uppercase tracking-widest text-off-white/50">Chargement…</p>
+      ) : filtered.length === 0 ? (
+        <p className="mt-16 font-mono text-xs uppercase tracking-widest text-off-white/50">
+          {activeCategory === "all" ? "Aucun projet publié pour le moment." : "Aucun projet dans cette catégorie."}
+        </p>
+      ) : (
+        <ul className="mt-10 grid grid-cols-1 gap-px border border-off-white/20 bg-off-white/20 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((project, i) => (
+            <li key={project.id} className="relative bg-deep-black">
+              <Link to={`/projet/${project.slug}`} className="group block">
+                <div className="relative overflow-hidden">
+                  <img src={project.image || "/placeholder.svg"} alt="" loading="lazy" className="img-reveal aspect-[4/3] w-full object-cover" />
+                  {/* Revealed on hover with a mouse; on touch screens the title below is enough. */}
+                  <div className="absolute inset-x-0 bottom-0 hidden translate-y-full bg-dutch-orange p-5 text-deep-black transition-transform duration-500 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 md:block">
+                    <p className="line-clamp-3 text-sm leading-relaxed">{project.shortDescription}</p>
+                    <p className="mt-3 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
+                      Voir le projet <ArrowRight size={14} aria-hidden="true" />
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4 p-5">
+                  <span className="font-mono text-xs text-off-white/50">{pad(i + 1)}</span>
+                  <div>
+                    <p className="font-mono text-[11px] uppercase tracking-widest text-off-white/50">{categoryLabel(project.category)}</p>
+                    <h2 className="mt-2 text-xl font-black uppercase leading-tight tracking-tighter transition-colors group-hover:text-dutch-orange">
+                      {project.title}
+                    </h2>
+                  </div>
+                </div>
+              </Link>
+              {isAdmin && (
+                <div className="absolute right-3 top-3 z-10 flex gap-1">
+                  <button
+                    onClick={() => openEdit(project)}
+                    aria-label={`Modifier ${project.title}`}
+                    className="flex h-9 w-9 items-center justify-center bg-off-white text-deep-black hover:bg-dutch-orange"
+                  >
+                    <PencilSimple size={14} aria-hidden="true" />
+                  </button>
+                  <button
+                    onClick={() => handleArchive(project)}
+                    aria-label={`Archiver ${project.title}`}
+                    className="flex h-9 w-9 items-center justify-center bg-off-white text-deep-black hover:bg-dutch-orange"
+                  >
+                    <Archive size={14} aria-hidden="true" />
+                  </button>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
 
       {/* Add/Edit Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>

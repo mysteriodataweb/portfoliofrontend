@@ -130,7 +130,7 @@ const BlogPage = () => {
       <div className="container mx-auto px-6">
         <header className="pt-12 md:pt-20">
           <div className="flex items-start justify-between gap-6">
-            <h1 className="text-3xl font-normal text-foreground">
+            <h1 className="display-title text-foreground">
               Blog
             </h1>
             {isAdmin && (
@@ -214,13 +214,13 @@ const BlogPage = () => {
                 <img
                   src={featured.image}
                   alt=""
-                  className="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  className="img-reveal aspect-[16/10] w-full object-cover"
                 />
               </Link>
               <div className="flex flex-col justify-end md:col-span-5">
                 {postMeta(featured)}
-                <h2 className="text-2xl font-normal mt-4 text-foreground">
-                  <Link to={`/blog/${featured.slug}`} className="transition-colors hover:text-foreground">
+                <h2 className="mt-4 text-3xl font-black uppercase leading-[0.95] tracking-tighter text-foreground">
+                  <Link to={`/blog/${featured.slug}`} className="transition-colors hover:text-dutch-orange">
                     {featured.title}
                   </Link>
                 </h2>
@@ -234,14 +234,14 @@ const BlogPage = () => {
 
             <ul>
               {rest.map((post) => (
-                <li key={post.id} className="border-t border-foreground/15">
+                <li key={post.id} className="border-t border-foreground">
                   <article
                     className={`grid grid-cols-1 gap-4 py-8 md:grid-cols-12 md:items-center md:gap-8 ${post.archived ? "opacity-50" : ""}`}
                   >
                     <div className="md:col-span-8">
                       {postMeta(post)}
-                      <h2 className="text-2xl font-normal mt-2 text-foreground">
-                        <Link to={`/blog/${post.slug}`} className="transition-colors hover:text-foreground">
+                      <h2 className="mt-2 text-2xl font-black uppercase leading-[0.95] tracking-tighter text-foreground">
+                        <Link to={`/blog/${post.slug}`} className="transition-colors hover:text-dutch-orange">
                           {post.title}
                         </Link>
                       </h2>
@@ -258,7 +258,7 @@ const BlogPage = () => {
                         src={post.image}
                         alt=""
                         loading="lazy"
-                        className="aspect-[16/9] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                        className="img-reveal aspect-[16/9] w-full object-cover"
                       />
                     </Link>
                   </article>

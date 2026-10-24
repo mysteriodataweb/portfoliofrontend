@@ -118,7 +118,7 @@ const SkillsPage = () => {
       <div className="container mx-auto px-6">
         <AnimatedSection>
           <div className="mb-16">
-            <h1 className="text-3xl font-normal text-foreground mb-4">Compétences</h1>
+            <h1 className="display-title text-foreground mb-4">Compétences</h1>
             <p className="text-lg text-muted-foreground max-w-2xl">Ce que j'utilise au quotidien, du traitement des données à l'interface.</p>
           </div>
         </AnimatedSection>
@@ -127,7 +127,7 @@ const SkillsPage = () => {
         <AnimatedSection>
           <div className="mb-20">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-normal text-foreground">Par domaine</h2>
+              <h2 className="section-title text-foreground">Par domaine</h2>
             </div>
             <SkillsExplorer categories={skillCategories} />
           </div>
@@ -136,7 +136,7 @@ const SkillsPage = () => {
         {/* Certifications */}
         <AnimatedSection>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-normal text-foreground">Certifications</h2>
+            <h2 className="section-title text-foreground">Certifications</h2>
             {isAdmin && (
               <button onClick={openAddCert} className="pill-btn-outline text-sm">
                 <Plus className="h-4 w-4 mr-2" /> Ajouter
@@ -186,7 +186,7 @@ const SkillsPage = () => {
         <AnimatedSection>
           <div className="mb-20">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-2xl font-normal text-foreground">Outils</h2>
+              <h2 className="section-title text-foreground">Outils</h2>
               {isAdmin && (
                 <button onClick={openAddTool} className="pill-btn-outline text-sm">
                   <Plus className="h-4 w-4 mr-2" /> Ajouter

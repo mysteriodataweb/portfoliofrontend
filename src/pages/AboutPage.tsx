@@ -131,7 +131,7 @@ const AboutPage = () => {
       <section className="container mx-auto px-6 pt-12 md:pt-20">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
-            <h1 className="text-3xl font-normal text-foreground">
+            <h1 className="display-title text-foreground">
               Je fais passer la donnée et l'IA du notebook à la production.
             </h1>
             <p className="mt-8 text-lg text-muted-foreground">
@@ -186,7 +186,7 @@ const AboutPage = () => {
 
       {/* Biographie */}
       <section className="container mx-auto grid grid-cols-1 gap-8 px-6 pb-24 md:grid-cols-12">
-        <h2 className="text-2xl font-normal text-foreground md:col-span-4">
+        <h2 className="section-title text-foreground md:col-span-4">
           Qui je suis
         </h2>
         <div className="md:col-span-8">
@@ -224,7 +224,7 @@ const AboutPage = () => {
 
       {/* Ce qui me fait avancer */}
       <section className="container mx-auto px-6 pb-24">
-        <h2 className="text-2xl font-normal text-foreground">
+        <h2 className="section-title text-foreground">
           Ce qui me fait avancer
         </h2>
         <dl className="mt-10">
@@ -246,7 +246,7 @@ const AboutPage = () => {
       {cvSections.length > 0 && (
         <section className="container mx-auto px-6 pb-24">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="text-2xl font-normal text-foreground">Mon parcours</h2>
+            <h2 className="section-title text-foreground">Mon parcours</h2>
             <Link to="/cv" className="link-arrow">
               Voir le CV complet <ArrowRight size={16} />
             </Link>
@@ -289,7 +289,7 @@ const AboutPage = () => {
       {/* Méthode */}
       <section className="bg-foreground text-background">
         <div className="container mx-auto px-6 py-24">
-          <h2 className="text-2xl font-normal">
+          <h2 className="section-title">
             Cinq étapes, toujours dans cet ordre.
           </h2>
           <ol className="mt-12">
@@ -329,7 +329,7 @@ const AboutPage = () => {
       {/* Hors du code: links to the Engagements pages, visible to the admin only for now */}
       {isAdmin && (
         <section className="container mx-auto px-6 py-24">
-          <h2 className="text-2xl font-normal text-foreground">Hors du code</h2>
+          <h2 className="section-title text-foreground">Hors du code</h2>
           <ul className="mt-10">
             {[
               ...engagementChapters.map((c) => ({ ...c, path: `/engagements/${c.slug}` })),

@@ -14,11 +14,17 @@ export default {
     },
     extend: {
       fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
         heading: ["Inter", "system-ui", "sans-serif"],
         body: ["Inter", "system-ui", "sans-serif"],
-        mono: ["IBM Plex Mono", "ui-monospace", "monospace"],
+        mono: ['"Space Mono"', "ui-monospace", "monospace"],
       },
       colors: {
+        // HEDEN palette, used directly by the shell (loader, menu, marquee, contact block).
+        "dutch-orange": "#FF4800",
+        "off-white": "#F4F4F0",
+        "deep-black": "#0A0A0A",
+        concrete: "#D4D4D4",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -53,10 +59,15 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      // Brutalist: square corners everywhere; rounded-full stays for real circles (dots, avatars).
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        DEFAULT: "0px",
+        sm: "0px",
+        md: "0px",
+        lg: "0px",
+        xl: "0px",
+        "2xl": "0px",
+        "3xl": "0px",
       },
       keyframes: {
         "accordion-down": {
@@ -81,6 +92,7 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in-up": "fade-in-up 0.6s ease-out forwards",
         marquee: "marquee 40s linear infinite",
+        "marquee-fast": "marquee 28s linear infinite",
       },
     },
   },

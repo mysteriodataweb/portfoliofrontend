@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Github, Linkedin, Mail, MapPin, Send } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "@phosphor-icons/react";
+import { internship } from "@/data/availability";
 import AnimatedSection from "@/components/AnimatedSection";
 import { toast } from "sonner";
 import { useContact } from "@/hooks/use-contact";
@@ -34,18 +35,19 @@ const ContactPage = () => {
   };
 
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-6">
-        <AnimatedSection>
-          <h1 className="text-3xl font-normal text-foreground mb-4">
-            Travaillons ensemble
+    <section className="px-4 pb-24 pt-10 md:px-8 md:pb-32 md:pt-16">
+      <div>
+        <div className="border-b border-foreground pb-10">
+          <p className="eyebrow">(Contact) Une question, un projet, un stage</p>
+          <h1 className="display-title mt-4">
+            Travaillons <span className="text-dutch-orange">ensemble</span>
           </h1>
-          <p className="text-lg text-muted-foreground mb-16 max-w-2xl">
+          <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
             Vous avez un projet ? Une question ? Discutons-en.
           </p>
-        </AnimatedSection>
+        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-16">
+        <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-16">
           {/* Form */}
           <AnimatedSection className="lg:col-span-3">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -53,7 +55,7 @@ const ContactPage = () => {
                 <div>
                   <label
                     htmlFor="name"
-                    className="mb-2 block text-sm font-medium text-foreground"
+                    className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
                   >
                     Nom *
                   </label>
@@ -70,7 +72,7 @@ const ContactPage = () => {
                 <div>
                   <label
                     htmlFor="email"
-                    className="mb-2 block text-sm font-medium text-foreground"
+                    className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
                   >
                     Email *
                   </label>
@@ -90,7 +92,7 @@ const ContactPage = () => {
               <div>
                 <label
                   htmlFor="subject"
-                  className="mb-2 block text-sm font-medium text-foreground"
+                  className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
                 >
                   Sujet
                 </label>
@@ -109,7 +111,7 @@ const ContactPage = () => {
               <div>
                 <label
                   htmlFor="message"
-                  className="mb-2 block text-sm font-medium text-foreground"
+                  className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
                 >
                   Message *
                 </label>
@@ -122,7 +124,7 @@ const ContactPage = () => {
                   onChange={(e) =>
                     setForm({ ...form, message: e.target.value })
                   }
-                  className="field h-auto py-3"
+                  className="field !h-auto min-h-40 py-3"
                 />
               </div>
               {/* Anti-spam trap: hidden from people, only bots fill it in. */}
@@ -140,73 +142,50 @@ const ContactPage = () => {
               <button
                 type="submit"
                 disabled={contactMutation.isPending}
-                className="pill-btn disabled:opacity-50"
+                className="btn-ink disabled:opacity-50"
               >
-                {contactMutation.isPending
-                  ? "Envoi en cours..."
-                  : "Envoyer le message"}{" "}
-                <Send size={16} className="ml-2" />
+                {contactMutation.isPending ? "Envoi en cours..." : "Envoyer le message"}
+                <ArrowRight size={14} aria-hidden="true" />
               </button>
             </form>
           </AnimatedSection>
 
           {/* Info */}
           <AnimatedSection className="lg:col-span-2" delay={0.2}>
-            <div className="space-y-6">
+            <dl className="space-y-8 bg-dutch-orange p-6 font-mono text-sm uppercase leading-relaxed text-deep-black md:p-10">
               <div>
-                <h3 className="font-heading font-semibold text-foreground mb-4">
-                  Contact direct
-                </h3>
-                <div className="space-y-4">
-                  <a
-                    href="mailto:fredbiam9@gmail.com"
-                    className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Mail size={18} /> fredbiam9@gmail.com
+                <dt className="text-xs tracking-widest opacity-70">Contact direct</dt>
+                <dd className="mt-3 flex flex-col items-start gap-1">
+                  <a href="mailto:fredbiam9@gmail.com" className="normal-case underline-offset-4 hover:underline">
+                    fredbiam9@gmail.com
                   </a>
-                  <a
-                    href="https://github.com/mysteriodataweb"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Github size={18} /> github.com/mysteriodataweb
+                  <a href="https://github.com/mysteriodataweb" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">
+                    github.com/mysteriodataweb <ArrowUpRight size={12} aria-hidden="true" />
                   </a>
-                  <a
-                    href="https://www.linkedin.com/in/alfredbiam"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <Linkedin size={18} /> linkedin.com/in/alfredbiam
+                  <a href="https://www.linkedin.com/in/alfredbiam" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">
+                    linkedin.com/in/alfredbiam <ArrowUpRight size={12} aria-hidden="true" />
                   </a>
-                </div>
+                </dd>
               </div>
-
-              <div>
-                <h3 className="font-heading font-semibold text-foreground mb-4">
-                  Disponibilité
-                </h3>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
-                  <span className="text-sm text-foreground">
-                    Disponible pour de nouveaux projets
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Réponse sous 24-48h en moyenne.
-                </p>
+              <div className="border-t border-deep-black pt-8">
+                <dt className="text-xs tracking-widest opacity-70">Disponibilité</dt>
+                <dd className="mt-3">
+                  Stage de fin d'études, {internship.duration}
+                  <br />
+                  Missions freelance
+                  <br />
+                  Réponse sous 24-48 h
+                </dd>
               </div>
-
-              <div>
-                <h3 className="font-heading font-semibold text-foreground mb-4">
-                  Localisation
-                </h3>
-                <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin size={16} /> Maroc Casablanca, Bouskoura ville verte
-                </p>
+              <div className="border-t border-deep-black pt-8">
+                <dt className="text-xs tracking-widest opacity-70">Localisation</dt>
+                <dd className="mt-3">
+                  Bouskoura, Casablanca
+                  <br />
+                  Maroc · mobile · télétravail possible
+                </dd>
               </div>
-            </div>
+            </dl>
           </AnimatedSection>
         </div>
       </div>

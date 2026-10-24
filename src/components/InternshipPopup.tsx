@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { internship } from "@/data/availability";
 import { track } from "@/lib/analytics";
+import { introDone } from "@/lib/motion";
 
 const DURATION = 10_000;
 const TICK = 100;
@@ -33,12 +34,20 @@ const InternshipPopup = () => {
 
   useEffect(() => {
     if (pathname.startsWith("/admin") || alreadySeen()) return;
-    // A short delay lets the page appear first.
-    const timer = setTimeout(() => {
-      markSeen();
-      setOpen(true);
-    }, 800);
-    return () => clearTimeout(timer);
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    // Shown once the loading screen has gone, after a short delay that lets the page appear first.
+    introDone.then(() => {
+      if (cancelled) return;
+      timer = setTimeout(() => {
+        markSeen();
+        setOpen(true);
+      }, 800);
+    });
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [pathname]);
 
   // Timed in JavaScript rather than with a CSS animation: the reduced-motion rule shortens every animation to nothing.
@@ -55,13 +64,15 @@ const InternshipPopup = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
-        className="w-[calc(100%-2rem)] max-w-md gap-0 overflow-hidden p-0 sm:rounded-none"
+        className="w-[calc(100%-2rem)] max-w-md gap-0 overflow-hidden border-deep-black p-0 sm:rounded-none"
         onPointerEnter={() => setPaused(true)}
         onPointerLeave={() => setPaused(false)}
       >
         <div className="p-6 pr-12">
-          <p className="text-sm font-medium text-muted-foreground">{internship.role}</p>
-          <DialogTitle className="mt-2 text-xl font-normal text-foreground">Je cherche un stage de fin d'études</DialogTitle>
+          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">(Disponible) {internship.role}</p>
+          <DialogTitle className="mt-3 text-3xl font-black uppercase leading-[0.95] tracking-tighter text-foreground">
+            Je cherche un stage de <span className="text-dutch-orange">fin d'études</span>
+          </DialogTitle>
           <DialogDescription className="mt-3 text-base leading-relaxed text-foreground">
             {internship.duration}. {internship.location}.
           </DialogDescription>
@@ -91,7 +102,7 @@ const InternshipPopup = () => {
         </div>
         <div aria-hidden="true" className="h-1 bg-secondary">
           <div
-            className="h-full bg-foreground transition-[width] duration-100 ease-linear"
+            className="h-full bg-dutch-orange transition-[width] duration-100 ease-linear"
             style={{ width: `${(remaining / DURATION) * 100}%` }}
           />
         </div>

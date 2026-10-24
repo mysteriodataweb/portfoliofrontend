@@ -1,40 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* HEDEN palette: off-white paper, deep-black ink, dutch-orange as the only colour, concrete for lines. */
 @layer base {
   :root {
-    --background: 60 9% 98%;         /* #FAFAF9 paper */
-    --foreground: 0 0% 4%;           /* #0A0A0A ink */
+    --background: 60 15% 95%;        /* #F4F4F0 off-white */
+    --foreground: 0 0% 4%;           /* #0A0A0A deep-black */
 
     --card: 0 0% 100%;
     --card-foreground: 0 0% 4%;
 
-    --popover: 0 0% 100%;
+    --popover: 60 15% 95%;
     --popover-foreground: 0 0% 4%;
 
-    --primary: 0 0% 9%;              /* #171717 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 4%;              /* deep-black */
+    --primary-foreground: 60 15% 95%;
 
-    --secondary: 240 5% 96%;         /* #F4F4F5 tile grey */
+    --secondary: 60 8% 90%;          /* #E8E8E3 light concrete tile */
     --secondary-foreground: 0 0% 4%;
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 215 14% 34%; /* #4B5563 */
+    --muted: 60 8% 90%;
+    --muted-foreground: 0 0% 32%;    /* #525252 */
 
-    --accent: 25 72% 55%;            /* #E07B39 orange, the only colour */
-    --accent-foreground: 0 0% 100%;
+    --accent: 17 100% 50%;           /* #FF4800 dutch-orange */
+    --accent-foreground: 0 0% 4%;    /* black on orange: white would fail contrast */
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;              /* #E5E5E5 */
-    --input: 0 0% 90%;
-    --ring: 0 0% 9%;
+    --border: 0 0% 83%;              /* #D4D4D4 concrete */
+    --input: 0 0% 83%;
+    --ring: 17 100% 50%;
 
-    --radius: 0.375rem;
+    --radius: 0rem;
   }
 }
 
@@ -56,9 +57,29 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading tracking-tight;
   }
+
+  ::selection {
+    background: #FF4800;
+    color: #0A0A0A;
+  }
 }
 
 @layer utilities {
+  /* Page titles: very large, heavy, uppercase. */
+  .display-title {
+    @apply font-heading text-5xl font-black uppercase leading-[0.9] tracking-tighter text-foreground md:text-7xl;
+  }
+
+  /* Section titles inside a page. */
+  .section-title {
+    @apply font-heading text-3xl font-black uppercase leading-none tracking-tighter md:text-4xl;
+  }
+
+  /* Small monospace label above a title: "(01) Projets". */
+  .eyebrow {
+    @apply font-mono text-xs uppercase tracking-widest text-muted-foreground;
+  }
+
   .card-hover {
     @apply transition-colors;
   }
@@ -68,26 +89,26 @@
   }
 
   .pill-btn {
-    @apply inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-semibold text-primary-foreground transition-colors hover:bg-black;
+    @apply inline-flex h-11 items-center justify-center bg-primary px-6 font-mono text-xs font-bold uppercase tracking-widest text-primary-foreground transition-colors hover:bg-dutch-orange hover:text-deep-black;
   }
 
   .pill-btn-outline {
-    @apply inline-flex h-11 items-center justify-center rounded-md border border-border bg-card px-6 text-sm font-semibold text-foreground transition-colors hover:border-foreground;
+    @apply inline-flex h-11 items-center justify-center border border-foreground bg-transparent px-6 font-mono text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:bg-foreground hover:text-background;
   }
 
   .link-arrow {
-    @apply inline-flex items-center gap-2 text-sm font-medium text-foreground underline decoration-foreground/40 underline-offset-4 hover:decoration-foreground;
+    @apply inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-foreground underline decoration-foreground/40 underline-offset-4 hover:text-dutch-orange hover:decoration-dutch-orange;
   }
 
   .section-dark {
     @apply w-full py-24;
-    background: #171717;
-    color: #FFFFFF;
+    background: #0A0A0A;
+    color: #F4F4F0;
   }
 
   .section-light {
     @apply w-full py-24;
-    background: #FAFAF9;
+    background: #F4F4F0;
   }
 
   /* Left gutter matching .container, for strips that bleed off the right edge */
@@ -108,71 +129,102 @@
     display: none;
   }
 
-  /* White block with the hard offset shadow */
+  /* Block with a hard black offset shadow */
   .panel {
-    @apply border border-border bg-card;
-    box-shadow: 4px 4px 0 0 #E7E7E5;
+    @apply border border-foreground bg-card;
+    box-shadow: 6px 6px 0 0 #0A0A0A;
   }
 
   .panel-active {
-    @apply border-foreground;
+    @apply border-dutch-orange;
   }
 
   .btn-ink {
-    @apply inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-semibold text-primary-foreground transition-colors hover:bg-black;
+    @apply inline-flex h-12 items-center justify-center gap-2 bg-primary px-8 font-mono text-xs font-bold uppercase tracking-widest text-primary-foreground transition-colors hover:bg-dutch-orange hover:text-deep-black;
   }
 
   .btn-paper {
-    @apply inline-flex h-11 items-center justify-center rounded-md border border-border bg-card px-8 text-base font-medium text-foreground transition-colors hover:border-foreground;
+    @apply inline-flex h-12 items-center justify-center gap-2 border border-foreground bg-transparent px-8 font-mono text-xs font-bold uppercase tracking-widest text-foreground transition-colors hover:bg-foreground hover:text-background;
   }
 
   .btn-sm {
     height: 2.5rem;
     padding-inline: 1.25rem;
-    font-size: 0.875rem;
   }
 
   .field {
-    @apply block h-11 w-full rounded-md border border-border bg-card px-3 text-base text-foreground transition-colors focus:border-foreground focus:outline-none;
+    @apply block h-12 w-full border border-foreground/30 bg-card px-3 text-base text-foreground transition-colors focus:border-foreground focus:outline-none;
   }
 
   .link-plain {
-    @apply underline decoration-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground;
+    @apply underline decoration-foreground/40 underline-offset-4 transition-colors hover:text-dutch-orange hover:decoration-dutch-orange;
+  }
+
+  /* Image that goes from grayscale to colour and zooms in slightly on hover of its .group. */
+  .img-reveal {
+    @apply grayscale transition-[filter,transform] duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0;
   }
 }
 
 /* Code blocks styling */
 pre code {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Space Mono', monospace;
 }
 
 code {
-  font-family: 'IBM Plex Mono', monospace;
-  @apply bg-secondary px-1.5 py-0.5 rounded text-sm;
+  font-family: 'Space Mono', monospace;
+  @apply bg-secondary px-1.5 py-0.5 text-sm;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAFAF9;
+  background: #F4F4F0;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #D4D4D4;
-  border-radius: 3px;
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #A3A3A3;
+  background: #FF4800;
 }
 
 /* Focus visible */
 :focus-visible {
-  outline: 2px solid #0A0A0A;
+  outline: 2px solid #FF4800;
   outline-offset: 2px;
+}
+
+/* Custom cursor: the native one is hidden only while the custom one runs (fine pointer, motion allowed).
+   Text fields keep their caret cursor. */
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none !important;
+}
+
+html.has-custom-cursor input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
+html.has-custom-cursor textarea,
+html.has-custom-cursor [contenteditable="true"] {
+  cursor: text !important;
+}
+
+/* The ring is moved with transform by GSAP; size and colour use separate properties so they don't clash. */
+.cursor-ring {
+  transition: scale 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, opacity 0.2s ease;
+}
+
+.cursor-ring.is-dark {
+  border-color: #F4F4F0;
+}
+
+.cursor-ring.is-hover {
+  scale: 1.8;
+  border-color: #FF4800;
+  background-color: rgba(255, 72, 0, 0.08);
 }
 
 /* ===== Nav Star Link ===== */
@@ -193,14 +245,14 @@ code {
 }
 
 .nav-star-btn--active {
-  color: #171717;
-  border-color: #171717;
-  background: rgba(23, 23, 23, 0.05);
+  color: #0A0A0A;
+  border-color: #0A0A0A;
+  background: rgba(10, 10, 10, 0.05);
 }
 
 .nav-star-btn:hover {
-  color: #171717;
-  background: rgba(23, 23, 23, 0.03);
+  color: #0A0A0A;
+  background: rgba(10, 10, 10, 0.03);
 }
 
 /* Hidden stars - we don't need them for this design */

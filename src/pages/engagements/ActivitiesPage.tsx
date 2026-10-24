@@ -86,7 +86,7 @@ const ActivitiesPage = () => {
         <ArrowLeft size={16} /> Tous les engagements
       </Link>
       <div className="mt-8 flex flex-wrap items-start justify-between gap-6">
-        <h1 className="text-3xl font-normal text-foreground">
+        <h1 className="display-title text-foreground">
           {activitiesSection.title}
         </h1>
         {isAdmin && (

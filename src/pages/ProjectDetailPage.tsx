@@ -26,7 +26,7 @@ const ProjectDetailPage = () => {
   if (!project) {
     return (
       <div className="py-32 text-center">
-        <h1 className="text-3xl font-normal text-foreground">Projet non trouvé</h1>
+        <h1 className="display-title text-foreground">Projet non trouvé</h1>
         <Link to="/projets" className="text-primary mt-4 inline-block">← Retour aux projets</Link>
       </div>
     );
@@ -78,22 +78,22 @@ const ProjectDetailPage = () => {
   return (
     <>
       {/* Hero */}
-      <div className="relative h-[400px] overflow-hidden">
-        <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      <div className="relative h-[440px] overflow-hidden border-b border-foreground">
+        <img src={project.image} alt={project.title} className="h-full w-full object-cover grayscale" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 container mx-auto px-6 pb-8">
-          <p className="text-sm text-muted-foreground mb-2">
-            <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
-            {" > "}
-            <Link to="/projets" className="hover:text-foreground transition-colors">Projets</Link>
-            {" > "}
-            <span className="text-foreground">{project.title}</span>
+          <p className="mb-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+            <Link to="/" className="transition-colors hover:text-dutch-orange">Accueil</Link>
+            {" / "}
+            <Link to="/projets" className="transition-colors hover:text-dutch-orange">Projets</Link>
+            {" / "}
+            <span className="text-foreground">{categoryLabel(project.category)}</span>
           </p>
 
           {editing ? (
             <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="text-3xl md:text-5xl font-heading font-bold bg-background/50 border-primary/50" />
           ) : (
-            <h1 className="text-3xl font-normal text-foreground">{project.title}</h1>
+            <h1 className="display-title text-foreground">{project.title}</h1>
           )}
 
           {isAdmin && !editing && (
@@ -120,7 +120,7 @@ const ProjectDetailPage = () => {
             {/* Main */}
             <div className="lg:col-span-2 space-y-12">
               <AnimatedSection>
-                <h2 className="text-2xl font-normal text-foreground mb-4">Contexte</h2>
+                <h2 className="section-title text-foreground mb-4">Contexte</h2>
                 {editing ? (
                   <textarea value={form.context} onChange={(e) => setForm({ ...form, context: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
                 ) : (
@@ -128,7 +128,7 @@ const ProjectDetailPage = () => {
                 )}
               </AnimatedSection>
               <AnimatedSection>
-                <h2 className="text-2xl font-normal text-foreground mb-4">Approche et méthode</h2>
+                <h2 className="section-title text-foreground mb-4">Approche et méthode</h2>
                 {editing ? (
                   <textarea value={form.approach} onChange={(e) => setForm({ ...form, approach: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
                 ) : (
@@ -136,7 +136,7 @@ const ProjectDetailPage = () => {
                 )}
               </AnimatedSection>
               <AnimatedSection>
-                <h2 className="text-2xl font-normal text-foreground mb-4">Résultats</h2>
+                <h2 className="section-title text-foreground mb-4">Résultats</h2>
                 {editing ? (
                   <textarea value={form.results} onChange={(e) => setForm({ ...form, results: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
                 ) : (
@@ -144,7 +144,7 @@ const ProjectDetailPage = () => {
                 )}
               </AnimatedSection>
               <AnimatedSection>
-                <h2 className="text-2xl font-normal text-foreground mb-4">Défis et apprentissages</h2>
+                <h2 className="section-title text-foreground mb-4">Défis et apprentissages</h2>
                 {editing ? (
                   <textarea value={form.challenges} onChange={(e) => setForm({ ...form, challenges: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
                 ) : (
@@ -155,20 +155,20 @@ const ProjectDetailPage = () => {
 
             {/* Sidebar */}
             <aside className="lg:col-span-1">
-              <div className="sticky top-28 bg-white border border-border rounded-none p-6 space-y-6">
+              <div className="panel sticky top-28 space-y-6 p-6">
                 <div>
-                  <span className="text-xs text-muted-foreground font-medium">Catégorie</span>
-                  <p className="font-medium text-foreground mt-1">{categoryLabel(project.category)}</p>
+                  <span className="eyebrow">Catégorie</span>
+                  <p className="mt-1 font-semibold text-foreground">{categoryLabel(project.category)}</p>
                 </div>
                 <div>
-                  <span className="text-xs text-muted-foreground font-medium">Date</span>
-                  <p className="font-medium text-foreground mt-1">{project.date}</p>
+                  <span className="eyebrow">Date</span>
+                  <p className="mt-1 font-semibold text-foreground">{project.date}</p>
                 </div>
                 <div>
-                  <span className="text-xs text-muted-foreground font-medium">Technologies</span>
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <span className="eyebrow">Technologies</span>
+                  <div className="mt-2 flex flex-wrap gap-2">
                     {project.techStack.map((t) => (
-                      <span key={t} className="text-xs px-3 py-1 rounded-md bg-foreground/5 text-foreground/70 font-medium">
+                      <span key={t} className="border border-foreground/30 px-2 py-1 font-mono text-[11px] uppercase tracking-wider text-foreground">
                         {t}
                       </span>
                     ))}
@@ -176,12 +176,12 @@ const ProjectDetailPage = () => {
                 </div>
                 <div className="space-y-3 pt-2">
                   {project.githubUrl && (
-                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" onClick={() => track("projet-code", { projet: project.slug })} className="flex items-center gap-2 w-full px-4 py-3 rounded-md border border-foreground/10 text-sm font-medium text-foreground hover:bg-foreground hover:text-white transition-all">
+                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" onClick={() => track("projet-code", { projet: project.slug })} className="btn-paper w-full">
                       <Github size={16} /> Voir le code
                     </a>
                   )}
                   {project.demoUrl && (
-                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" onClick={() => track("projet-demo", { projet: project.slug })} className="flex items-center gap-2 w-full px-4 py-3 rounded-md bg-foreground text-white text-sm font-medium hover:bg-black transition-all">
+                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" onClick={() => track("projet-demo", { projet: project.slug })} className="btn-ink w-full">
                       <ExternalLink size={16} /> Demo live
                     </a>
                   )}
@@ -191,16 +191,16 @@ const ProjectDetailPage = () => {
           </div>
 
           {/* Nav */}
-          <div className="flex justify-between mt-20 pt-10 border-t border-border">
+          <div className="mt-20 flex justify-between gap-6 border-t border-foreground pt-10">
             {prev ? (
               <Link to={`/projet/${prev.slug}`} className="group flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors">
                 <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                <div><p className="text-xs text-muted-foreground">Précédent</p><p className="text-sm font-medium">{prev.title}</p></div>
+                <div><p className="eyebrow">Précédent</p><p className="mt-1 font-bold uppercase tracking-tight">{prev.title}</p></div>
               </Link>
             ) : <div />}
             {next ? (
               <Link to={`/projet/${next.slug}`} className="group flex items-center gap-3 text-right text-muted-foreground hover:text-foreground transition-colors">
-                <div><p className="text-xs text-muted-foreground">Suivant</p><p className="text-sm font-medium">{next.title}</p></div>
+                <div><p className="eyebrow">Suivant</p><p className="mt-1 font-bold uppercase tracking-tight">{next.title}</p></div>
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             ) : <div />}
@@ -209,13 +209,17 @@ const ProjectDetailPage = () => {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-card border-t border-border">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-2xl font-normal text-foreground mb-4">Vous avez un projet similaire ?</h2>
-          <Link to="/contact" className="pill-btn">
-            Discutons-en <ArrowRight size={18} className="ml-2" />
-          </Link>
-        </div>
+      <section className="bg-dutch-orange px-4 py-20 text-deep-black md:px-8 md:py-28">
+        <p className="font-mono text-xs uppercase tracking-widest">(Contact)</p>
+        <h2 data-reveal className="mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tighter md:text-7xl">
+          Un projet similaire ?
+        </h2>
+        <Link
+          to="/contact"
+          className="mt-10 inline-flex h-14 items-center gap-3 bg-deep-black px-8 font-mono text-xs font-bold uppercase tracking-widest text-off-white transition-colors hover:bg-off-white hover:text-deep-black"
+        >
+          Discutons-en <ArrowRight size={14} aria-hidden="true" />
+        </Link>
       </section>
     </>
   );

@@ -24,7 +24,7 @@ export default function PublicCVPage() {
         <AnimatedSection>
           <div className="flex items-center justify-between mb-12">
             <div>
-              <h1 className="text-3xl font-normal mb-2">Mon CV</h1>
+              <h1 className="display-title mb-2">Mon CV</h1>
               <p className="text-muted-foreground">Téléchargez mon CV en PDF ou consultez la version HTML.</p>
             </div>
             <div className="flex gap-3">
@@ -50,7 +50,7 @@ export default function PublicCVPage() {
           {cv?.sections?.map((section, i) => (
             <AnimatedSection key={section.id} delay={i * 0.05}>
               <div className="bg-white border border-border rounded-none p-6">
-                <h2 className="text-2xl font-normal text-foreground mb-6 text-foreground">{section.title}</h2>
+                <h2 className="section-title text-foreground mb-6 text-foreground">{section.title}</h2>
                 <div className="space-y-6">
                   {section.items?.map((item) => (
                     <div key={item.id} className="relative pl-6 border-l-2 border-border">

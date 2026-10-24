@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Briefcase, FolderGit2, Handshake, PenLine, Pencil } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ArrowRight, ArrowUpRight, PencilSimple } from "@phosphor-icons/react";
 import profilePhoto from "@/assets/profile-photo.jpg";
 import SkillsExplorer from "@/components/SkillsExplorer";
-import { useFeaturedProjects } from "@/hooks/use-projects";
-import type { Project } from "@/hooks/use-projects";
+import Marquee from "@/components/Marquee";
+import { useFeaturedProjects, useProjects } from "@/hooks/use-projects";
 import { useBlogPosts } from "@/hooks/use-blog";
 import { useSkills } from "@/hooks/use-skills";
 import { useTools } from "@/hooks/use-tools";
@@ -13,12 +12,11 @@ import { useStats } from "@/hooks/use-stats";
 import { useAdmin } from "@/contexts/AdminContext";
 import { categoryLabel } from "@/data/project-categories";
 import { internship } from "@/data/availability";
+import { gsap, introDone, reducedMotion } from "@/lib/motion";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { api } from "@/api/client";
 import { toast } from "sonner";
-
-const sectionTitle = "text-2xl font-normal text-foreground";
 
 const formatMonth = (date: string) => {
   const parsed = new Date(`${date.slice(0, 7)}-01T00:00:00`);
@@ -27,127 +25,69 @@ const formatMonth = (date: string) => {
     : parsed.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
 };
 
-const shortUrl = (url: string) => url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+const pad = (n: number) => String(n).padStart(2, "0");
 
-/** Featured projects, one per tab: a reading pane and the project's spec sheet as a terminal. */
-const ProjectShowcase = ({ projects }: { projects: Project[] }) => {
-  const [selected, setSelected] = useState(0);
-  const project = projects[Math.min(selected, projects.length - 1)];
-
-  const sheet: [string, React.ReactNode][] = [
-    ["catégorie", categoryLabel(project.category)],
-    ["date", formatMonth(project.date)],
-    [
-      "stack",
-      <ul>
-        {project.techStack.map((tech) => (
-          <li key={tech}>{tech}</li>
-        ))}
-      </ul>,
-    ],
-  ];
-  if (project.demoUrl) sheet.push(["démo", <ExternalLink href={project.demoUrl} />]);
-  if (project.githubUrl) sheet.push(["code", <ExternalLink href={project.githubUrl} />]);
-
-  return (
-    <div className="border border-border bg-card">
-      <div role="tablist" aria-label="Projets sélectionnés" className="no-scrollbar flex gap-1 overflow-x-auto p-3">
-        {projects.map((p, i) => (
-          <button
-            key={p.id}
-            role="tab"
-            id={`project-tab-${p.id}`}
-            aria-selected={i === selected}
-            aria-controls="project-panel"
-            onClick={() => setSelected(i)}
-            className={`h-9 shrink-0 px-4 text-sm font-semibold transition-colors ${
-              i === selected ? "bg-foreground text-background" : "text-foreground hover:bg-secondary"
-            }`}
-          >
-            {p.title}
-          </button>
-        ))}
-      </div>
-
-      <div
-        role="tabpanel"
-        id="project-panel"
-        aria-labelledby={`project-tab-${project.id}`}
-        className="relative border-t border-border bg-secondary"
-      >
-        <img
-          src={project.image}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover contrast-125 grayscale"
-        />
-        <div className="relative mx-auto grid max-w-[920px] grid-cols-1 px-4 py-10 md:grid-cols-[5fr_4fr] md:px-0 md:py-12">
-          <div className="flex min-h-[26rem] flex-col bg-[#F7F7F7]">
-            <p className="border-b border-border px-4 py-3 text-sm font-medium text-foreground">
-              {categoryLabel(project.category)}
-            </p>
-            <div className="flex flex-1 flex-col justify-center px-6 py-8 md:px-10">
-              <h3 className="text-2xl font-medium text-foreground">{project.title}</h3>
-              <p className="mt-4 max-w-[46ch] leading-relaxed text-muted-foreground">{project.shortDescription}</p>
-              <div className="mt-8">
-                <Link to={`/projet/${project.slug}`} className="btn-ink btn-sm">
-                  Voir le projet
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#1A1A1A] font-mono text-[13px] leading-6 text-white">
-            <p className="flex justify-between gap-4 border-b border-white/10 px-4 py-3">
-              <span>fiche</span>
-              <span className="truncate text-white/60">{project.slug}</span>
-            </p>
-            <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-6 gap-y-3 px-4 py-5">
-              {sheet.map(([label, value]) => (
-                <div key={label} className="contents">
-                  <dt className="text-white/50">{label}</dt>
-                  <dd className="min-w-0 break-words">{value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </div>
+/** "(02) En ce moment" above a large uppercase section title. */
+const SectionHead = ({ index, eyebrow, title, link, dark = false }: { index: number; eyebrow: string; title: string; link?: { to: string; label: string }; dark?: boolean }) => (
+  <div className={`flex flex-wrap items-end justify-between gap-6 border-b pb-6 ${dark ? "border-off-white/30" : "border-foreground"}`}>
+    <div>
+      <p className={`font-mono text-xs uppercase tracking-widest ${dark ? "text-off-white/50" : "text-muted-foreground"}`}>
+        ({pad(index)}) {eyebrow}
+      </p>
+      <h2 className="section-title mt-3 md:text-6xl">{title}</h2>
     </div>
-  );
-};
-
-const ExternalLink = ({ href }: { href: string }) => (
-  <a
-    href={href}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="underline decoration-white/40 decoration-dashed underline-offset-4 hover:decoration-white"
-  >
-    {shortUrl(href)}
-  </a>
+    {link && (
+      <Link
+        to={link.to}
+        className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest underline-offset-4 hover:text-dutch-orange hover:underline"
+      >
+        {link.label} <ArrowRight size={14} aria-hidden="true" />
+      </Link>
+    )}
+  </div>
 );
-
-// Column count follows the number of figures shown, so no slot is left empty.
-const figureColumns: Record<number, string> = {
-  2: "sm:grid-cols-2",
-  3: "sm:grid-cols-3",
-  4: "sm:grid-cols-2 lg:grid-cols-4",
-};
 
 const Index = () => {
   const { data: featured = [] } = useFeaturedProjects();
+  const { data: allProjects = [] } = useProjects();
   const { data: allPosts = [] } = useBlogPosts();
   const { data: tools = [] } = useTools();
   const { data: skillsData } = useSkills();
   const { data: stats, refetch: refetchStats } = useStats();
   const { isAdmin } = useAdmin();
+  const hero = useRef<HTMLElement>(null);
 
   const projects = featured.slice(0, 4);
+  const featuredIds = new Set(projects.map((p) => p.id));
+  const collection = allProjects.filter((p) => !featuredIds.has(p.id)).slice(0, 6);
   const latestPosts = allPosts.slice(0, 3);
   const skillCategories = skillsData?.skillCategories ?? [];
 
   const [showStatsDialog, setShowStatsDialog] = useState(false);
   const [statsForm, setStatsForm] = useState({ yearsExperience: 0, clientsCount: 0 });
+
+  // The title lines rise once the loading screen has left (immediately on later visits).
+  useLayoutEffect(() => {
+    if (reducedMotion()) return;
+    let cancelled = false;
+    const ctx = gsap.context(() => {
+      gsap.set(".hero-line", { yPercent: 110 });
+      gsap.set(".hero-fade", { autoAlpha: 0, y: 24 });
+    }, hero);
+    introDone.then(() => {
+      if (cancelled) return;
+      ctx.add(() => {
+        gsap
+          .timeline()
+          .to(".hero-line", { yPercent: 0, stagger: 0.12, duration: 1.1, ease: "power4.out" })
+          .to(".hero-fade", { autoAlpha: 1, y: 0, stagger: 0.08, duration: 0.8, ease: "power3.out" }, "-=0.6");
+      });
+    });
+    return () => {
+      cancelled = true;
+      ctx.revert();
+    };
+  }, []);
 
   const openEditStats = () => {
     setStatsForm({
@@ -168,86 +108,82 @@ const Index = () => {
     }
   };
 
-  const plural = (n: number, one: string, many: string) => `${n} ${n > 1 ? many : one}`;
+  const plural = (n: number, one: string, many: string) => (n > 1 ? many : one);
 
   // A figure still at zero is left out rather than shown as "0".
-  const figures: { icon: LucideIcon; title: string; text: string; to: string; count: number }[] = stats
+  const figures = stats
     ? [
-        {
-          icon: FolderGit2,
-          count: stats.projectsCount,
-          title: plural(stats.projectsCount, "projet réalisé", "projets réalisés"),
-          text: "Data science, IA et applications web.",
-          to: "/projets",
-        },
-        {
-          icon: PenLine,
-          count: stats.articlesCount,
-          title: plural(stats.articlesCount, "article publié", "articles publiés"),
-          text: "Notes et tutoriels sur le blog.",
-          to: "/blog",
-        },
-        {
-          icon: Briefcase,
-          count: stats.yearsExperience,
-          title: plural(stats.yearsExperience, "an d'expérience", "ans d'expérience"),
-          text: "Le parcours complet est dans le CV.",
-          to: "/cv",
-        },
-        {
-          icon: Handshake,
-          count: stats.clientsCount,
-          title: plural(stats.clientsCount, "client accompagné", "clients accompagnés"),
-          text: "Parlons de votre projet.",
-          to: "/contact",
-        },
+        { count: stats.projectsCount, label: plural(stats.projectsCount, "Projet réalisé", "Projets réalisés"), to: "/projets" },
+        { count: stats.articlesCount, label: plural(stats.articlesCount, "Article publié", "Articles publiés"), to: "/blog" },
+        { count: stats.yearsExperience, label: plural(stats.yearsExperience, "An d'expérience", "Ans d'expérience"), to: "/cv" },
+        { count: stats.clientsCount, label: plural(stats.clientsCount, "Client accompagné", "Clients accompagnés"), to: "/contact" },
       ].filter((figure) => figure.count > 0)
     : [];
 
+  const marqueeItems = [
+    "Data & AI Engineer",
+    `Stage de fin d'études · ${internship.duration}`,
+    internship.location,
+    "Python · SQL · Kafka · FastAPI",
+    "Machine learning · LLM · RAG",
+    "Ouvert aux missions freelance",
+  ];
+
+  let section = 0;
+  const next = () => ++section;
+
   return (
-    <div className="container mx-auto px-6 pb-32">
+    <>
       {/* Hero */}
-      <section className="flex flex-col gap-10 pb-20 pt-14 md:pt-24 lg:flex-row lg:items-end lg:justify-between">
-        <div className="order-2 lg:order-1">
-          <h1 className="text-2xl font-normal text-foreground">Data &amp; AI Engineer</h1>
-          <p className="mt-5 max-w-[46rem] text-base leading-relaxed text-foreground">
-            Je suis Alfred, étudiant en dernière année. Je construis des pipelines de données et des applications d'IA
-            qui sortent du notebook : de la donnée brute au modèle, puis à l'API et à l'interface qu'une personne utilise
-            vraiment.
-          </p>
-          <p className="mt-4 max-w-[46rem] text-sm leading-relaxed text-muted-foreground">
-            Je cherche un stage de fin d'études de {internship.duration} à partir de {internship.start}, avec une
-            embauche possible ensuite. Ouvert aux missions freelance. {internship.location}.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4">
+      <section ref={hero} className="flex min-h-screen flex-col justify-end px-4 pb-10 pt-28 md:px-8 md:pb-14">
+        <div className="hero-fade mb-6 flex justify-between font-mono text-xs uppercase tracking-widest text-muted-foreground md:mb-10">
+          <span>(Portfolio) Alfred BIAM</span>
+          <span className="hidden sm:inline">Casablanca, Maroc</span>
+        </div>
+        <h1 className="text-[16vw] font-black uppercase leading-[0.82] tracking-tighter md:text-[13vw]">
+          <span className="block overflow-hidden pb-[0.04em]">
+            <span className="hero-line block">Data &amp; AI</span>
+          </span>
+          <span className="block overflow-hidden pb-[0.04em]">
+            <span className="hero-line block text-dutch-orange">Engineer</span>
+          </span>
+        </h1>
+        <div className="mt-10 grid grid-cols-1 gap-8 border-t border-foreground pt-8 md:grid-cols-12 md:items-end md:gap-6">
+          <div className="hero-fade md:col-span-6">
+            <p className="max-w-[46ch] text-lg leading-relaxed md:text-xl">
+              Je suis Alfred, étudiant en dernière année. Je construis des pipelines de données et des applications
+              d'IA qui sortent du notebook : de la donnée brute au modèle, puis à l'API et à l'interface qu'une personne
+              utilise vraiment.
+            </p>
+            <p className="mt-5 font-mono text-xs uppercase leading-relaxed tracking-widest text-muted-foreground">
+              Stage de fin d'études · {internship.duration} · {internship.location}
+            </p>
+          </div>
+          <div className="hero-fade flex flex-wrap gap-3 md:col-span-4 md:col-start-7">
             <Link to="/projets" className="btn-ink">
-              Voir mes projets
+              Voir mes projets <ArrowRight size={14} aria-hidden="true" />
             </Link>
             <Link to="/cv" className="btn-paper">
               Lire mon CV
             </Link>
           </div>
-          <p className="mt-5 text-sm text-foreground">
-            Ou{" "}
-            <Link to="/contact" className="link-plain">
-              écrivez-moi directement
-            </Link>
-            .
-          </p>
-        </div>
-        <div className="panel order-1 w-40 shrink-0 p-1.5 lg:order-2 lg:w-60">
-          <img src={profilePhoto} alt="Portrait d'Alfred BIAM" className="aspect-[4/5] w-full object-cover object-bottom" />
+          <div className="hero-fade group hidden overflow-hidden border border-foreground md:col-span-2 md:block">
+            <img src={profilePhoto} alt="Portrait d'Alfred BIAM" className="img-reveal aspect-[4/5] w-full object-cover object-bottom" />
+          </div>
         </div>
       </section>
 
+      <Marquee label="En bref" items={marqueeItems} />
+
       {/* Outils */}
       {tools.length > 0 && (
-        <section aria-label="Outils du quotidien">
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
+        <section aria-label="Outils du quotidien" className="px-4 pt-20 md:px-8 md:pt-28">
+          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">({pad(next())}) Outils du quotidien</p>
+          <ul data-reveal className="mt-6 grid grid-cols-2 border-l border-t border-foreground sm:grid-cols-4 xl:grid-cols-8">
             {tools.slice(0, 8).map((tool) => (
               <li
                 key={tool.id}
-                className="flex h-20 items-center justify-center gap-2.5 rounded-md bg-secondary px-3 text-sm font-semibold text-foreground"
+                className="flex h-24 items-center justify-center gap-3 border-b border-r border-foreground px-3 font-mono text-xs font-bold uppercase tracking-widest transition-colors hover:bg-dutch-orange"
               >
                 <img src={tool.image} alt="" loading="lazy" className="h-5 w-5 shrink-0 brightness-0" />
                 <span className="truncate">{tool.name}</span>
@@ -257,38 +193,67 @@ const Index = () => {
         </section>
       )}
 
-      {/* Projets */}
+      {/* Projets sélectionnés */}
       {projects.length > 0 && (
-        <section className="mt-24">
-          <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
-            <h2 className={sectionTitle}>Projets sélectionnés</h2>
-            <Link to="/projets" className="link-plain text-sm">
-              Tous les projets
-            </Link>
-          </div>
-          <ProjectShowcase projects={projects} />
+        <section className="px-4 pt-24 md:px-8 md:pt-32">
+          <SectionHead index={next()} eyebrow="En ce moment" title="Projets sélectionnés" link={{ to: "/projets", label: "Tous les projets" }} />
+          {projects.map((project, i) => (
+            <article key={project.id} className="group grid grid-cols-1 gap-8 border-b border-foreground py-12 md:grid-cols-12 md:gap-12 md:py-16">
+              <Link
+                to={`/projet/${project.slug}`}
+                tabIndex={-1}
+                aria-hidden="true"
+                className={`block overflow-hidden border border-foreground md:col-span-7 ${i % 2 ? "md:order-2" : ""}`}
+              >
+                <img src={project.image} alt="" loading="lazy" className="img-reveal aspect-[16/10] w-full object-cover" />
+              </Link>
+              <div data-reveal className="flex flex-col md:col-span-5">
+                <div className="flex justify-between gap-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+                  <span>{pad(i + 1)}</span>
+                  <span>
+                    {categoryLabel(project.category)} · {formatMonth(project.date)}
+                  </span>
+                </div>
+                <h3 className="mt-6 text-3xl font-black uppercase leading-[0.95] tracking-tighter md:text-5xl">
+                  <Link to={`/projet/${project.slug}`} className="transition-colors hover:text-dutch-orange">
+                    {project.title}
+                  </Link>
+                </h3>
+                <p className="mt-5 max-w-[48ch] leading-relaxed text-muted-foreground">{project.shortDescription}</p>
+                <ul className="mt-6 flex flex-wrap gap-2 font-mono text-[11px] uppercase tracking-wider">
+                  {project.techStack.slice(0, 6).map((tech) => (
+                    <li key={tech} className="border border-foreground/30 px-2 py-1">
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
+                <Link to={`/projet/${project.slug}`} className="link-arrow mt-8 self-start">
+                  Voir le projet <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
+            </article>
+          ))}
         </section>
       )}
 
       {/* Chiffres */}
       {(figures.length > 0 || isAdmin) && (
-        <section className="mt-20" aria-label="En chiffres">
-          {isAdmin && (
-            <div className="mb-4 flex justify-end">
-              <button
-                onClick={openEditStats}
-                className="inline-flex h-9 items-center gap-1.5 rounded-md border border-border bg-card px-3 text-sm font-medium hover:border-foreground"
-              >
-                <Pencil size={14} /> Modifier les chiffres
+        <section aria-label="En chiffres" className="px-4 pt-24 md:px-8 md:pt-32">
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">({pad(next())}) En chiffres</p>
+            {isAdmin && (
+              <button onClick={openEditStats} className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest hover:text-dutch-orange">
+                <PencilSimple size={14} aria-hidden="true" /> Modifier les chiffres
               </button>
-            </div>
-          )}
-          <div className={`grid grid-cols-1 gap-5 ${figureColumns[figures.length] ?? ""}`}>
-            {figures.map(({ icon: Icon, title, text, to }) => (
-              <Link key={to} to={to} className="panel block p-5 transition-colors hover:border-foreground">
-                <Icon size={40} strokeWidth={1.25} aria-hidden="true" />
-                <p className="mt-6 text-sm font-semibold text-foreground">{title}</p>
-                <p className="mt-4 text-sm text-foreground">{text}</p>
+            )}
+          </div>
+          <div data-reveal className="mt-6 grid grid-cols-1 border-l border-t border-foreground sm:grid-cols-2 lg:grid-cols-4">
+            {figures.map(({ count, label, to }) => (
+              <Link key={to} to={to} className="group border-b border-r border-foreground p-6 transition-colors hover:bg-deep-black hover:text-off-white md:p-8">
+                <p className="text-7xl font-black tracking-tighter md:text-8xl">{count}</p>
+                <p className="mt-6 flex items-center justify-between font-mono text-xs uppercase tracking-widest">
+                  {label} <ArrowUpRight size={14} aria-hidden="true" className="group-hover:text-dutch-orange" />
+                </p>
               </Link>
             ))}
           </div>
@@ -297,39 +262,60 @@ const Index = () => {
 
       {/* Compétences */}
       {skillCategories.length > 0 && (
-        <section className="mt-32">
-          <h2 className={sectionTitle}>Compétences</h2>
-          <div className="mt-6">
-            <SkillsExplorer categories={skillCategories} moreLink="/competences" />
+        <section className="px-4 pt-24 md:px-8 md:pt-32">
+          <SectionHead index={next()} eyebrow="Savoir-faire" title="Compétences" link={{ to: "/competences", label: "Tout voir" }} />
+          <div data-reveal className="mt-10">
+            <SkillsExplorer categories={skillCategories} />
           </div>
+        </section>
+      )}
+
+      {/* La collection */}
+      {collection.length > 0 && (
+        <section data-dark className="mt-24 bg-deep-black px-4 py-24 text-off-white md:mt-32 md:px-8 md:py-32">
+          <SectionHead
+            index={next()}
+            eyebrow="La collection"
+            title="Autres projets"
+            link={{ to: "/projets", label: `Voir les ${allProjects.length} projets` }}
+            dark
+          />
+          <ul className="mt-12 grid grid-cols-1 gap-px bg-off-white/20 sm:grid-cols-2 lg:grid-cols-3">
+            {collection.map((project) => (
+              <li key={project.id} data-reveal className="bg-deep-black">
+                <Link to={`/projet/${project.slug}`} className="group relative block overflow-hidden">
+                  <img src={project.image} alt="" loading="lazy" className="img-reveal aspect-[4/3] w-full object-cover" />
+                  {/* Caption below the image on touch screens, revealed on hover with a mouse. */}
+                  <div className="bg-dutch-orange p-5 text-deep-black transition-transform duration-500 ease-out md:absolute md:inset-x-0 md:bottom-0 md:translate-y-full md:group-hover:translate-y-0 md:group-focus-visible:translate-y-0">
+                    <p className="font-mono text-[11px] uppercase tracking-widest">{categoryLabel(project.category)}</p>
+                    <p className="mt-2 text-xl font-black uppercase leading-tight tracking-tighter">{project.title}</p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 
       {/* Blog */}
       {latestPosts.length > 0 && (
-        <section className="mt-32">
-          <div className="mb-6 flex flex-wrap items-baseline justify-between gap-4">
-            <h2 className={sectionTitle}>Derniers articles</h2>
-            <Link to="/blog" className="link-plain text-sm">
-              Tous les articles
-            </Link>
-          </div>
-          <ul className="space-y-3">
+        <section className="px-4 pt-24 md:px-8 md:pt-32">
+          <SectionHead index={next()} eyebrow="Journal" title="Derniers articles" link={{ to: "/blog", label: "Tous les articles" }} />
+          <ul>
             {latestPosts.map((post) => (
-              <li key={post.id}>
+              <li key={post.id} data-reveal>
                 <Link
                   to={`/blog/${post.slug}`}
-                  className="grid grid-cols-1 gap-x-8 gap-y-2 border border-border bg-card px-6 py-5 transition-colors hover:border-foreground md:grid-cols-[9rem_minmax(0,1fr)_auto] md:items-baseline"
+                  className="group grid grid-cols-1 gap-x-8 gap-y-2 border-b border-foreground py-7 md:grid-cols-12 md:items-baseline"
                 >
-                  <time dateTime={post.date} className="font-mono text-[13px] text-muted-foreground">
-                    {new Date(post.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
+                  <time dateTime={post.date} className="font-mono text-xs uppercase tracking-widest text-muted-foreground md:col-span-2">
+                    {new Date(post.date).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}
                   </time>
-                  <span>
-                    <span className="block font-semibold text-foreground">{post.title}</span>
-                    <span className="mt-1 block text-sm text-muted-foreground">{post.excerpt}</span>
+                  <span className="text-2xl font-black uppercase leading-tight tracking-tighter transition-colors group-hover:text-dutch-orange md:col-span-7">
+                    {post.title}
                   </span>
-                  <span className="font-mono text-[13px] text-muted-foreground">
-                    {post.category}, {post.readTime}
+                  <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground md:col-span-3 md:text-right">
+                    {post.category} · {post.readTime}
                   </span>
                 </Link>
               </li>
@@ -337,6 +323,56 @@ const Index = () => {
           </ul>
         </section>
       )}
+
+      {/* Me trouver */}
+      <section className="mt-24 bg-dutch-orange px-4 py-20 text-deep-black md:mt-32 md:px-8 md:py-28">
+        <p className="font-mono text-xs uppercase tracking-widest">({pad(next())}) Me trouver</p>
+        <h2 data-reveal className="mt-4 text-[13vw] font-black uppercase leading-[0.85] tracking-tighter md:text-[8vw]">
+          Parlons de
+          <br />
+          votre projet
+        </h2>
+        <dl data-reveal className="mt-14 grid grid-cols-1 gap-10 border-t border-deep-black pt-10 font-mono text-sm uppercase leading-relaxed md:grid-cols-3">
+          <div>
+            <dt className="text-xs tracking-widest opacity-70">Localisation</dt>
+            <dd className="mt-3">
+              Casablanca, Maroc
+              <br />
+              Mobile · télétravail possible
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs tracking-widest opacity-70">Disponibilité</dt>
+            <dd className="mt-3">
+              Stage de fin d'études
+              <br />
+              {internship.duration}
+              <br />
+              Missions freelance
+            </dd>
+          </div>
+          <div>
+            <dt className="text-xs tracking-widest opacity-70">Contact</dt>
+            <dd className="mt-3 flex flex-col items-start gap-1 normal-case">
+              <a href="mailto:fredbiam9@gmail.com" className="underline-offset-4 hover:underline">
+                fredbiam9@gmail.com
+              </a>
+              <a href="https://github.com/mysteriodataweb" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 uppercase underline-offset-4 hover:underline">
+                GitHub <ArrowUpRight size={12} aria-hidden="true" />
+              </a>
+              <a href="https://www.linkedin.com/in/alfredbiam" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 uppercase underline-offset-4 hover:underline">
+                LinkedIn <ArrowUpRight size={12} aria-hidden="true" />
+              </a>
+            </dd>
+          </div>
+        </dl>
+        <Link
+          to="/contact"
+          className="mt-14 inline-flex h-14 items-center gap-3 bg-deep-black px-8 font-mono text-xs font-bold uppercase tracking-widest text-off-white transition-colors hover:bg-off-white hover:text-deep-black"
+        >
+          Écrire un message <ArrowRight size={14} aria-hidden="true" />
+        </Link>
+      </section>
 
       {/* Stats Dialog */}
       <Dialog open={showStatsDialog} onOpenChange={setShowStatsDialog}>
@@ -381,7 +417,7 @@ const Index = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 };
 

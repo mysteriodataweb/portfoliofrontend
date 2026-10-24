@@ -19,7 +19,7 @@ const NotificationsPage = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-3xl font-normal mb-4">Accès non autorisé</h1>
+          <h1 className="display-title mb-4">Accès non autorisé</h1>
           <Link to="/login">
             <Button>Se connecter</Button>
           </Link>
@@ -81,7 +81,7 @@ const NotificationsPage = () => {
         </Link>
 
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-normal text-primary">
+          <h1 className="display-title text-primary">
             Messages reçus
           </h1>
           <button

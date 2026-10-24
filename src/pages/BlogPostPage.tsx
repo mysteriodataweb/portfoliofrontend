@@ -163,7 +163,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
             className="mt-4 w-full rounded-none border border-border bg-white px-4 py-3 font-heading text-3xl md:text-4xl font-bold text-foreground"
           />
         ) : (
-          <h1 className="text-3xl font-normal mt-4 text-foreground">
+          <h1 className="display-title mt-4 text-foreground">
             {post.title}
           </h1>
         )}
@@ -192,7 +192,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
 
       {post.image && (
         <div className="container mx-auto mt-12 px-6">
-          <img src={post.image} alt="" className="aspect-[16/9] md:aspect-[21/9] w-full rounded-none bg-secondary object-cover" />
+          <img src={post.image} alt="" className="aspect-[16/9] w-full border border-foreground bg-secondary object-cover grayscale md:aspect-[21/9]" />
         </div>
       )}
 
@@ -326,7 +326,7 @@ const BlogPostPage = () => {
   if (!post) {
     return (
       <div className="container mx-auto px-6 py-32">
-        <h1 className="text-3xl font-normal text-foreground">Cet article est introuvable.</h1>
+        <h1 className="display-title text-foreground">Cet article est introuvable.</h1>
         <Link to="/blog" className="link-arrow mt-6">
           <ArrowLeft size={16} /> Voir tous les articles
         </Link>

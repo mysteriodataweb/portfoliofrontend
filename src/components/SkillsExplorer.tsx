@@ -30,7 +30,7 @@ const SkillsExplorer = ({ categories, moreLink }: { categories: SkillCategory[];
                   {category.skills.length} {category.skills.length > 1 ? "compétences" : "compétence"}
                 </span>
               </span>
-              {selected && <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-foreground" />}
+              {selected && <span aria-hidden="true" className="h-2 w-2 shrink-0 bg-dutch-orange" />}
             </button>
           );
         })}

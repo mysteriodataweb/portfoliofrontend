@@ -1,75 +1,66 @@
 import { Link } from "react-router-dom";
+import { ArrowUpRight } from "@phosphor-icons/react";
 import { useAdmin } from "@/contexts/AdminContext";
+import { siteLinks } from "@/data/site-links";
 
-type FooterLink = { label: string; to?: string; href?: string; adminOnly?: boolean };
-
-const columns: { title: string; links: FooterLink[] }[] = [
-  {
-    title: "Site",
-    links: [
-      { label: "Projets", to: "/projets" },
-      { label: "Compétences", to: "/competences" },
-      { label: "Engagements", to: "/engagements", adminOnly: true },
-      { label: "Blog", to: "/blog" },
-      { label: "CV", to: "/cv" },
-      { label: "À propos", to: "/about" },
-    ],
-  },
-  {
-    title: "Contact",
-    links: [
-      { label: "Me contacter", to: "/contact" },
-      { label: "Email", href: "mailto:fredbiam9@gmail.com" },
-    ],
-  },
-  {
-    title: "Suivre",
-    links: [
-      { label: "GitHub", href: "https://github.com/mysteriodataweb" },
-      { label: "LinkedIn", href: "https://www.linkedin.com/in/alfredbiam" },
-    ],
-  },
-];
-
-const linkClass = "text-muted-foreground transition-colors hover:text-foreground";
+const linkClass = "transition-colors hover:text-dutch-orange";
 
 const Footer = () => {
   const { isAdmin } = useAdmin();
+  const links = siteLinks.filter((link) => isAdmin || !link.adminOnly);
 
   return (
-    <footer className="border-t border-border bg-secondary/50">
-      <div className="container mx-auto flex flex-col gap-10 px-6 py-10 md:flex-row md:justify-between">
-        <div>
-          <Link to="/" className="text-xl font-semibold tracking-tight text-foreground">
-            Alfred BIAM<span className="text-accent">.</span>
-          </Link>
-          <p className="mt-3 text-sm text-muted-foreground">© {new Date().getFullYear()}</p>
+    <footer data-dark className="overflow-hidden bg-deep-black text-off-white">
+      <div className="px-4 pb-8 pt-16 md:px-8 md:pt-24">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
+          <div className="md:col-span-6">
+            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">(Contact)</p>
+            <a
+              href="mailto:fredbiam9@gmail.com"
+              className="mt-4 inline-block break-all text-2xl font-black uppercase tracking-tighter transition-colors hover:text-dutch-orange md:text-4xl"
+            >
+              fredbiam9@gmail.com
+            </a>
+          </div>
+          <nav aria-label="Pages du site" className="md:col-span-3">
+            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">(Site)</p>
+            <ul className="mt-4 space-y-2 font-mono text-sm uppercase tracking-widest">
+              {links.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className={linkClass}>
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <nav aria-label="Réseaux" className="md:col-span-3">
+            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">(Suivre)</p>
+            <ul className="mt-4 space-y-2 font-mono text-sm uppercase tracking-widest">
+              {[
+                { label: "GitHub", href: "https://github.com/mysteriodataweb" },
+                { label: "LinkedIn", href: "https://www.linkedin.com/in/alfredbiam" },
+              ].map(({ label, href }) => (
+                <li key={label}>
+                  <a href={href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 ${linkClass}`}>
+                    {label} <ArrowUpRight size={12} aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-        <div className="grid grid-cols-2 gap-x-16 gap-y-8 sm:grid-cols-3">
-          {columns.map((column) => (
-            <nav key={column.title} aria-label={column.title}>
-              <h2 className="text-sm font-semibold text-foreground">{column.title}</h2>
-              <ul className="mt-4 space-y-2 text-sm">
-                {column.links.filter((link) => isAdmin || !link.adminOnly).map(({ label, to, href }) => (
-                  <li key={label}>
-                    {to ? (
-                      <Link to={to} className={linkClass}>
-                        {label}
-                      </Link>
-                    ) : (
-                      <a
-                        href={href}
-                        className={linkClass}
-                        {...(href?.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                      >
-                        {label}
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+
+        <p
+          aria-hidden="true"
+          className="mt-16 whitespace-nowrap text-[13.5vw] font-black uppercase leading-[0.8] tracking-tighter md:mt-24"
+        >
+          Alfred Biam<span className="text-dutch-orange">.</span>
+        </p>
+
+        <div className="mt-8 flex flex-col gap-2 border-t border-off-white/15 pt-6 font-mono text-xs uppercase tracking-widest text-off-white/50 sm:flex-row sm:justify-between">
+          <span>© {new Date().getFullYear()} Alfred BIAM</span>
+          <span>Casablanca, Maroc</span>
         </div>
       </div>
     </footer>

@@ -22,6 +22,8 @@ import PublicCVPage from "./pages/PublicCVPage";
 import AdminOnly from "@/components/AdminOnly";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import BackendWakeNotice from "@/components/BackendWakeNotice";
+import Loader from "@/components/Loader";
+import CustomCursor from "@/components/CustomCursor";
 
 const queryClient = new QueryClient();
 
@@ -32,12 +34,14 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BackendWakeNotice />
+        <Loader />
+        <CustomCursor />
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
-            <Route element={<Layout><Index /></Layout>} path="/" />
-            <Route element={<Layout><ProjectsPage /></Layout>} path="/projets" />
-            <Route element={<Layout><ProjectsPage /></Layout>} path="/projets/:category" />
+            <Route element={<Layout fullBleed><Index /></Layout>} path="/" />
+            <Route element={<Layout fullBleed><ProjectsPage /></Layout>} path="/projets" />
+            <Route element={<Layout fullBleed><ProjectsPage /></Layout>} path="/projets/:category" />
             <Route element={<Layout><ProjectDetailPage /></Layout>} path="/projet/:slug" />
             <Route element={<Layout><BlogPage /></Layout>} path="/blog" />
             <Route element={<Layout><BlogPostPage /></Layout>} path="/blog/:slug" />

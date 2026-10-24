@@ -29,7 +29,7 @@ const Chapter = ({ chapter }: { chapter: EngagementChapter }) => {
         >
           <ArrowLeft size={16} /> Tous les engagements
         </Link>
-        <h1 className="text-3xl font-normal mt-8 text-foreground">
+        <h1 className="display-title mt-8 text-foreground">
           {chapter.title}
         </h1>
         <p className="mt-6 max-w-[38ch] text-xl md:text-2xl leading-snug text-muted-foreground">
