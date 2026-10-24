@@ -22,6 +22,14 @@ export interface Project {
   approach: string;
   results: string;
   challenges: string;
+  // English versions, empty until translated (the French text is shown instead).
+  titleEn?: string | null;
+  shortDescriptionEn?: string | null;
+  fullDescriptionEn?: string | null;
+  contextEn?: string | null;
+  approachEn?: string | null;
+  resultsEn?: string | null;
+  challengesEn?: string | null;
 }
 
 export function useProjects(category?: string) {

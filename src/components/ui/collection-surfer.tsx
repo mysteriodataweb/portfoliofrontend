@@ -1,5 +1,6 @@
 "use client";
 import { Pencil, Trash2 } from "lucide-react";
+import { useLanguage } from "@/i18n";
 
 export interface SurferTool {
   id: string;
@@ -69,13 +70,14 @@ export default function CollectionSurfer({
   onEdit,
   onDelete,
 }: CollectionSurferProps) {
+  const { t } = useLanguage();
   if (tools.length === 0) {
     return (
       <div className="flex items-center justify-center border border-dashed border-border rounded-3xl py-16">
         <p className="text-[#6B6B6B] text-sm">
           {isAdmin
             ? "Aucun outil pour le moment. Cliquez sur « Ajouter » pour en créer un."
-            : "Aucun outil pour le moment."}
+            : t.skills.noTools}
         </p>
       </div>
     );
@@ -86,7 +88,7 @@ export default function CollectionSurfer({
   return (
     <div
       className="relative w-full overflow-hidden rounded-3xl border bg-background py-10 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
-      aria-label="Outils"
+      aria-label={t.skills.tools}
     >
       <div className="flex gap-6 w-max animate-marquee hover:[animation-play-state:paused] px-6">
         {track.map((tool, i) => (

@@ -6,6 +6,7 @@ export interface Profile {
   fullName: string;
   title: string;
   bio: string;
+  bioEn?: string | null;
   photo: string;
   email: string;
   github: string;

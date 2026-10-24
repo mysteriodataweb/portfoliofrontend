@@ -9,13 +9,26 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { api } from "@/api/client";
 import { toast } from "sonner";
-import { PROJECT_CATEGORIES, categoryLabel } from "@/data/project-categories";
+import { PROJECT_CATEGORIES } from "@/data/project-categories";
+import { useLanguage } from "@/i18n";
+import { localizeProject } from "@/i18n/content";
 
 const emptyProject = {
   title: "", slug: "", category: "web-app", shortDescription: "", fullDescription: "",
   image: "/placeholder.svg", techStack: "", demoUrl: "", githubUrl: "", date: new Date().toISOString().split("T")[0],
   featured: false, published: true, context: "", approach: "", results: "", challenges: "",
+  titleEn: "", shortDescriptionEn: "", contextEn: "", approachEn: "", resultsEn: "", challengesEn: "",
 };
+
+// English version of the texts, shown to visitors who read the site in English (French when left empty).
+const englishFields = [
+  { key: "titleEn", label: "Titre", multiline: false },
+  { key: "shortDescriptionEn", label: "Description courte", multiline: false },
+  { key: "contextEn", label: "Contexte", multiline: true },
+  { key: "approachEn", label: "Approche", multiline: true },
+  { key: "resultsEn", label: "Résultats", multiline: true },
+  { key: "challengesEn", label: "Défis", multiline: true },
+] as const;
 
 const chipBase = "border px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest transition-colors";
 const chipActive = "border-dutch-orange bg-dutch-orange text-deep-black";
@@ -32,6 +45,8 @@ const ProjectsPage = () => {
   const [saving, setSaving] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const archiveProject = useArchiveProject();
+  const { lang, t } = useLanguage();
+  const categoryLabel = (value: string) => t.categories[value] ?? value;
 
   const filtered =
     activeCategory === "all" ? projects : projects.filter((p) => p.category === activeCategory);
@@ -62,6 +77,7 @@ const ProjectsPage = () => {
       approach: project.approach || "",
       results: project.results || "",
       challenges: project.challenges || "",
+      ...Object.fromEntries(englishFields.map(({ key }) => [key, project[key] || ""])),
     });
     setShowDialog(true);
   };
@@ -101,10 +117,10 @@ const ProjectsPage = () => {
       <div className="flex flex-wrap items-end justify-between gap-6 border-b border-off-white/30 pb-8">
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">
-            (Projets) {projects.length} réalisations
+            {t.projects.eyebrow(projects.length)}
           </p>
           <h1 data-reveal className="mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tighter md:text-8xl">
-            La <span className="text-dutch-orange">collection</span>
+            {t.projects.titleStart} <span className="text-dutch-orange">{t.projects.titleAccent}</span>
           </h1>
         </div>
         {isAdmin && (
@@ -118,13 +134,13 @@ const ProjectsPage = () => {
       </div>
 
       {/* Category filter bar */}
-      <div role="group" aria-label="Filtrer par catégorie" className="mt-8 flex flex-wrap gap-2">
+      <div role="group" aria-label={t.projects.filterLabel} className="mt-8 flex flex-wrap gap-2">
         <button
           onClick={() => setActiveCategory("all")}
           aria-pressed={activeCategory === "all"}
           className={`${chipBase} ${activeCategory === "all" ? chipActive : chipIdle}`}
         >
-          Tout ({projects.length})
+          {t.projects.all} ({projects.length})
         </button>
         {PROJECT_CATEGORIES.map((c) => (
           <button
@@ -133,20 +149,22 @@ const ProjectsPage = () => {
             aria-pressed={activeCategory === c.value}
             className={`${chipBase} ${activeCategory === c.value ? chipActive : chipIdle}`}
           >
-            {c.label} ({countOf(c.value)})
+            {categoryLabel(c.value)} ({countOf(c.value)})
           </button>
         ))}
       </div>
 
       {isLoading && filtered.length === 0 ? (
-        <p className="mt-16 font-mono text-xs uppercase tracking-widest text-off-white/50">Chargement…</p>
+        <p className="mt-16 font-mono text-xs uppercase tracking-widest text-off-white/50">{t.common.loading}</p>
       ) : filtered.length === 0 ? (
         <p className="mt-16 font-mono text-xs uppercase tracking-widest text-off-white/50">
-          {activeCategory === "all" ? "Aucun projet publié pour le moment." : "Aucun projet dans cette catégorie."}
+          {activeCategory === "all" ? t.projects.empty : t.projects.emptyCategory}
         </p>
       ) : (
         <ul className="mt-10 grid grid-cols-1 gap-px border border-off-white/20 bg-off-white/20 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((project, i) => (
+          {filtered.map((original, i) => {
+            const project = localizeProject(original, lang);
+            return (
             <li key={project.id} className="relative bg-deep-black">
               <Link to={`/projet/${project.slug}`} className="group block">
                 <div className="relative overflow-hidden">
@@ -155,7 +173,7 @@ const ProjectsPage = () => {
                   <div className="absolute inset-x-0 bottom-0 hidden translate-y-full bg-dutch-orange p-5 text-deep-black transition-transform duration-500 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 md:block">
                     <p className="line-clamp-3 text-sm leading-relaxed">{project.shortDescription}</p>
                     <p className="mt-3 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest">
-                      Voir le projet <ArrowRight size={14} aria-hidden="true" />
+                      {t.common.viewProject} <ArrowRight size={14} aria-hidden="true" />
                     </p>
                   </div>
                 </div>
@@ -172,7 +190,7 @@ const ProjectsPage = () => {
               {isAdmin && (
                 <div className="absolute right-3 top-3 z-10 flex gap-1">
                   <button
-                    onClick={() => openEdit(project)}
+                    onClick={() => openEdit(original)}
                     aria-label={`Modifier ${project.title}`}
                     className="flex h-9 w-9 items-center justify-center bg-off-white text-deep-black hover:bg-dutch-orange"
                   >
@@ -188,7 +206,8 @@ const ProjectsPage = () => {
                 </div>
               )}
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
 
@@ -224,6 +243,21 @@ const ProjectsPage = () => {
             <div><label className="text-sm font-medium">Approche</label><textarea value={form.approach} onChange={(e) => setForm({ ...form, approach: e.target.value })} className="w-full h-24 px-3 py-2 rounded-md border border-border bg-background text-foreground" /></div>
             <div><label className="text-sm font-medium">Résultats</label><textarea value={form.results} onChange={(e) => setForm({ ...form, results: e.target.value })} className="w-full h-24 px-3 py-2 rounded-md border border-border bg-background text-foreground" /></div>
             <div><label className="text-sm font-medium">Défis</label><textarea value={form.challenges} onChange={(e) => setForm({ ...form, challenges: e.target.value })} className="w-full h-24 px-3 py-2 rounded-md border border-border bg-background text-foreground" /></div>
+
+            <fieldset className="space-y-4 border-t border-border pt-4">
+              <legend className="text-sm font-semibold">Version anglaise</legend>
+              <p className="text-xs text-muted-foreground">Affichée sur la version anglaise du site. Un champ vide affiche le texte français.</p>
+              {englishFields.map(({ key, label, multiline }) => (
+                <div key={key}>
+                  <label htmlFor={`project-${key}`} className="text-sm font-medium">{label} (EN)</label>
+                  {multiline ? (
+                    <textarea id={`project-${key}`} lang="en" value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} className="w-full h-24 px-3 py-2 rounded-md border border-border bg-background text-foreground" />
+                  ) : (
+                    <Input id={`project-${key}`} lang="en" value={form[key]} onChange={(e) => setForm({ ...form, [key]: e.target.value })} />
+                  )}
+                </div>
+              ))}
+            </fieldset>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDialog(false)}>Annuler</Button>

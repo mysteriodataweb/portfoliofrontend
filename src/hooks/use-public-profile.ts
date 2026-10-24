@@ -6,6 +6,8 @@ export interface PublicProfile {
   fullName: string;
   title: string;
   bio: string;
+  /** English biography, empty until translated. */
+  bioEn?: string | null;
   photo: string;
   email: string;
   github: string;

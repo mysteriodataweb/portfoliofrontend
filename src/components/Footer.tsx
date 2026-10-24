@@ -2,11 +2,13 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { useAdmin } from "@/contexts/AdminContext";
 import { siteLinks } from "@/data/site-links";
+import { useLanguage } from "@/i18n";
 
 const linkClass = "transition-colors hover:text-dutch-orange";
 
 const Footer = () => {
   const { isAdmin } = useAdmin();
+  const { t } = useLanguage();
   const links = siteLinks.filter((link) => isAdmin || !link.adminOnly);
 
   return (
@@ -14,7 +16,7 @@ const Footer = () => {
       <div className="px-4 pb-8 pt-16 md:px-8 md:pt-24">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           <div className="md:col-span-6">
-            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">(Contact)</p>
+            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">{t.footer.contact}</p>
             <a
               href="mailto:fredbiam9@gmail.com"
               className="mt-4 inline-block break-all text-2xl font-black uppercase tracking-tighter transition-colors hover:text-dutch-orange md:text-4xl"
@@ -22,20 +24,20 @@ const Footer = () => {
               fredbiam9@gmail.com
             </a>
           </div>
-          <nav aria-label="Pages du site" className="md:col-span-3">
-            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">(Site)</p>
+          <nav aria-label={t.footer.sitePages} className="md:col-span-3">
+            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">{t.footer.site}</p>
             <ul className="mt-4 space-y-2 font-mono text-sm uppercase tracking-widest">
               {links.map((link) => (
                 <li key={link.to}>
                   <Link to={link.to} className={linkClass}>
-                    {link.label}
+                    {t.nav[link.key]}
                   </Link>
                 </li>
               ))}
             </ul>
           </nav>
-          <nav aria-label="Réseaux" className="md:col-span-3">
-            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">(Suivre)</p>
+          <nav aria-label={t.footer.social} className="md:col-span-3">
+            <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">{t.footer.follow}</p>
             <ul className="mt-4 space-y-2 font-mono text-sm uppercase tracking-widest">
               {[
                 { label: "GitHub", href: "https://github.com/mysteriodataweb" },
@@ -60,7 +62,7 @@ const Footer = () => {
 
         <div className="mt-8 flex flex-col gap-2 border-t border-off-white/15 pt-6 font-mono text-xs uppercase tracking-widest text-off-white/50 sm:flex-row sm:justify-between">
           <span>© {new Date().getFullYear()} Alfred BIAM</span>
-          <span>Casablanca, Maroc</span>
+          <span>{t.common.location}</span>
         </div>
       </div>
     </footer>

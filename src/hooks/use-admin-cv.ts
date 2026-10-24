@@ -5,6 +5,7 @@ export interface CVSection {
   id: number;
   sort_order: number;
   title: string;
+  title_en?: string | null;
   type: "experience" | "education" | "skills" | "custom";
   items: CVItem[];
 }
@@ -19,6 +20,11 @@ export interface CVItem {
   date_end: string;
   description: string;
   highlights: string[];
+  // English versions, empty until translated (the French text is shown instead).
+  title_en?: string | null;
+  subtitle_en?: string | null;
+  description_en?: string | null;
+  highlights_en?: string[] | null;
 }
 
 export interface CVData {

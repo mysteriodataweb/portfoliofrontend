@@ -20,11 +20,14 @@ import { api } from "@/api/client";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import SkillsExplorer from "@/components/SkillsExplorer";
+import { useLanguage } from "@/i18n";
+import { localizeCategory } from "@/i18n/content";
 
 const SkillsPage = () => {
   const { data, isLoading, refetch } = useSkills();
   const { data: tools = [], refetch: refetchTools } = useTools();
   const { isAdmin } = useAdmin();
+  const { lang, t } = useLanguage();
 
   // Certification dialog
   const [showCertDialog, setShowCertDialog] = useState(false);
@@ -36,7 +39,7 @@ const SkillsPage = () => {
   const [editingTool, setEditingTool] = useState<any>(null);
   const [toolForm, setToolForm] = useState({ name: "", image: "" });
 
-  const skillCategories = data?.skillCategories || [];
+  const skillCategories = (data?.skillCategories || []).map((c) => localizeCategory(c, lang));
   const certifications = data?.certifications || [];
 
   const openAddCert = () => {
@@ -110,7 +113,7 @@ const SkillsPage = () => {
   };
 
   if (isLoading) {
-    return <div className="py-32 text-center"><p className="text-muted-foreground">Chargement...</p></div>;
+    return <div className="py-32 text-center"><p className="text-muted-foreground">{t.common.loading}</p></div>;
   }
 
   return (
@@ -118,8 +121,8 @@ const SkillsPage = () => {
       <div className="container mx-auto px-6">
         <AnimatedSection>
           <div className="mb-16">
-            <h1 className="display-title text-foreground mb-4">Compétences</h1>
-            <p className="text-lg text-muted-foreground max-w-2xl">Ce que j'utilise au quotidien, du traitement des données à l'interface.</p>
+            <h1 className="display-title text-foreground mb-4">{t.skills.title}</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl">{t.skills.intro}</p>
           </div>
         </AnimatedSection>
 
@@ -127,7 +130,7 @@ const SkillsPage = () => {
         <AnimatedSection>
           <div className="mb-20">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="section-title text-foreground">Par domaine</h2>
+              <h2 className="section-title text-foreground">{t.skills.byDomain}</h2>
             </div>
             <SkillsExplorer categories={skillCategories} />
           </div>
@@ -136,7 +139,7 @@ const SkillsPage = () => {
         {/* Certifications */}
         <AnimatedSection>
           <div className="flex items-center justify-between mb-8">
-            <h2 className="section-title text-foreground">Certifications</h2>
+            <h2 className="section-title text-foreground">{t.skills.certifications}</h2>
             {isAdmin && (
               <button onClick={openAddCert} className="pill-btn-outline text-sm">
                 <Plus className="h-4 w-4 mr-2" /> Ajouter
@@ -167,7 +170,7 @@ const SkillsPage = () => {
                   <p className="text-xs text-muted-foreground mt-1">{cert.org} · {cert.year}</p>
                   {cert.url && (
                     <p className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-foreground">
-                      Voir le certificat <ArrowUpRight size={12} aria-hidden="true" />
+                      {t.skills.seeCertificate} <ArrowUpRight size={12} aria-hidden="true" />
                     </p>
                   )}
                 </div>
@@ -186,7 +189,7 @@ const SkillsPage = () => {
         <AnimatedSection>
           <div className="mb-20">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="section-title text-foreground">Outils</h2>
+              <h2 className="section-title text-foreground">{t.skills.tools}</h2>
               {isAdmin && (
                 <button onClick={openAddTool} className="pill-btn-outline text-sm">
                   <Plus className="h-4 w-4 mr-2" /> Ajouter
@@ -199,7 +202,7 @@ const SkillsPage = () => {
 
         <AnimatedSection className="text-center">
           <Link to="/projets" className="link-arrow">
-            Voir mes projets utilisant ces technologies <ArrowRight size={16} />
+            {t.skills.projectsLink} <ArrowRight size={16} />
           </Link>
         </AnimatedSection>
       </div>

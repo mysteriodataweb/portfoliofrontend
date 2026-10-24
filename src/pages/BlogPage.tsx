@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { api } from "@/api/client";
 import { toast } from "sonner";
+import { pick, useLanguage } from "@/i18n";
 
 const categories = ["Tous", "IA/ML", "Fullstack", "Data Science", "Tutoriels"];
 
@@ -17,6 +18,7 @@ const emptyPost = {
   title: "", slug: "", excerpt: "", category: "Data Science", tags: "",
   image: "/placeholder.svg", date: new Date().toISOString().split("T")[0],
   readTime: "5 min", content: "",
+  titleEn: "", excerptEn: "", contentEn: "",
 };
 
 const BlogPage = () => {
@@ -24,6 +26,7 @@ const BlogPage = () => {
   const [search, setSearch] = useState("");
   const { data: filtered = [], isLoading } = useBlogPosts(activeCategory, search);
   const { isAdmin } = useAdmin();
+  const { lang, t } = useLanguage();
   const [showDialog, setShowDialog] = useState(false);
   const [editingPost, setEditingPost] = useState<any>(null);
   const [form, setForm] = useState<any>(emptyPost);
@@ -49,6 +52,9 @@ const BlogPage = () => {
       date: post.date || "",
       readTime: post.readTime || "5 min",
       content: post.content || "",
+      titleEn: post.titleEn || "",
+      excerptEn: post.excerptEn || "",
+      contentEn: post.contentEn || "",
     });
     setShowDialog(true);
   };
@@ -96,13 +102,13 @@ const BlogPage = () => {
 
   const postMeta = (post: BlogPost) => (
     <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-      <span className="font-medium text-foreground">{post.category}</span>
+      <span className="font-medium text-foreground">{t.blog.categoryNames[post.category] ?? post.category}</span>
       <time dateTime={post.date}>
-        {new Date(post.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+        {new Date(post.date).toLocaleDateString(t.locale, { day: "numeric", month: "long", year: "numeric" })}
       </time>
-      <span>{post.readTime} de lecture</span>
+      <span>{t.blog.readTime(post.readTime)}</span>
       {post.archived && (
-        <span className="rounded-md bg-foreground px-2 py-0.5 text-xs font-semibold text-background">Archivé</span>
+        <span className="rounded-md bg-foreground px-2 py-0.5 text-xs font-semibold text-background">{t.blog.archived}</span>
       )}
     </p>
   );
@@ -140,13 +146,12 @@ const BlogPage = () => {
             )}
           </div>
           <p className="mt-8 max-w-[46ch] text-xl md:text-2xl leading-snug text-muted-foreground">
-            J'écris pour vérifier que j'ai compris. Des notes sur les modèles, les données et le code
-            qui les met en production.
+            {t.blog.intro}
           </p>
         </header>
 
         <div className="mt-14 flex flex-col gap-5 border-b border-foreground/15 pb-5 md:flex-row md:items-center md:justify-between">
-          <div className="flex flex-wrap gap-x-6 gap-y-2" role="group" aria-label="Filtrer par catégorie">
+          <div className="flex flex-wrap gap-x-6 gap-y-2" role="group" aria-label={t.blog.filterLabel}>
             {categories.map((c) => (
               <button
                 key={c}
@@ -158,16 +163,16 @@ const BlogPage = () => {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {c}
+                {t.blog.categoryNames[c] ?? c}
               </button>
             ))}
           </div>
           <label className="relative block md:w-72">
-            <span className="sr-only">Rechercher un article</span>
+            <span className="sr-only">{t.blog.searchLabel}</span>
             <Search size={16} className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               type="search"
-              placeholder="Rechercher"
+              placeholder={t.blog.searchPlaceholder}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full border-b border-foreground/15 bg-transparent py-2 pl-7 text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-foreground"
@@ -177,7 +182,7 @@ const BlogPage = () => {
 
         {isLoading ? (
           <div className="py-10" aria-busy="true">
-            <p className="sr-only">Chargement des articles</p>
+            <p className="sr-only">{t.blog.loadingList}</p>
             {[0, 1, 2].map((i) => (
               <div key={i} className="grid grid-cols-12 gap-8 border-t border-foreground/10 py-8 first:border-t-0">
                 <div className="col-span-8 h-8 animate-pulse rounded bg-foreground/10" />
@@ -187,7 +192,7 @@ const BlogPage = () => {
           </div>
         ) : !featured ? (
           <div className="py-20">
-            <p className="font-heading text-2xl font-semibold text-foreground">Aucun article ne correspond.</p>
+            <p className="font-heading text-2xl font-semibold text-foreground">{t.blog.noMatch}</p>
             {(search || activeCategory !== "Tous") && (
               <button
                 onClick={() => {
@@ -196,7 +201,7 @@ const BlogPage = () => {
                 }}
                 className="link-arrow mt-4"
               >
-                Afficher tous les articles
+                {t.blog.showAll}
               </button>
             )}
           </div>
@@ -221,12 +226,12 @@ const BlogPage = () => {
                 {postMeta(featured)}
                 <h2 className="mt-4 text-3xl font-black uppercase leading-[0.95] tracking-tighter text-foreground">
                   <Link to={`/blog/${featured.slug}`} className="transition-colors hover:text-dutch-orange">
-                    {featured.title}
+                    {pick(lang, featured.title, featured.titleEn)}
                   </Link>
                 </h2>
-                <p className="mt-4 max-w-[44ch] text-lg leading-relaxed text-muted-foreground">{featured.excerpt}</p>
+                <p className="mt-4 max-w-[44ch] text-lg leading-relaxed text-muted-foreground">{pick(lang, featured.excerpt, featured.excerptEn)}</p>
                 <Link to={`/blog/${featured.slug}`} className="link-arrow mt-6 w-fit">
-                  Lire l'article <ArrowRight size={16} />
+                  {t.blog.readArticle} <ArrowRight size={16} />
                 </Link>
                 {adminActions(featured)}
               </div>
@@ -242,10 +247,10 @@ const BlogPage = () => {
                       {postMeta(post)}
                       <h2 className="mt-2 text-2xl font-black uppercase leading-[0.95] tracking-tighter text-foreground">
                         <Link to={`/blog/${post.slug}`} className="transition-colors hover:text-dutch-orange">
-                          {post.title}
+                          {pick(lang, post.title, post.titleEn)}
                         </Link>
                       </h2>
-                      <p className="mt-2 max-w-[60ch] leading-relaxed text-muted-foreground">{post.excerpt}</p>
+                      <p className="mt-2 max-w-[60ch] leading-relaxed text-muted-foreground">{pick(lang, post.excerpt, post.excerptEn)}</p>
                       {adminActions(post)}
                     </div>
                     <Link
@@ -295,6 +300,14 @@ const BlogPage = () => {
             </div>
             <div><label className="text-sm font-medium">Image</label><ImageUpload value={form.image} onChange={(url) => setForm({ ...form, image: url })} /></div>
             <div><label className="text-sm font-medium">Contenu (Markdown supporté)</label><textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} className="w-full h-[300px] px-3 py-2 rounded-md border border-border bg-background text-foreground font-mono text-sm" /></div>
+
+            <fieldset className="space-y-4 border-t border-border pt-4">
+              <legend className="text-sm font-semibold">Version anglaise</legend>
+              <p className="text-xs text-muted-foreground">Affichée sur la version anglaise du site. Sans contenu anglais, l'article s'affiche en français avec une mention.</p>
+              <div><label htmlFor="post-titleEn" className="text-sm font-medium">Titre (EN)</label><Input id="post-titleEn" lang="en" value={form.titleEn} onChange={(e) => setForm({ ...form, titleEn: e.target.value })} /></div>
+              <div><label htmlFor="post-excerptEn" className="text-sm font-medium">Extrait (EN)</label><textarea id="post-excerptEn" lang="en" value={form.excerptEn} onChange={(e) => setForm({ ...form, excerptEn: e.target.value })} className="w-full h-20 px-3 py-2 rounded-md border border-border bg-background text-foreground" /></div>
+              <div><label htmlFor="post-contentEn" className="text-sm font-medium">Contenu (EN, Markdown supporté)</label><textarea id="post-contentEn" lang="en" value={form.contentEn} onChange={(e) => setForm({ ...form, contentEn: e.target.value })} className="w-full h-[300px] px-3 py-2 rounded-md border border-border bg-background text-foreground font-mono text-sm" /></div>
+            </fieldset>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDialog(false)}>Annuler</Button>

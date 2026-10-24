@@ -5,6 +5,8 @@ import { useAdmin } from "@/contexts/AdminContext";
 import { useUnreadCount } from "@/hooks/use-messages";
 import { gsap, reducedMotion } from "@/lib/motion";
 import { siteLinks } from "@/data/site-links";
+import { useLanguage } from "@/i18n";
+import LanguageToggle from "./LanguageToggle";
 
 
 interface SiteMenuProps {
@@ -18,6 +20,7 @@ interface SiteMenuProps {
 const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
   const { pathname } = useLocation();
   const { isAdmin, logout } = useAdmin();
+  const { t } = useLanguage();
   const { data: unreadData } = useUnreadCount(isAdmin);
   const unread = unreadData?.count || 0;
   const root = useRef<HTMLDivElement>(null);
@@ -90,7 +93,7 @@ const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
       id="site-menu"
       role="dialog"
       aria-modal="true"
-      aria-label="Menu"
+      aria-label={t.nav.menu}
       data-dark
       className="invisible fixed inset-0 z-[80] flex flex-col overflow-y-auto bg-deep-black text-off-white"
     >
@@ -102,11 +105,11 @@ const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
           onClick={onClose}
           className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest hover:text-dutch-orange"
         >
-          Fermer <X size={18} weight="bold" aria-hidden="true" />
+          {t.nav.close} <X size={18} weight="bold" aria-hidden="true" />
         </button>
       </div>
 
-      <nav aria-label="Navigation principale" className="flex flex-1 items-center px-4 py-8 md:px-8">
+      <nav aria-label={t.nav.mainNav} className="flex flex-1 items-center px-4 py-8 md:px-8">
         <ul>
           {links.map((link, i) => {
             const active = pathname.startsWith(link.to);
@@ -122,7 +125,7 @@ const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
                   <span className="mt-[0.4em] font-mono text-xs font-normal tracking-widest text-off-white/50 md:text-sm">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  {link.label}
+                  {t.nav[link.key]}
                 </Link>
               </li>
             );
@@ -131,9 +134,12 @@ const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
       </nav>
 
       <div className="menu-meta grid shrink-0 gap-6 border-t border-off-white/15 px-4 py-6 font-mono text-xs uppercase tracking-widest md:grid-cols-3 md:px-8">
-        <a href="mailto:fredbiam9@gmail.com" className="hover:text-dutch-orange">
-          fredbiam9@gmail.com
-        </a>
+        <div className="flex items-center gap-6">
+          <a href="mailto:fredbiam9@gmail.com" className="hover:text-dutch-orange">
+            fredbiam9@gmail.com
+          </a>
+          <LanguageToggle className="hover:text-dutch-orange" />
+        </div>
         <div className="flex gap-6">
           <a href="https://github.com/mysteriodataweb" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-dutch-orange">
             GitHub <ArrowUpRight size={12} aria-hidden="true" />
@@ -145,10 +151,11 @@ const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
         {isAdmin && (
           <div className="flex gap-6 md:justify-end">
             <Link to="/notifications" className="hover:text-dutch-orange">
-              Messages{unread > 0 ? ` (${unread})` : ""}
+              {t.nav.messages}
+              {unread > 0 ? ` (${unread})` : ""}
             </Link>
             <button onClick={logout} className="uppercase hover:text-dutch-orange">
-              Déconnexion
+              {t.nav.logout}
             </button>
           </div>
         )}

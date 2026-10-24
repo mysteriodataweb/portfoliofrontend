@@ -8,6 +8,8 @@ import { useAdmin } from "@/contexts/AdminContext";
 import { api } from "@/api/client";
 import { toast } from "sonner";
 import profilePhoto from "@/assets/profile-photo.jpg";
+import { pick, useLanguage } from "@/i18n";
+import { isFrenchOnly, localizePost } from "@/i18n/content";
 
 const escapeHtml = (text: string) =>
   text
@@ -75,14 +77,17 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
   const [activeId, setActiveId] = useState<string | null>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll();
+  const { lang, t } = useLanguage();
+  // Displayed in the visitor's language; the inline editor works on the French text.
+  const shown = localizePost(post, lang);
 
   const headings = useMemo(
     () =>
-      post.content
+      shown.content
         .split("\n\n")
         .map((block, i) => ({ id: headingId(i), text: block.replace("## ", ""), isHeading: block.startsWith("## ") }))
         .filter((h) => h.isHeading),
-    [post.content],
+    [shown.content],
   );
   const hasSummary = headings.length > 1 && !editing;
 
@@ -98,7 +103,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
     );
     bodyRef.current.querySelectorAll("h2[id]").forEach((h) => observer.observe(h));
     return () => observer.disconnect();
-  }, [hasSummary, post.content]);
+  }, [hasSummary, shown.content]);
 
   const startEdit = () => {
     setForm({ title: post.title, excerpt: post.excerpt || "", content: post.content });
@@ -119,9 +124,9 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast.success("Lien copié");
+      toast.success(t.blog.linkCopied);
     } catch {
-      toast.error("Impossible de copier le lien");
+      toast.error(t.blog.copyFailed);
     }
   };
 
@@ -146,14 +151,14 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
           to="/blog"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft size={16} /> Tous les articles
+          <ArrowLeft size={16} /> {t.blog.allArticles}
         </Link>
         <p className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{post.category}</span>
+          <span className="font-medium text-foreground">{t.blog.categoryNames[post.category] ?? post.category}</span>
           <time dateTime={post.date}>
-            {new Date(post.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+            {new Date(post.date).toLocaleDateString(t.locale, { day: "numeric", month: "long", year: "numeric" })}
           </time>
-          <span>{post.readTime} de lecture</span>
+          <span>{t.blog.readTime(post.readTime)}</span>
         </p>
         {editing ? (
           <input
@@ -164,11 +169,11 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
           />
         ) : (
           <h1 className="display-title mt-4 text-foreground">
-            {post.title}
+            {shown.title}
           </h1>
         )}
-        {!editing && post.excerpt && (
-          <p className="mt-6 max-w-[52ch] text-xl md:text-2xl leading-snug text-muted-foreground">{post.excerpt}</p>
+        {!editing && shown.excerpt && (
+          <p className="mt-6 max-w-[52ch] text-xl md:text-2xl leading-snug text-muted-foreground">{shown.excerpt}</p>
         )}
         {isAdmin && (
           <div className="mt-6 flex gap-2">
@@ -199,8 +204,8 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
       <div className="container mx-auto mt-16 grid grid-cols-1 gap-12 px-6 lg:grid-cols-12">
         {hasSummary && (
           <aside className="hidden lg:col-span-3 lg:block">
-            <nav aria-label="Dans cet article" className="sticky top-28">
-              <p className="font-heading font-semibold text-foreground">Dans cet article</p>
+            <nav aria-label={t.blog.inThisArticle} className="sticky top-28">
+              <p className="font-heading font-semibold text-foreground">{t.blog.inThisArticle}</p>
               <ul className="mt-4 space-y-1 border-l border-foreground/15">
                 {headings.map((h) => (
                   <li key={h.id}>
@@ -236,15 +241,22 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
                 </div>
               </div>
             ) : (
-              <div className="[&>*:first-child]:mt-0">{renderContent(post.content)}</div>
+              <div className="[&>*:first-child]:mt-0">
+                {isFrenchOnly(post, lang) && (
+                  <p lang="en" className="mb-8 border-l-4 border-dutch-orange bg-secondary px-4 py-3 font-mono text-xs uppercase tracking-widest">
+                    {t.blog.frenchOnly}
+                  </p>
+                )}
+                <div lang={isFrenchOnly(post, lang) ? "fr" : undefined}>{renderContent(shown.content)}</div>
+              </div>
             )}
           </div>
 
           <div className="mt-16 max-w-[68ch] border-t border-foreground/15 pt-8">
-            <p className="font-heading font-semibold text-foreground">Partager cet article</p>
+            <p className="font-heading font-semibold text-foreground">{t.blog.share}</p>
             <div className="mt-4 flex flex-wrap gap-3">
               <button onClick={copyLink} className={shareClass}>
-                <Link2 size={16} /> Copier le lien
+                <Link2 size={16} /> {t.blog.copyLink}
               </button>
               <a
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
@@ -255,7 +267,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
                 <Linkedin size={16} /> LinkedIn
               </a>
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${shareUrl}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shown.title)}&url=${shareUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={shareClass}
@@ -272,7 +284,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
               <p className="text-sm text-muted-foreground">
                 Data &amp; AI Engineer.{" "}
                 <Link to="/about" className="text-foreground underline decoration-foreground underline-offset-4 hover:text-foreground">
-                  En savoir plus
+                  {t.blog.learnMore}
                 </Link>
               </p>
             </div>
@@ -281,14 +293,14 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
       </div>
 
       {(prev || next) && (
-        <nav aria-label="Autres articles" className="container mx-auto mt-20 grid grid-cols-1 gap-8 px-6 md:grid-cols-2">
+        <nav aria-label={t.blog.otherArticles} className="container mx-auto mt-20 grid grid-cols-1 gap-8 px-6 md:grid-cols-2">
           {prev ? (
             <Link to={`/blog/${prev.slug}`} className="group border-t border-foreground/15 pt-6">
               <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" /> Article précédent
+                <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" /> {t.blog.previous}
               </span>
               <span className="mt-2 block text-xl font-semibold text-foreground transition-colors group-hover:underline">
-                {prev.title}
+                {pick(lang, prev.title, prev.titleEn)}
               </span>
             </Link>
           ) : (
@@ -297,10 +309,10 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
           {next && (
             <Link to={`/blog/${next.slug}`} className="group border-t border-foreground/15 pt-6 md:text-right">
               <span className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                Article suivant <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                {t.blog.next} <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
               </span>
               <span className="mt-2 block text-xl font-semibold text-foreground transition-colors group-hover:underline">
-                {next.title}
+                {pick(lang, next.title, next.titleEn)}
               </span>
             </Link>
           )}
@@ -314,11 +326,12 @@ const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isLoading } = useBlogPost(slug || "");
   const { data: blogPosts = [] } = useBlogPosts();
+  const { t } = useLanguage();
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-6 py-32" aria-busy="true">
-        <p className="text-muted-foreground">Chargement de l'article…</p>
+        <p className="text-muted-foreground">{t.blog.loadingArticle}</p>
       </div>
     );
   }
@@ -326,9 +339,9 @@ const BlogPostPage = () => {
   if (!post) {
     return (
       <div className="container mx-auto px-6 py-32">
-        <h1 className="display-title text-foreground">Cet article est introuvable.</h1>
+        <h1 className="display-title text-foreground">{t.blog.notFound}</h1>
         <Link to="/blog" className="link-arrow mt-6">
-          <ArrowLeft size={16} /> Voir tous les articles
+          <ArrowLeft size={16} /> {t.blog.seeAll}
         </Link>
       </div>
     );

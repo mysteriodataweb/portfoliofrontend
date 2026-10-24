@@ -9,66 +9,15 @@ import { useUpdateProfile } from "@/hooks/use-admin-profile";
 import { useCVData } from "@/hooks/use-admin-cv";
 import { useStats } from "@/hooks/use-stats";
 import { activitiesSection, engagementChapters } from "@/data/engagements";
-import { internship } from "@/data/availability";
 import { toast } from "sonner";
 import profilePhoto from "@/assets/profile-photo.jpg";
-
-const MANIFESTO =
-  "Un modèle qui reste dans un notebook n'aide personne. Ce qui m'intéresse vient après : l'API, l'interface, et la personne qui s'en sert un lundi matin.";
+import { useLanguage } from "@/i18n";
+import { fr } from "@/i18n/fr";
+import { localizeSection } from "@/i18n/content";
 
 const SEED_BIO =
   "Passionné par la data science et le développement web, je crée des solutions innovantes alliant IA et performance.";
 
-const FALLBACK_BIO = [
-  "Je suis Data & AI Engineer, en dernière année d'études. Concrètement, je construis toute la chaîne : collecter et nettoyer les données, entraîner un modèle ou brancher un LLM, puis livrer l'API et l'interface qui le rendent utilisable par quelqu'un d'autre que moi.",
-  "Ce profil est un choix. Un modèle n'existe vraiment que lorsqu'il tourne en production et qu'une personne s'en sert, alors j'ai appris à construire la suite plutôt que de m'arrêter au notebook.",
-  "Je suis basé à Casablanca, mobile et ouvert au télétravail. Je conçois des outils sobres, qui tiennent avec une connexion moyenne et répondent à un besoin que j'ai pu observer.",
-  `Je cherche un stage de fin d'études de ${internship.duration} à partir de ${internship.start}, avec une embauche possible ensuite, et j'accepte des missions freelance. Le reste du temps, j'écris ce que j'apprends, je participe à des compétitions et j'accompagne des étudiants qui débutent.`,
-];
-
-const motivations = [
-  {
-    title: "Des systèmes qui apprennent",
-    desc: "Entraîner un modèle, comprendre pourquoi il se trompe, recommencer. Je ne m'en lasse pas.",
-  },
-  {
-    title: "Des décisions mieux informées",
-    desc: "Une bonne analyse change une décision. Sinon, ce n'est qu'un joli graphique.",
-  },
-  {
-    title: "Des outils pensés pour ici",
-    desc: "Connexion instable, téléphones modestes, usages réels : je conçois pour le terrain que je connais.",
-  },
-  {
-    title: "Quelqu'un qui s'en sert",
-    desc: "Je juge un projet à ce qu'il change pour la personne qui l'utilise, pas à sa technique.",
-  },
-];
-
-const workflow = [
-  {
-    title: "Comprendre",
-    desc: "Je reformule le problème avec la personne qui le vit. Souvent, le vrai sujet n'est pas celui du brief.",
-  },
-  {
-    title: "Explorer",
-    desc: "Je regarde les données avant de choisir un modèle, et je prototype deux ou trois pistes.",
-  },
-  {
-    title: "Construire",
-    desc: "Une architecture simple, et du code que quelqu'un d'autre pourra reprendre.",
-  },
-  {
-    title: "Tester",
-    desc: "Je mesure, je montre tôt, et j'observe ce que les premiers utilisateurs en font.",
-  },
-  {
-    title: "Améliorer",
-    desc: "Une mise en ligne est un début. J'itère à partir de l'usage réel.",
-  },
-];
-
-const plural = (n: number, one: string, many: string) => (n > 1 ? many : one);
 
 const AboutPage = () => {
   const { isAdmin } = useAdmin();
@@ -76,15 +25,17 @@ const AboutPage = () => {
   const { data: cv } = useCVData();
   const { data: stats } = useStats();
   const updateProfile = useUpdateProfile();
+  const { lang, t } = useLanguage();
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ full_name: "", title: "", bio: "", photo: "" });
+  const [form, setForm] = useState({ full_name: "", title: "", bio: "", bioEn: "", photo: "" });
 
   useEffect(() => {
     if (profile) {
       setForm({
         full_name: profile.fullName || "",
         title: profile.title || "",
-        bio: profile.bio && profile.bio !== SEED_BIO ? profile.bio : FALLBACK_BIO.join("\n\n"),
+        bio: profile.bio && profile.bio !== SEED_BIO ? profile.bio : fr.about.bio.join("\n\n"),
+        bioEn: profile.bioEn || "",
         photo: profile.photo || "",
       });
     }
@@ -96,6 +47,7 @@ const AboutPage = () => {
         fullName: form.full_name,
         title: form.title,
         bio: form.bio,
+        bioEn: form.bioEn,
         photo: form.photo,
       });
       toast.success("Profil mis à jour !");
@@ -106,16 +58,20 @@ const AboutPage = () => {
   };
 
   // The database still holds the one-line bio it was seeded with; until it is edited, show the full text.
+  // In English: the English bio when there is one, otherwise the built-in English text if the French bio
+  // is still the default, otherwise the French bio (better than nothing).
   const hasOwnBio = Boolean(profile?.bio) && profile?.bio !== SEED_BIO;
-  const bioParagraphs = hasOwnBio ? profile!.bio.split(/\n\s*\n/).filter(Boolean) : FALLBACK_BIO;
-  const cvSections = cv?.sections?.filter((s) => s.items?.length > 0) ?? [];
+  const ownBio = lang === "en" ? profile?.bioEn?.trim() || (hasOwnBio ? profile!.bio : "") : hasOwnBio ? profile!.bio : "";
+  const bioParagraphs = ownBio ? ownBio.split(/\n\s*\n/).filter(Boolean) : t.about.bio;
+  const cvSections = (cv?.sections ?? []).map((s) => localizeSection(s, lang)).filter((s) => s.items?.length > 0);
 
+  const labels = t.about.figureLabels;
   const figures = stats
     ? [
-        { value: stats.yearsExperience, label: plural(stats.yearsExperience, "an d'expérience", "ans d'expérience") },
-        { value: stats.projectsCount, label: plural(stats.projectsCount, "projet réalisé", "projets réalisés") },
-        { value: stats.articlesCount, label: plural(stats.articlesCount, "article publié", "articles publiés") },
-        { value: stats.clientsCount, label: plural(stats.clientsCount, "client accompagné", "clients accompagnés") },
+        { value: stats.yearsExperience, label: labels.years(stats.yearsExperience) },
+        { value: stats.projectsCount, label: labels.projects(stats.projectsCount) },
+        { value: stats.articlesCount, label: labels.articles(stats.articlesCount) },
+        { value: stats.clientsCount, label: labels.clients(stats.clientsCount) },
       ].filter((f) => f.value > 0)
     : [];
 
@@ -132,7 +88,7 @@ const AboutPage = () => {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
             <h1 className="display-title text-foreground">
-              Je fais passer la donnée et l'IA du notebook à la production.
+              {t.about.title}
             </h1>
             <p className="mt-8 text-lg text-muted-foreground">
               {profile?.fullName || "Alfred BIAM"}
@@ -179,7 +135,8 @@ const AboutPage = () => {
       {/* Manifeste */}
       <section className="container mx-auto px-6 py-24 md:py-40">
         <ScrollRevealText
-          text={MANIFESTO}
+          key={lang}
+          text={t.about.manifesto}
           className="max-w-[34ch] text-[clamp(1.5rem,3vw,2.5rem)] font-normal leading-[1.25] tracking-tight text-foreground"
         />
       </section>
@@ -187,7 +144,7 @@ const AboutPage = () => {
       {/* Biographie */}
       <section className="container mx-auto grid grid-cols-1 gap-8 px-6 pb-24 md:grid-cols-12">
         <h2 className="section-title text-foreground md:col-span-4">
-          Qui je suis
+          {t.about.whoTitle}
         </h2>
         <div className="md:col-span-8">
           {editing ? (
@@ -199,6 +156,16 @@ const AboutPage = () => {
                 id="bio"
                 value={form.bio}
                 onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                className="h-64 w-full rounded-none border border-border bg-white px-4 py-3 text-foreground"
+              />
+              <label className="text-sm font-medium" htmlFor="bio-en">
+                Biographie en anglais (facultatif ; vide = texte anglais par défaut ou bio française)
+              </label>
+              <textarea
+                id="bio-en"
+                lang="en"
+                value={form.bioEn}
+                onChange={(e) => setForm({ ...form, bioEn: e.target.value })}
                 className="h-64 w-full rounded-none border border-border bg-white px-4 py-3 text-foreground"
               />
               <div className="flex gap-2">
@@ -225,10 +192,10 @@ const AboutPage = () => {
       {/* Ce qui me fait avancer */}
       <section className="container mx-auto px-6 pb-24">
         <h2 className="section-title text-foreground">
-          Ce qui me fait avancer
+          {t.about.motivationsTitle}
         </h2>
         <dl className="mt-10">
-          {motivations.map((m) => (
+          {t.about.motivations.map((m) => (
             <div
               key={m.title}
               className="grid grid-cols-1 gap-2 border-t border-foreground/15 py-7 md:grid-cols-12 md:gap-8"
@@ -246,9 +213,9 @@ const AboutPage = () => {
       {cvSections.length > 0 && (
         <section className="container mx-auto px-6 pb-24">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="section-title text-foreground">Mon parcours</h2>
+            <h2 className="section-title text-foreground">{t.about.pathTitle}</h2>
             <Link to="/cv" className="link-arrow">
-              Voir le CV complet <ArrowRight size={16} />
+              {t.about.fullCv} <ArrowRight size={16} />
             </Link>
           </div>
           {cvSections.map((section) => (
@@ -290,10 +257,10 @@ const AboutPage = () => {
       <section className="bg-foreground text-background">
         <div className="container mx-auto px-6 py-24">
           <h2 className="section-title">
-            Cinq étapes, toujours dans cet ordre.
+            {t.about.methodTitle}
           </h2>
           <ol className="mt-12">
-            {workflow.map((step, i) => (
+            {t.about.workflow.map((step, i) => (
               <li
                 key={step.title}
                 className="grid grid-cols-[3rem_1fr] gap-x-4 gap-y-1 border-t border-background/15 py-6 md:grid-cols-12 md:gap-8"
@@ -329,7 +296,7 @@ const AboutPage = () => {
       {/* Hors du code: links to the Engagements pages, visible to the admin only for now */}
       {isAdmin && (
         <section className="container mx-auto px-6 py-24">
-          <h2 className="section-title text-foreground">Hors du code</h2>
+          <h2 className="section-title text-foreground">{t.about.offCode}</h2>
           <ul className="mt-10">
             {[
               ...engagementChapters.map((c) => ({ ...c, path: `/engagements/${c.slug}` })),
@@ -358,14 +325,14 @@ const AboutPage = () => {
       <section className="container mx-auto px-6 pb-24">
         <div className="flex flex-col gap-8 border-t border-foreground/15 pt-12 md:flex-row md:items-end md:justify-between">
           <p className="max-w-[30ch] text-2xl md:text-3xl font-normal tracking-tight text-foreground">
-            Un projet data, IA ou web en tête ?
+            {t.about.ctaQuestion}
           </p>
           <div className="flex flex-col gap-4 sm:flex-row">
             <Link to="/contact" className="pill-btn">
-              Me contacter
+              {t.common.contactMe}
             </Link>
             <Link to="/projets" className="pill-btn-outline">
-              Voir mes projets
+              {t.common.seeProjects}
             </Link>
           </div>
         </div>

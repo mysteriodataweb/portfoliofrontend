@@ -2,6 +2,8 @@ import { useCVData } from "@/hooks/use-admin-cv";
 import { Download, ExternalLink } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import { track } from "@/lib/analytics";
+import { useLanguage } from "@/i18n";
+import { localizeSection } from "@/i18n/content";
 
 const API_BASE = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL}/api`
@@ -9,11 +11,15 @@ const API_BASE = import.meta.env.VITE_API_URL
 
 export default function PublicCVPage() {
   const { data: cv, isLoading } = useCVData();
+  const { lang, t } = useLanguage();
+  // The API builds the HTML and PDF versions in the requested language.
+  const langQuery = lang === "en" ? "?lang=en" : "";
+  const sections = (cv?.sections ?? []).map((s) => localizeSection(s, lang));
 
   if (isLoading) {
     return (
       <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center text-muted-foreground">Chargement...</div>
+        <div className="max-w-4xl mx-auto text-center text-muted-foreground">{t.common.loading}</div>
       </section>
     );
   }
@@ -24,30 +30,30 @@ export default function PublicCVPage() {
         <AnimatedSection>
           <div className="flex items-center justify-between mb-12">
             <div>
-              <h1 className="display-title mb-2">Mon CV</h1>
-              <p className="text-muted-foreground">Téléchargez mon CV en PDF ou consultez la version HTML.</p>
+              <h1 className="display-title mb-2">{t.cv.title}</h1>
+              <p className="text-muted-foreground">{t.cv.intro}</p>
             </div>
             <div className="flex gap-3">
               <a
-                href={`${API_BASE}/cv/html`}
+                href={`${API_BASE}/cv/html${langQuery}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track("cv", { format: "html" })}
                 className="pill-btn-outline text-sm"
               >
                 <ExternalLink className="h-4 w-4 mr-2" />
-                Voir HTML
+                {t.cv.viewHtml}
               </a>
-              <a href={`${API_BASE}/cv/pdf`} download onClick={() => track("cv", { format: "pdf" })} className="pill-btn text-sm">
+              <a href={`${API_BASE}/cv/pdf${langQuery}`} download onClick={() => track("cv", { format: "pdf" })} className="pill-btn text-sm">
                 <Download className="h-4 w-4 mr-2" />
-                Télécharger le PDF
+                {t.cv.downloadPdf}
               </a>
             </div>
           </div>
         </AnimatedSection>
 
         <div className="space-y-8">
-          {cv?.sections?.map((section, i) => (
+          {sections.map((section, i) => (
             <AnimatedSection key={section.id} delay={i * 0.05}>
               <div className="bg-white border border-border rounded-none p-6">
                 <h2 className="section-title text-foreground mb-6 text-foreground">{section.title}</h2>

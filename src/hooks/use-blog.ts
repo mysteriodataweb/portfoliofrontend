@@ -15,6 +15,10 @@ export interface BlogPost {
   published: boolean;
   archived: boolean;
   archivedAt: string | null;
+  // English versions, empty until translated (the French text is shown instead).
+  titleEn?: string | null;
+  excerptEn?: string | null;
+  contentEn?: string | null;
 }
 
 export function useBlogPosts(category?: string, search?: string) {

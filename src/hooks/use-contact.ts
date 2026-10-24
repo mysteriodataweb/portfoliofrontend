@@ -10,6 +10,8 @@ interface ContactFormData {
   website: string;
   /** How the visitor first found the site, e.g. "LinkedIn, arrivé sur /projets". */
   source?: string;
+  /** Language of the page, so the API answers in it. */
+  lang?: "fr" | "en";
 }
 
 interface ContactResponse {

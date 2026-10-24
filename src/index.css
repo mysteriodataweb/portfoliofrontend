@@ -68,6 +68,9 @@
   /* Page titles: very large, heavy, uppercase. */
   .display-title {
     @apply font-heading text-5xl font-black uppercase leading-[0.9] tracking-tighter text-foreground md:text-7xl;
+    /* A long word ("WaterTracker") would run off a phone screen: it breaks instead, hyphenated in the page language. */
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
 
   /* Section titles inside a page. */

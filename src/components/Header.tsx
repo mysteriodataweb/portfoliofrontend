@@ -3,12 +3,15 @@ import { Link } from "react-router-dom";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useUnreadCount } from "@/hooks/use-messages";
 import SiteMenu from "./SiteMenu";
+import LanguageToggle from "./LanguageToggle";
+import { useLanguage } from "@/i18n";
 
 /** Fixed bar in mix-blend-difference: white on dark sections, black on light ones, without a background. */
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const { isAdmin } = useAdmin();
+  const { t } = useLanguage();
   const { data: unreadData } = useUnreadCount(isAdmin);
   const unread = unreadData?.count || 0;
   const closeMenu = useCallback(() => setMenuOpen(false), []);
@@ -21,6 +24,7 @@ const Header = () => {
             Alfred Biam
           </Link>
           <div className="pointer-events-auto flex items-center gap-4 md:gap-8">
+            <LanguageToggle />
             <button
               ref={menuButton}
               onClick={() => setMenuOpen(true)}
@@ -28,13 +32,14 @@ const Header = () => {
               aria-controls="site-menu"
               className="font-mono text-xs font-bold uppercase tracking-widest underline-offset-4 hover:underline"
             >
-              Menu{isAdmin && unread > 0 ? ` (${unread})` : ""}
+              {t.nav.menu}
+              {isAdmin && unread > 0 ? ` (${unread})` : ""}
             </button>
             <Link
               to="/contact"
               className="border border-off-white px-3 py-2 font-mono text-xs font-bold uppercase tracking-widest transition-colors hover:bg-off-white hover:text-deep-black md:px-5"
             >
-              Me contacter
+              {t.common.contactMe}
             </Link>
           </div>
         </div>

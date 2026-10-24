@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowRight, ArrowUpRight } from "@phosphor-icons/react";
-import { internship } from "@/data/availability";
+import { useLanguage } from "@/i18n";
 import AnimatedSection from "@/components/AnimatedSection";
 import { toast } from "sonner";
 import { useContact } from "@/hooks/use-contact";
@@ -16,20 +16,20 @@ const ContactPage = () => {
     website: "",
   });
   const contactMutation = useContact();
+  const { lang, t } = useLanguage();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const source = getArrival();
-    contactMutation.mutate({ ...form, source }, {
+    // The API answers (errors included) in the language of the page.
+    contactMutation.mutate({ ...form, source, lang }, {
       onSuccess: () => {
         track("contact-envoye", source ? { provenance: source } : undefined);
-        toast.success(
-          "Message envoyé avec succès ! Je vous répondrai rapidement.",
-        );
+        toast.success(t.contact.success);
         setForm({ name: "", email: "", subject: "", message: "", website: "" });
       },
       onError: (error) => {
-        toast.error(error.message || "Erreur lors de l'envoi du message.");
+        toast.error(error.message || t.contact.error);
       },
     });
   };
@@ -38,12 +38,12 @@ const ContactPage = () => {
     <section className="px-4 pb-24 pt-10 md:px-8 md:pb-32 md:pt-16">
       <div>
         <div className="border-b border-foreground pb-10">
-          <p className="eyebrow">(Contact) Une question, un projet, un stage</p>
+          <p className="eyebrow">{t.contact.eyebrow}</p>
           <h1 className="display-title mt-4">
-            Travaillons <span className="text-dutch-orange">ensemble</span>
+            {t.contact.titleStart} <span className="text-dutch-orange">{t.contact.titleAccent}</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
-            Vous avez un projet ? Une question ? Discutons-en.
+            {t.contact.intro}
           </p>
         </div>
 
@@ -57,7 +57,7 @@ const ContactPage = () => {
                     htmlFor="name"
                     className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
                   >
-                    Nom *
+                    {t.contact.name}
                   </label>
                   <input
                     id="name"
@@ -74,7 +74,7 @@ const ContactPage = () => {
                     htmlFor="email"
                     className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
                   >
-                    Email *
+                    {t.contact.email}
                   </label>
                   <input
                     id="email"
@@ -94,7 +94,7 @@ const ContactPage = () => {
                   htmlFor="subject"
                   className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
                 >
-                  Sujet
+                  {t.contact.subject}
                 </label>
                 <input
                   id="subject"
@@ -113,7 +113,7 @@ const ContactPage = () => {
                   htmlFor="message"
                   className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
                 >
-                  Message *
+                  {t.contact.message}
                 </label>
                 <textarea
                   id="message"
@@ -129,7 +129,7 @@ const ContactPage = () => {
               </div>
               {/* Anti-spam trap: hidden from people, only bots fill it in. */}
               <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-                <label htmlFor="website">Site web</label>
+                <label htmlFor="website">{t.contact.honeypot}</label>
                 <input
                   id="website"
                   type="text"
@@ -144,7 +144,7 @@ const ContactPage = () => {
                 disabled={contactMutation.isPending}
                 className="btn-ink disabled:opacity-50"
               >
-                {contactMutation.isPending ? "Envoi en cours..." : "Envoyer le message"}
+                {contactMutation.isPending ? t.contact.sending : t.contact.send}
                 <ArrowRight size={14} aria-hidden="true" />
               </button>
             </form>
@@ -154,7 +154,7 @@ const ContactPage = () => {
           <AnimatedSection className="lg:col-span-2" delay={0.2}>
             <dl className="space-y-8 bg-dutch-orange p-6 font-mono text-sm uppercase leading-relaxed text-deep-black md:p-10">
               <div>
-                <dt className="text-xs tracking-widest opacity-70">Contact direct</dt>
+                <dt className="text-xs tracking-widest opacity-70">{t.contact.direct}</dt>
                 <dd className="mt-3 flex flex-col items-start gap-1">
                   <a href="mailto:fredbiam9@gmail.com" className="normal-case underline-offset-4 hover:underline">
                     fredbiam9@gmail.com
@@ -168,21 +168,23 @@ const ContactPage = () => {
                 </dd>
               </div>
               <div className="border-t border-deep-black pt-8">
-                <dt className="text-xs tracking-widest opacity-70">Disponibilité</dt>
+                <dt className="text-xs tracking-widest opacity-70">{t.contact.availability}</dt>
                 <dd className="mt-3">
-                  Stage de fin d'études, {internship.duration}
-                  <br />
-                  Missions freelance
-                  <br />
-                  Réponse sous 24-48 h
+                  {t.contact.availabilityLines.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
                 </dd>
               </div>
               <div className="border-t border-deep-black pt-8">
-                <dt className="text-xs tracking-widest opacity-70">Localisation</dt>
+                <dt className="text-xs tracking-widest opacity-70">{t.contact.location}</dt>
                 <dd className="mt-3">
-                  Bouskoura, Casablanca
-                  <br />
-                  Maroc · mobile · télétravail possible
+                  {t.contact.locationLines.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
                 </dd>
               </div>
             </dl>

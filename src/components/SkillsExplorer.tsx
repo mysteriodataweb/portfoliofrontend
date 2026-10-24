@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { SkillCategory } from "@/hooks/use-skills";
+import { useLanguage } from "@/i18n";
 
 /** Skill domains on the left, the levels of the selected domain on the right. */
 const SkillsExplorer = ({ categories, moreLink }: { categories: SkillCategory[]; moreLink?: string }) => {
   const [index, setIndex] = useState(0);
+  const { t } = useLanguage();
   const active = categories[Math.min(index, categories.length - 1)];
   if (!active) return null;
 
   return (
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-      <div role="tablist" aria-label="Domaines de compétences" className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
+      <div role="tablist" aria-label={t.skills.domainsLabel} className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
         {categories.map((category, i) => {
           const selected = category.name === active.name;
           return (
@@ -27,7 +29,7 @@ const SkillsExplorer = ({ categories, moreLink }: { categories: SkillCategory[];
               <span>
                 <span className="block font-semibold text-foreground">{category.name}</span>
                 <span className="mt-1 block text-sm text-muted-foreground">
-                  {category.skills.length} {category.skills.length > 1 ? "compétences" : "compétence"}
+                  {t.skills.count(category.skills.length)}
                 </span>
               </span>
               {selected && <span aria-hidden="true" className="h-2 w-2 shrink-0 bg-dutch-orange" />}
@@ -41,12 +43,12 @@ const SkillsExplorer = ({ categories, moreLink }: { categories: SkillCategory[];
           <p className="bg-foreground px-4 py-2.5 font-semibold text-background">{active.name}</p>
           {moreLink && (
             <Link to={moreLink} className="ml-auto border-l border-foreground px-4 py-2.5 text-sm hover:bg-secondary">
-              Tout voir
+              {t.home.seeAll}
             </Link>
           )}
         </div>
         <div className="px-6 py-6 text-[13px] leading-7">
-          <p className="mb-3 text-muted-foreground">// niveau sur 100</p>
+          <p className="mb-3 text-muted-foreground">{t.skills.levelNote}</p>
           <ul>
             {active.skills.map((skill) => (
               <li

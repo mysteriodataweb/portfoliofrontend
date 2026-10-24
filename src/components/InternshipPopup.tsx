@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { internship } from "@/data/availability";
+import { useLanguage } from "@/i18n";
 import { track } from "@/lib/analytics";
 import { introDone } from "@/lib/motion";
 
@@ -31,6 +31,8 @@ const InternshipPopup = () => {
   const [open, setOpen] = useState(false);
   const [remaining, setRemaining] = useState(DURATION);
   const [paused, setPaused] = useState(false);
+  const { t } = useLanguage();
+  const { internship } = t;
 
   useEffect(() => {
     if (pathname.startsWith("/admin") || alreadySeen()) return;
@@ -69,9 +71,9 @@ const InternshipPopup = () => {
         onPointerLeave={() => setPaused(false)}
       >
         <div className="p-6 pr-12">
-          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">(Disponible) {internship.role}</p>
+          <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">{t.popup.available} {internship.role}</p>
           <DialogTitle className="mt-3 text-3xl font-black uppercase leading-[0.95] tracking-tighter text-foreground">
-            Je cherche un stage de <span className="text-dutch-orange">fin d'études</span>
+            {t.popup.titleStart} <span className="text-dutch-orange">{t.popup.titleAccent}</span>
           </DialogTitle>
           <DialogDescription className="mt-3 text-base leading-relaxed text-foreground">
             {internship.duration}. {internship.location}.
@@ -86,7 +88,7 @@ const InternshipPopup = () => {
               }}
               className="btn-ink btn-sm"
             >
-              Voir mon CV
+              {t.popup.seeCv}
             </Link>
             <Link
               to="/contact"
@@ -96,7 +98,7 @@ const InternshipPopup = () => {
               }}
               className="btn-paper btn-sm"
             >
-              Me contacter
+              {t.common.contactMe}
             </Link>
           </div>
         </div>

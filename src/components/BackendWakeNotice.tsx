@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/i18n";
 
 const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : "/api";
 
@@ -19,6 +20,7 @@ const BackendWakeNotice = () => {
   const [state, setState] = useState<State>("checking");
   const [attempt, setAttempt] = useState(0);
   const shown = useRef(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     let cancelled = false;
@@ -71,17 +73,14 @@ const BackendWakeNotice = () => {
         <div className="flex items-start gap-3">
           <Loader2 size={18} className="mt-0.5 shrink-0 animate-spin text-foreground" aria-hidden="true" />
           <div>
-            <p className="text-sm font-medium text-foreground">Chargement des projets et du contenu…</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Le serveur se réveille, cela peut prendre jusqu'à une minute. Merci de patienter, la page se complète
-              toute seule.
-            </p>
+            <p className="text-sm font-medium text-foreground">{t.wake.loading}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t.wake.waking}</p>
           </div>
         </div>
       ) : (
         <div>
-          <p className="text-sm font-medium text-foreground">Le serveur met plus de temps que prévu.</p>
-          <p className="mt-1 text-sm text-muted-foreground">Le contenu n'a pas pu être chargé pour le moment.</p>
+          <p className="text-sm font-medium text-foreground">{t.wake.slow}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t.wake.failed}</p>
           <button
             onClick={() => {
               setState("waking");
@@ -89,7 +88,7 @@ const BackendWakeNotice = () => {
             }}
             className="btn-ink btn-sm mt-3"
           >
-            Réessayer
+            {t.wake.retry}
           </button>
         </div>
       )}

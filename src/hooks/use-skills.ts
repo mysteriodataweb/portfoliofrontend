@@ -9,6 +9,8 @@ export interface Skill {
 
 export interface SkillCategory {
   name: string;
+  /** English name, empty until translated. */
+  nameEn?: string | null;
   icon: string;
   color: string;
   skills: Skill[];
