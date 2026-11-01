@@ -11,7 +11,7 @@ import { useLanguage } from "@/i18n";
 // The facts come with the site, so the page shows at once even while the API wakes up.
 export default function PublicCVPage() {
   const { lang, t } = useLanguage();
-  const { experience, education, skills } = parcours[lang];
+  const { experience, education, skills, languages } = parcours[lang];
   // Certifications are managed from the admin, on the Skills page.
   const { data } = useSkills();
   const certifications = data?.certifications ?? [];
@@ -63,6 +63,18 @@ export default function PublicCVPage() {
                       </span>
                     ))}
                   </dd>
+                </div>
+              ))}
+            </dl>
+          </AnimatedSection>
+
+          <AnimatedSection>
+            <h2 className="section-title">{t.cv.languages}</h2>
+            <dl className="mt-4">
+              {languages.map((language) => (
+                <div key={language.name} className="grid grid-cols-1 gap-1 border-t border-foreground/15 py-4 md:grid-cols-12 md:gap-8">
+                  <dt className="font-semibold text-foreground md:col-span-3">{language.name}</dt>
+                  <dd className="text-muted-foreground md:col-span-9">{language.level}</dd>
                 </div>
               ))}
             </dl>

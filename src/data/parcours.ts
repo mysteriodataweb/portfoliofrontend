@@ -19,11 +19,17 @@ export interface SkillGroup {
   items: string[];
 }
 
+export interface Language {
+  name: string;
+  level: string;
+}
+
 interface Parcours {
   experience: PathEntry[];
   education: PathEntry[];
   /** Only tools used in a project or listed on LinkedIn, without self-rated levels. */
   skills: SkillGroup[];
+  languages: Language[];
 }
 
 export const parcours: Record<Lang, Parcours> = {
@@ -96,6 +102,10 @@ export const parcours: Record<Lang, Parcours> = {
         items: ["FastAPI", "Node.js / Express", "React / Next.js", "Docker", "Git / GitHub Actions"],
       },
     ],
+    languages: [
+      { name: "Français", level: "Langue maternelle" },
+      { name: "Anglais", level: "B2" },
+    ],
   },
   en: {
     experience: [
@@ -165,6 +175,10 @@ export const parcours: Record<Lang, Parcours> = {
         name: "Development & deployment",
         items: ["FastAPI", "Node.js / Express", "React / Next.js", "Docker", "Git / GitHub Actions"],
       },
+    ],
+    languages: [
+      { name: "French", level: "Native" },
+      { name: "English", level: "B2 (upper intermediate)" },
     ],
   },
 };

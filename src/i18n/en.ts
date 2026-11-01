@@ -234,6 +234,7 @@ export const en: Dict = {
     education: "Education",
     skills: "Skills",
     skillsNote: "Only tools I have used in my projects or my studies.",
+    languages: "Languages",
     certifications: "Certifications",
     seeProject: "View the project",
   },

@@ -234,6 +234,7 @@ export const fr = {
     education: "Formation",
     skills: "Compétences",
     skillsNote: "Uniquement des outils utilisés dans mes projets ou ma formation.",
+    languages: "Langues",
     certifications: "Certifications",
     seeProject: "Voir le projet",
   },
