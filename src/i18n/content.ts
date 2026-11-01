@@ -1,7 +1,6 @@
 import type { Project } from "@/hooks/use-projects";
 import type { BlogPost } from "@/hooks/use-blog";
 import type { SkillCategory } from "@/hooks/use-skills";
-import type { CVItem, CVSection } from "@/hooks/use-admin-cv";
 import { pick, type Lang } from "./index";
 
 // Database content in the visitor's language: each French field is replaced by its English
@@ -31,18 +30,4 @@ export const localizePost = (post: BlogPost, lang: Lang): BlogPost => ({
 export const localizeCategory = (c: SkillCategory, lang: Lang): SkillCategory => ({
   ...c,
   name: pick(lang, c.name, c.nameEn),
-});
-
-const localizeItem = (item: CVItem, lang: Lang): CVItem => ({
-  ...item,
-  title: pick(lang, item.title, item.title_en),
-  subtitle: pick(lang, item.subtitle, item.subtitle_en),
-  description: pick(lang, item.description, item.description_en),
-  highlights: lang === "en" && item.highlights_en?.length ? item.highlights_en : item.highlights,
-});
-
-export const localizeSection = (s: CVSection, lang: Lang): CVSection => ({
-  ...s,
-  title: pick(lang, s.title, s.title_en),
-  items: (s.items ?? []).map((item) => localizeItem(item, lang)),
 });

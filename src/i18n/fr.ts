@@ -200,7 +200,7 @@ export const fr = {
       { title: "Quelqu'un qui s'en sert", desc: "Je juge un projet à ce qu'il change pour la personne qui l'utilise, pas à sa technique." },
     ],
     pathTitle: "Mon parcours",
-    fullCv: "Voir le CV complet",
+    fullCv: "Voir le parcours complet",
     methodTitle: "Cinq étapes, toujours dans cet ordre.",
     workflow: [
       { title: "Comprendre", desc: "Je reformule le problème avec la personne qui le vit. Souvent, le vrai sujet n'est pas celui du brief." },
@@ -220,10 +220,22 @@ export const fr = {
   },
 
   cv: {
-    title: "Mon CV",
-    intro: "Téléchargez mon CV en PDF ou consultez la version HTML.",
-    viewHtml: "Voir HTML",
-    downloadPdf: "Télécharger le PDF",
+    eyebrow: "(CV) Parcours",
+    titleStart: "Mon",
+    titleAccent: "parcours",
+    intro:
+      "Boursier de la Fondation Mastercard, en double diplôme à l'École Centrale Casablanca et à l'Institut 2iE : data science, intelligence artificielle et développement logiciel.",
+    requestTitle: "Mon CV, adapté à votre offre",
+    requestText:
+      "Je postule à des postes différents : data science, IA, data engineering, développement. Dites-moi lequel vous concerne, je vous envoie la version de mon CV qui y répond.",
+    request: "Recevoir mon CV",
+    requestSubject: "Demande de CV",
+    experience: "Expérience",
+    education: "Formation",
+    skills: "Compétences",
+    skillsNote: "Uniquement des outils utilisés dans mes projets ou ma formation.",
+    certifications: "Certifications",
+    seeProject: "Voir le projet",
   },
 
   contact: {

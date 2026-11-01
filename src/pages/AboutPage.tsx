@@ -7,14 +7,14 @@ import ScrollRevealText from "@/components/ScrollRevealText";
 import { useAdmin } from "@/contexts/AdminContext";
 import { usePublicProfile } from "@/hooks/use-public-profile";
 import { useUpdateProfile } from "@/hooks/use-admin-profile";
-import { useCVData } from "@/hooks/use-admin-cv";
 import { useStats } from "@/hooks/use-stats";
 import { activitiesSection, engagementChapters } from "@/data/engagements";
 import { toast } from "sonner";
 import profilePhoto from "@/assets/profile-photo.jpg";
 import { useLanguage } from "@/i18n";
 import { fr } from "@/i18n/fr";
-import { localizeSection } from "@/i18n/content";
+import { parcours } from "@/data/parcours";
+import PathTimeline from "@/components/PathTimeline";
 
 const SEED_BIO =
   "Passionné par la data science et le développement web, je crée des solutions innovantes alliant IA et performance.";
@@ -23,7 +23,6 @@ const SEED_BIO =
 const AboutPage = () => {
   const { isAdmin } = useAdmin();
   const { data: profile } = usePublicProfile();
-  const { data: cv } = useCVData();
   const { data: stats } = useStats();
   const updateProfile = useUpdateProfile();
   const { lang, t } = useLanguage();
@@ -64,7 +63,6 @@ const AboutPage = () => {
   const hasOwnBio = Boolean(profile?.bio) && profile?.bio !== SEED_BIO;
   const ownBio = lang === "en" ? profile?.bioEn?.trim() || (hasOwnBio ? profile!.bio : "") : hasOwnBio ? profile!.bio : "";
   const bioParagraphs = ownBio ? ownBio.split(/\n\s*\n/).filter(Boolean) : t.about.bio;
-  const cvSections = (cv?.sections ?? []).map((s) => localizeSection(s, lang)).filter((s) => s.items?.length > 0);
 
   const labels = t.about.figureLabels;
   const figures = stats
@@ -211,48 +209,22 @@ const AboutPage = () => {
       </section>
 
       {/* Parcours */}
-      {cvSections.length > 0 && (
-        <section className="container mx-auto px-6 pb-24">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="section-title text-foreground">{t.about.pathTitle}</h2>
-            <Link to="/cv" className="link-arrow">
-              {t.about.fullCv} <ArrowRight size={16} />
-            </Link>
-          </div>
-          {cvSections.map((section) => (
-            <div key={section.id} className="mt-12">
-              <h3 className="font-heading text-xl font-semibold text-foreground">{section.title}</h3>
-              <ol className="mt-4">
-                {section.items.map((item) => (
-                  <li
-                    key={item.id}
-                    className="grid grid-cols-1 gap-2 border-t border-foreground/15 py-6 md:grid-cols-12 md:gap-8"
-                  >
-                    <p className="text-sm tabular-nums text-muted-foreground md:col-span-3 md:pt-1">
-                      {item.date_start}
-                      {item.date_end ? ` – ${item.date_end}` : ""}
-                    </p>
-                    <div className="md:col-span-9">
-                      <h4 className="font-heading text-xl font-semibold text-foreground">{item.title}</h4>
-                      {item.subtitle && <p className="text-foreground">{item.subtitle}</p>}
-                      {item.description && (
-                        <p className="mt-2 max-w-[64ch] leading-relaxed text-muted-foreground">{item.description}</p>
-                      )}
-                      {item.highlights?.length > 0 && (
-                        <ul className="mt-3 max-w-[64ch] list-disc space-y-1 pl-5 text-muted-foreground marker:text-foreground">
-                          {item.highlights.map((h, j) => (
-                            <li key={j}>{h}</li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          ))}
-        </section>
-      )}
+      <section className="container mx-auto px-6 pb-24">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <h2 className="section-title text-foreground">{t.about.pathTitle}</h2>
+          <Link to="/cv" className="link-arrow">
+            {t.about.fullCv} <ArrowRight size={16} />
+          </Link>
+        </div>
+        <div className="mt-12">
+          <h3 className="font-heading text-xl font-semibold text-foreground">{t.cv.experience}</h3>
+          <PathTimeline entries={parcours[lang].experience} as="h4" />
+        </div>
+        <div className="mt-12">
+          <h3 className="font-heading text-xl font-semibold text-foreground">{t.cv.education}</h3>
+          <PathTimeline entries={parcours[lang].education} as="h4" />
+        </div>
+      </section>
 
       {/* Méthode */}
       <section className="bg-foreground text-background">

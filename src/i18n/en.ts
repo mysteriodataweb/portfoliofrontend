@@ -200,7 +200,7 @@ export const en: Dict = {
       { title: "Someone who uses it", desc: "I judge a project by what it changes for the person using it, not by its technique." },
     ],
     pathTitle: "My path",
-    fullCv: "See the full resume",
+    fullCv: "See the full path",
     methodTitle: "Five steps, always in this order.",
     workflow: [
       { title: "Understand", desc: "I restate the problem with the person who lives it. Often, the real topic isn't the one in the brief." },
@@ -220,10 +220,22 @@ export const en: Dict = {
   },
 
   cv: {
-    title: "My resume",
-    intro: "Download my resume as a PDF or read the HTML version.",
-    viewHtml: "View HTML",
-    downloadPdf: "Download the PDF",
+    eyebrow: "(Resume) Path",
+    titleStart: "My",
+    titleAccent: "path",
+    intro:
+      "Mastercard Foundation Scholar, on a dual degree at École Centrale Casablanca and Institut 2iE: data science, artificial intelligence and software development.",
+    requestTitle: "My resume, tailored to your role",
+    requestText:
+      "I apply for different roles: data science, AI, data engineering, development. Tell me which one you have in mind and I'll send you the version of my resume that fits it.",
+    request: "Get my resume",
+    requestSubject: "Resume request",
+    experience: "Experience",
+    education: "Education",
+    skills: "Skills",
+    skillsNote: "Only tools I have used in my projects or my studies.",
+    certifications: "Certifications",
+    seeProject: "View the project",
   },
 
   contact: {
