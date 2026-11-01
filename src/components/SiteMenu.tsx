@@ -5,8 +5,10 @@ import { useAdmin } from "@/contexts/AdminContext";
 import { useUnreadCount } from "@/hooks/use-messages";
 import { gsap, reducedMotion } from "@/lib/motion";
 import { siteLinks } from "@/data/site-links";
+import { CONTACT_EMAIL } from "@/lib/contact";
 import { useLanguage } from "@/i18n";
 import LanguageToggle from "./LanguageToggle";
+import ContactLink from "./ContactLink";
 
 
 interface SiteMenuProps {
@@ -112,21 +114,30 @@ const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
       <nav aria-label={t.nav.mainNav} className="flex flex-1 items-center px-4 py-8 md:px-8">
         <ul>
           {links.map((link, i) => {
-            const active = pathname.startsWith(link.to);
+            const active = !link.email && pathname.startsWith(link.to);
+            const className = `menu-link group flex items-start gap-3 py-1 text-[11vw] font-black uppercase leading-[0.9] tracking-tighter transition-colors hover:text-dutch-orange focus-visible:text-dutch-orange md:gap-5 md:text-[7vw] lg:text-[6.5vw] ${
+              active ? "text-dutch-orange" : ""
+            }`;
+            const label = (
+              <>
+                <span className="mt-[0.4em] font-mono text-xs font-normal tracking-widest text-off-white/50 md:text-sm">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                {t.nav[link.key]}
+              </>
+            );
             return (
               <li key={link.to} className="overflow-hidden">
-                <Link
-                  to={link.to}
-                  aria-current={active ? "page" : undefined}
-                  className={`menu-link group flex items-start gap-3 py-1 text-[11vw] font-black uppercase leading-[0.9] tracking-tighter transition-colors hover:text-dutch-orange focus-visible:text-dutch-orange md:gap-5 md:text-[7vw] lg:text-[6.5vw] ${
-                    active ? "text-dutch-orange" : ""
-                  }`}
-                >
-                  <span className="mt-[0.4em] font-mono text-xs font-normal tracking-widest text-off-white/50 md:text-sm">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  {t.nav[link.key]}
-                </Link>
+                {link.email ? (
+                  // The page stays the same: the menu closes by itself.
+                  <ContactLink placement="menu" onClick={onClose} className={className}>
+                    {label}
+                  </ContactLink>
+                ) : (
+                  <Link to={link.to} aria-current={active ? "page" : undefined} className={className}>
+                    {label}
+                  </Link>
+                )}
               </li>
             );
           })}
@@ -135,9 +146,9 @@ const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
 
       <div className="menu-meta grid shrink-0 gap-6 border-t border-off-white/15 px-4 py-6 font-mono text-xs uppercase tracking-widest md:grid-cols-3 md:px-8">
         <div className="flex items-center gap-6">
-          <a href="mailto:fredbiam9@gmail.com" className="hover:text-dutch-orange">
-            fredbiam9@gmail.com
-          </a>
+          <ContactLink placement="menu-adresse" onClick={onClose} className="hover:text-dutch-orange">
+            {CONTACT_EMAIL}
+          </ContactLink>
           <LanguageToggle className="hover:text-dutch-orange" />
         </div>
         <div className="flex gap-6">

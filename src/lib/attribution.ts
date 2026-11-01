@@ -1,5 +1,5 @@
-// Where a visitor first came from. Kept in their own browser and only sent along with the contact
-// form, so each message in the admin says how its author found the site.
+// Where a visitor first came from. Kept in their own browser and only sent with the statistics of a
+// click on "Contact", so the audience figures say how the people who write found the site.
 const STORAGE_KEY = "first-arrival";
 
 const UTM_NAMES: Record<string, string> = {

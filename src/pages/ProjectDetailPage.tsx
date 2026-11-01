@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Github, ExternalLink, Pencil, Save, X } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import ContactLink from "@/components/ContactLink";
 import { useProject, useAllProjects } from "@/hooks/use-projects";
 import { track } from "@/lib/analytics";
 import { useAdmin } from "@/contexts/AdminContext";
@@ -228,12 +229,13 @@ const ProjectDetailPage = () => {
         <h2 data-reveal className="mt-4 text-5xl font-black uppercase leading-[0.9] tracking-tighter md:text-7xl">
           {t.project.similar}
         </h2>
-        <Link
-          to="/contact"
+        <ContactLink
+          placement="projet"
+          subject={t.contact.mailSubjectProject(project.title)}
           className="mt-10 inline-flex h-14 items-center gap-3 bg-deep-black px-8 font-mono text-xs font-bold uppercase tracking-widest text-off-white transition-colors hover:bg-off-white hover:text-deep-black"
         >
           {t.project.letsTalk} <ArrowRight size={14} aria-hidden="true" />
-        </Link>
+        </ContactLink>
       </section>
     </>
   );

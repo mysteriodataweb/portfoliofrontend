@@ -4,6 +4,8 @@ import { ArrowRight, ArrowUpRight, PencilSimple } from "@phosphor-icons/react";
 import profilePhoto from "@/assets/profile-photo.jpg";
 import SkillsExplorer from "@/components/SkillsExplorer";
 import Marquee from "@/components/Marquee";
+import ContactLink from "@/components/ContactLink";
+import { CONTACT_EMAIL } from "@/lib/contact";
 import { useFeaturedProjects, useProjects } from "@/hooks/use-projects";
 import { useBlogPosts } from "@/hooks/use-blog";
 import { useSkills } from "@/hooks/use-skills";
@@ -347,9 +349,9 @@ const Index = () => {
           <div>
             <dt className="text-xs tracking-widest opacity-70">{t.home.contactLabel}</dt>
             <dd className="mt-3 flex flex-col items-start gap-1 normal-case">
-              <a href="mailto:fredbiam9@gmail.com" className="underline-offset-4 hover:underline">
-                fredbiam9@gmail.com
-              </a>
+              <ContactLink placement="accueil-adresse" className="underline-offset-4 hover:underline">
+                {CONTACT_EMAIL}
+              </ContactLink>
               <a href="https://github.com/mysteriodataweb" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 uppercase underline-offset-4 hover:underline">
                 GitHub <ArrowUpRight size={12} aria-hidden="true" />
               </a>
@@ -359,12 +361,12 @@ const Index = () => {
             </dd>
           </div>
         </dl>
-        <Link
-          to="/contact"
+        <ContactLink
+          placement="accueil"
           className="mt-14 inline-flex h-14 items-center gap-3 bg-deep-black px-8 font-mono text-xs font-bold uppercase tracking-widest text-off-white transition-colors hover:bg-off-white hover:text-deep-black"
         >
           {t.home.writeMessage} <ArrowRight size={14} aria-hidden="true" />
-        </Link>
+        </ContactLink>
       </section>
 
       {/* Stats Dialog */}

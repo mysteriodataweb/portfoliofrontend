@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight, Github, Linkedin, Pencil, Save, Twitter, X } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
+import ContactLink from "@/components/ContactLink";
 import ScrollRevealText from "@/components/ScrollRevealText";
 import { useAdmin } from "@/contexts/AdminContext";
 import { usePublicProfile } from "@/hooks/use-public-profile";
@@ -328,9 +329,9 @@ const AboutPage = () => {
             {t.about.ctaQuestion}
           </p>
           <div className="flex flex-col gap-4 sm:flex-row">
-            <Link to="/contact" className="pill-btn">
+            <ContactLink placement="a-propos" className="pill-btn">
               {t.common.contactMe}
-            </Link>
+            </ContactLink>
             <Link to="/projets" className="pill-btn-outline">
               {t.common.seeProjects}
             </Link>

@@ -3,6 +3,8 @@ import { ArrowUpRight } from "@phosphor-icons/react";
 import { useAdmin } from "@/contexts/AdminContext";
 import { siteLinks } from "@/data/site-links";
 import { useLanguage } from "@/i18n";
+import { CONTACT_EMAIL } from "@/lib/contact";
+import ContactLink from "./ContactLink";
 
 const linkClass = "transition-colors hover:text-dutch-orange";
 
@@ -17,21 +19,27 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           <div className="md:col-span-6">
             <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">{t.footer.contact}</p>
-            <a
-              href="mailto:fredbiam9@gmail.com"
+            <ContactLink
+              placement="pied-de-page"
               className="mt-4 inline-block break-all text-2xl font-black uppercase tracking-tighter transition-colors hover:text-dutch-orange md:text-4xl"
             >
-              fredbiam9@gmail.com
-            </a>
+              {CONTACT_EMAIL}
+            </ContactLink>
           </div>
           <nav aria-label={t.footer.sitePages} className="md:col-span-3">
             <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">{t.footer.site}</p>
             <ul className="mt-4 space-y-2 font-mono text-sm uppercase tracking-widest">
               {links.map((link) => (
                 <li key={link.to}>
-                  <Link to={link.to} className={linkClass}>
-                    {t.nav[link.key]}
-                  </Link>
+                  {link.email ? (
+                    <ContactLink placement="pied-de-page" className={linkClass}>
+                      {t.nav[link.key]}
+                    </ContactLink>
+                  ) : (
+                    <Link to={link.to} className={linkClass}>
+                      {t.nav[link.key]}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

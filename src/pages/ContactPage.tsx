@@ -1,37 +1,21 @@
-import { useState } from "react";
 import { ArrowRight, ArrowUpRight } from "@phosphor-icons/react";
+import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
 import AnimatedSection from "@/components/AnimatedSection";
-import { toast } from "sonner";
-import { useContact } from "@/hooks/use-contact";
-import { track } from "@/lib/analytics";
-import { getArrival } from "@/lib/attribution";
+import ContactLink from "@/components/ContactLink";
+import { CONTACT_EMAIL } from "@/lib/contact";
 
+// No form: visitors write from their own mailbox. The page stays for links already shared to /contact.
 const ContactPage = () => {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-    website: "",
-  });
-  const contactMutation = useContact();
-  const { lang, t } = useLanguage();
+  const { t } = useLanguage();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const source = getArrival();
-    // The API answers (errors included) in the language of the page.
-    contactMutation.mutate({ ...form, source, lang }, {
-      onSuccess: () => {
-        track("contact-envoye", source ? { provenance: source } : undefined);
-        toast.success(t.contact.success);
-        setForm({ name: "", email: "", subject: "", message: "", website: "" });
-      },
-      onError: (error) => {
-        toast.error(error.message || t.contact.error);
-      },
-    });
+  const copyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT_EMAIL);
+      toast.success(t.contact.copied);
+    } catch {
+      toast.error(t.contact.copyFailed);
+    }
   };
 
   return (
@@ -48,117 +32,29 @@ const ContactPage = () => {
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-5 lg:gap-16">
-          {/* Form */}
           <AnimatedSection className="lg:col-span-3">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
-                  >
-                    {t.contact.name}
-                  </label>
-                  <input
-                    id="name"
-                    type="text"
-                    required
-                    maxLength={100}
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="field"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
-                  >
-                    {t.contact.email}
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    required
-                    maxLength={254}
-                    value={form.email}
-                    onChange={(e) =>
-                      setForm({ ...form, email: e.target.value })
-                    }
-                    className="field"
-                  />
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor="subject"
-                  className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
-                >
-                  {t.contact.subject}
-                </label>
-                <input
-                  id="subject"
-                  type="text"
-                  required
-                  maxLength={200}
-                  value={form.subject}
-                  onChange={(e) =>
-                    setForm({ ...form, subject: e.target.value })
-                  }
-                  className="field"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="message"
-                  className="mb-2 block font-mono text-xs font-bold uppercase tracking-widest text-foreground"
-                >
-                  {t.contact.message}
-                </label>
-                <textarea
-                  id="message"
-                  required
-                  maxLength={5000}
-                  rows={6}
-                  value={form.message}
-                  onChange={(e) =>
-                    setForm({ ...form, message: e.target.value })
-                  }
-                  className="field !h-auto min-h-40 py-3"
-                />
-              </div>
-              {/* Anti-spam trap: hidden from people, only bots fill it in. */}
-              <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
-                <label htmlFor="website">{t.contact.honeypot}</label>
-                <input
-                  id="website"
-                  type="text"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  value={form.website}
-                  onChange={(e) => setForm({ ...form, website: e.target.value })}
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={contactMutation.isPending}
-                className="btn-ink disabled:opacity-50"
-              >
-                {contactMutation.isPending ? t.contact.sending : t.contact.send}
-                <ArrowRight size={14} aria-hidden="true" />
+            <p className="font-mono text-xs font-bold uppercase tracking-widest text-foreground">{t.contact.addressLabel}</p>
+            <ContactLink
+              placement="page-contact-adresse"
+              className="mt-4 inline-block break-all text-3xl font-black tracking-tighter transition-colors hover:text-dutch-orange md:text-5xl"
+            >
+              {CONTACT_EMAIL}
+            </ContactLink>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <ContactLink placement="page-contact" className="btn-ink">
+                {t.contact.writeEmail} <ArrowRight size={14} aria-hidden="true" />
+              </ContactLink>
+              <button type="button" onClick={copyAddress} className="btn-paper">
+                {t.contact.copy}
               </button>
-            </form>
+            </div>
           </AnimatedSection>
 
-          {/* Info */}
           <AnimatedSection className="lg:col-span-2" delay={0.2}>
             <dl className="space-y-8 bg-dutch-orange p-6 font-mono text-sm uppercase leading-relaxed text-deep-black md:p-10">
               <div>
-                <dt className="text-xs tracking-widest opacity-70">{t.contact.direct}</dt>
+                <dt className="text-xs tracking-widest opacity-70">{t.contact.elsewhere}</dt>
                 <dd className="mt-3 flex flex-col items-start gap-1">
-                  <a href="mailto:fredbiam9@gmail.com" className="normal-case underline-offset-4 hover:underline">
-                    fredbiam9@gmail.com
-                  </a>
                   <a href="https://github.com/mysteriodataweb" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 underline-offset-4 hover:underline">
                     github.com/mysteriodataweb <ArrowUpRight size={12} aria-hidden="true" />
                   </a>

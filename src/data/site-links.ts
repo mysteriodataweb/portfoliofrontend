@@ -4,6 +4,8 @@ export interface SiteLink {
   key: "projects" | "skills" | "engagements" | "blog" | "cv" | "about" | "contact";
   to: string;
   adminOnly?: boolean;
+  /** Opens the visitor's email app instead of the page. */
+  email?: boolean;
 }
 
 export const siteLinks: SiteLink[] = [
@@ -13,5 +15,5 @@ export const siteLinks: SiteLink[] = [
   { key: "blog", to: "/blog" },
   { key: "cv", to: "/cv" },
   { key: "about", to: "/about" },
-  { key: "contact", to: "/contact" },
+  { key: "contact", to: "/contact", email: true },
 ];

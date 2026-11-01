@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { useLanguage } from "@/i18n";
 import { track } from "@/lib/analytics";
 import { introDone } from "@/lib/motion";
+import ContactLink from "./ContactLink";
 
 const DURATION = 10_000;
 const TICK = 100;
@@ -78,7 +79,6 @@ const InternshipPopup = () => {
           <DialogDescription className="mt-3 text-base leading-relaxed text-foreground">
             {internship.duration}. {internship.location}.
           </DialogDescription>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{internship.experience}</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               to="/cv"
@@ -90,8 +90,9 @@ const InternshipPopup = () => {
             >
               {t.popup.seeCv}
             </Link>
-            <Link
-              to="/contact"
+            <ContactLink
+              placement="pop-up"
+              subject={t.contact.mailSubjectInternship}
               onClick={() => {
                 track("popup-stage", { action: "contact" });
                 setOpen(false);
@@ -99,7 +100,7 @@ const InternshipPopup = () => {
               className="btn-paper btn-sm"
             >
               {t.common.contactMe}
-            </Link>
+            </ContactLink>
           </div>
         </div>
         <div aria-hidden="true" className="h-1 bg-secondary">

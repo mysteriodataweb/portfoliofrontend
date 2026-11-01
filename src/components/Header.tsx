@@ -4,6 +4,7 @@ import { useAdmin } from "@/contexts/AdminContext";
 import { useUnreadCount } from "@/hooks/use-messages";
 import SiteMenu from "./SiteMenu";
 import LanguageToggle from "./LanguageToggle";
+import ContactLink from "./ContactLink";
 import { useLanguage } from "@/i18n";
 
 /** Fixed bar in mix-blend-difference: white on dark sections, black on light ones, without a background. */
@@ -35,12 +36,12 @@ const Header = () => {
               {t.nav.menu}
               {isAdmin && unread > 0 ? ` (${unread})` : ""}
             </button>
-            <Link
-              to="/contact"
+            <ContactLink
+              placement="en-tete"
               className="border border-off-white px-3 py-2 font-mono text-xs font-bold uppercase tracking-widest transition-colors hover:bg-off-white hover:text-deep-black md:px-5"
             >
               {t.common.contactMe}
-            </Link>
+            </ContactLink>
           </div>
         </div>
       </header>
