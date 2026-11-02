@@ -265,7 +265,7 @@ const Index = () => {
 
       {/* La collection */}
       {collection.length > 0 && (
-        <section data-dark className="mt-24 bg-deep-black px-4 py-24 text-off-white md:mt-32 md:px-8 md:py-32">
+        <section className="mt-24 bg-deep-black px-4 py-24 text-off-white md:mt-32 md:px-8 md:py-32">
           <SectionHead
             index={next()}
             eyebrow={t.home.collectionEyebrow}

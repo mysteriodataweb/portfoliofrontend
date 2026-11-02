@@ -113,7 +113,7 @@ const ProjectsPage = () => {
   };
 
   return (
-    <section data-dark className="min-h-screen bg-deep-black px-4 pb-24 pt-28 text-off-white md:px-8 md:pb-32 md:pt-36">
+    <section className="min-h-screen bg-deep-black px-4 pb-24 pt-28 text-off-white md:px-8 md:pb-32 md:pt-36">
       <div className="flex flex-wrap items-end justify-between gap-6 border-b border-off-white/30 pb-8">
         <div>
           <p className="font-mono text-xs uppercase tracking-widest text-off-white/50">

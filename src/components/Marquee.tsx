@@ -5,7 +5,7 @@ interface MarqueeProps {
 
 /** Black ticker tape. The list is written twice so the loop is seamless; the copy is hidden from screen readers. */
 const Marquee = ({ items, label }: MarqueeProps) => (
-  <section data-dark aria-label={label} className="overflow-hidden bg-deep-black py-4 text-off-white md:py-5">
+  <section aria-label={label} className="overflow-hidden bg-deep-black py-4 text-off-white md:py-5">
     <div className="flex w-max animate-marquee-fast hover:[animation-play-state:paused]">
       {[0, 1].map((copy) => (
         <ul key={copy} aria-hidden={copy === 1} className="flex shrink-0 items-center">

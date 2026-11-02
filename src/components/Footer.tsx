@@ -14,7 +14,7 @@ const Footer = () => {
   const links = siteLinks.filter((link) => isAdmin || !link.adminOnly);
 
   return (
-    <footer data-dark className="overflow-hidden bg-deep-black text-off-white">
+    <footer className="overflow-hidden bg-deep-black text-off-white">
       <div className="px-4 pb-8 pt-16 md:px-8 md:pt-24">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           <div className="md:col-span-6">

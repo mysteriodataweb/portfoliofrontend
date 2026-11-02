@@ -202,34 +202,6 @@ code {
   outline-offset: 2px;
 }
 
-/* Custom cursor: the native one is hidden only while the custom one runs (fine pointer, motion allowed).
-   Text fields keep their caret cursor. */
-html.has-custom-cursor,
-html.has-custom-cursor * {
-  cursor: none !important;
-}
-
-html.has-custom-cursor input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]),
-html.has-custom-cursor textarea,
-html.has-custom-cursor [contenteditable="true"] {
-  cursor: text !important;
-}
-
-/* The ring is moved with transform by GSAP; size and colour use separate properties so they don't clash. */
-.cursor-ring {
-  transition: scale 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, opacity 0.2s ease;
-}
-
-.cursor-ring.is-dark {
-  border-color: #F4F4F0;
-}
-
-.cursor-ring.is-hover {
-  scale: 1.8;
-  border-color: #FF4800;
-  background-color: rgba(255, 72, 0, 0.08);
-}
-
 /* ===== Nav Star Link ===== */
 .nav-star-btn {
   position: relative;

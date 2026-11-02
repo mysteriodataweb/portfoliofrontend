@@ -96,7 +96,6 @@ const SiteMenu = ({ open, onClose, returnFocus }: SiteMenuProps) => {
       role="dialog"
       aria-modal="true"
       aria-label={t.nav.menu}
-      data-dark
       className="invisible fixed inset-0 z-[80] flex flex-col overflow-y-auto bg-deep-black text-off-white"
     >
       <div className="flex h-16 shrink-0 items-center justify-between px-4 md:h-20 md:px-8">

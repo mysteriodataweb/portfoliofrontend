@@ -86,7 +86,6 @@ const Loader = () => {
   return (
     <div
       ref={root}
-      data-dark
       aria-hidden="true"
       className="fixed inset-0 z-[100] flex flex-col justify-between bg-deep-black p-5 text-off-white md:p-10"
     >

@@ -24,7 +24,6 @@ import AdminOnly from "@/components/AdminOnly";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import BackendWakeNotice from "@/components/BackendWakeNotice";
 import Loader from "@/components/Loader";
-import CustomCursor from "@/components/CustomCursor";
 
 const queryClient = new QueryClient();
 
@@ -37,7 +36,6 @@ const App = () => (
         <Sonner />
         <BackendWakeNotice />
         <Loader />
-        <CustomCursor />
         <BrowserRouter>
           <Routes>
             {/* Public routes */}
