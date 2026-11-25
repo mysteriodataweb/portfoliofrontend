@@ -197,7 +197,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
 
       {post.image && (
         <div className="container mx-auto mt-12 px-6">
-          <img src={post.image} alt="" className="aspect-[16/9] w-full border border-foreground bg-secondary object-cover grayscale md:aspect-[21/9]" />
+          <img src={post.image} alt="" className="aspect-[16/9] w-full border border-foreground bg-secondary object-cover md:aspect-[21/9]" />
         </div>
       )}
 

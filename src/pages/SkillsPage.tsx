@@ -20,6 +20,7 @@ import { api } from "@/api/client";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import SkillsExplorer from "@/components/SkillsExplorer";
+import SkillsAdmin from "@/components/SkillsAdmin";
 import { useLanguage } from "@/i18n";
 import { localizeCategory } from "@/i18n/content";
 
@@ -133,6 +134,7 @@ const SkillsPage = () => {
               <h2 className="section-title text-foreground">{t.skills.byDomain}</h2>
             </div>
             <SkillsExplorer categories={skillCategories} />
+            {isAdmin && <SkillsAdmin categories={data?.skillCategories ?? []} onChange={refetch} />}
           </div>
         </AnimatedSection>
 

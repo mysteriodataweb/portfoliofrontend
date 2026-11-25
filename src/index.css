@@ -168,7 +168,7 @@
     @apply grayscale transition-[filter,transform] duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0;
   }
 
-  /* Project images stay in colour: only the slight zoom on hover of its .group. */
+  /* Project and blog images stay in colour: only the slight zoom on hover of its .group. */
   .img-zoom {
     @apply transition-transform duration-700 ease-out group-hover:scale-105;
   }

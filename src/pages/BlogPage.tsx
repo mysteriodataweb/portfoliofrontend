@@ -219,7 +219,7 @@ const BlogPage = () => {
                 <img
                   src={featured.image}
                   alt=""
-                  className="img-reveal aspect-[16/10] w-full object-cover"
+                  className="img-zoom aspect-[16/10] w-full object-cover"
                 />
               </Link>
               <div className="flex flex-col justify-end md:col-span-5">
@@ -263,7 +263,7 @@ const BlogPage = () => {
                         src={post.image}
                         alt=""
                         loading="lazy"
-                        className="img-reveal aspect-[16/9] w-full object-cover"
+                        className="img-zoom aspect-[16/9] w-full object-cover"
                       />
                     </Link>
                   </article>

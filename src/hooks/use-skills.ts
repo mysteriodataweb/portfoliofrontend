@@ -2,17 +2,22 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api/client";
 
 export interface Skill {
+  id: number;
   name: string;
   level: number;
+  categoryId: number;
+  sortOrder: number;
   icon?: string;
 }
 
 export interface SkillCategory {
+  id: number;
   name: string;
   /** English name, empty until translated. */
   nameEn?: string | null;
   icon: string;
   color: string;
+  sortOrder: number;
   skills: Skill[];
 }
 
