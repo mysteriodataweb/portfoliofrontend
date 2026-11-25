@@ -94,7 +94,7 @@ const ProjectDetailPage = () => {
     <>
       {/* Hero */}
       <div className="relative h-[440px] overflow-hidden border-b border-foreground">
-        <img src={project.image} alt={project.title} className="h-full w-full object-cover grayscale" />
+        <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 container mx-auto px-6 pb-8">
           <p className="mb-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">

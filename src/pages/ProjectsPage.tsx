@@ -52,6 +52,7 @@ const ProjectsPage = () => {
     activeCategory === "all" ? projects : projects.filter((p) => p.category === activeCategory);
 
   const countOf = (category: string) => projects.filter((p) => p.category === category).length;
+  const featuredCount = projects.filter((p) => p.featured).length;
 
   const openAdd = () => {
     setEditingProject(null);
@@ -168,7 +169,7 @@ const ProjectsPage = () => {
             <li key={project.id} className="relative bg-deep-black">
               <Link to={`/projet/${project.slug}`} className="group block">
                 <div className="relative overflow-hidden">
-                  <img src={project.image || "/placeholder.svg"} alt="" loading="lazy" className="img-reveal aspect-[4/3] w-full object-cover" />
+                  <img src={project.image || "/placeholder.svg"} alt="" loading="lazy" className="img-zoom aspect-[4/3] w-full object-cover" />
                   {/* Revealed on hover with a mouse; on touch screens the title below is enough. */}
                   <div className="absolute inset-x-0 bottom-0 hidden translate-y-full bg-dutch-orange p-5 text-deep-black transition-transform duration-500 ease-out group-hover:translate-y-0 group-focus-visible:translate-y-0 md:block">
                     <p className="line-clamp-3 text-sm leading-relaxed">{project.shortDescription}</p>
@@ -187,6 +188,11 @@ const ProjectsPage = () => {
                   </div>
                 </div>
               </Link>
+              {isAdmin && project.featured && (
+                <span className="absolute left-3 top-3 z-10 bg-dutch-orange px-2 py-1 font-mono text-[11px] font-bold uppercase tracking-widest text-deep-black">
+                  Accueil
+                </span>
+              )}
               {isAdmin && (
                 <div className="absolute right-3 top-3 z-10 flex gap-1">
                   <button
@@ -231,6 +237,15 @@ const ProjectsPage = () => {
                 </select>
               </div>
               <div><label className="text-sm font-medium">Date</label><Input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
+            </div>
+            <div className="border border-border p-3">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <input type="checkbox" checked={!!form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} className="h-4 w-4 accent-[#FF4800]" />
+                Afficher sur l'accueil
+              </label>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {featuredCount} projet{featuredCount > 1 ? "s" : ""} coché{featuredCount > 1 ? "s" : ""} en ce moment. L'accueil en montre 4 au maximum, les plus récents d'abord.
+              </p>
             </div>
             <div><label className="text-sm font-medium">Description courte</label><Input value={form.shortDescription} onChange={(e) => setForm({ ...form, shortDescription: e.target.value })} /></div>
             <div><label className="text-sm font-medium">Image</label><ImageUpload value={form.image} onChange={(url) => setForm({ ...form, image: url })} /></div>

@@ -198,7 +198,7 @@ const Index = () => {
                 aria-hidden="true"
                 className={`block overflow-hidden border border-foreground md:col-span-7 ${i % 2 ? "md:order-2" : ""}`}
               >
-                <img src={project.image} alt="" loading="lazy" className="img-reveal aspect-[16/10] w-full object-cover" />
+                <img src={project.image} alt="" loading="lazy" className="img-zoom aspect-[16/10] w-full object-cover" />
               </Link>
               <div data-reveal className="flex flex-col md:col-span-5">
                 <div className="flex justify-between gap-4 font-mono text-xs uppercase tracking-widest text-muted-foreground">
@@ -277,7 +277,7 @@ const Index = () => {
             {collection.map((project) => (
               <li key={project.id} data-reveal className="bg-deep-black">
                 <Link to={`/projet/${project.slug}`} className="group relative block overflow-hidden">
-                  <img src={project.image} alt="" loading="lazy" className="img-reveal aspect-[4/3] w-full object-cover" />
+                  <img src={project.image} alt="" loading="lazy" className="img-zoom aspect-[4/3] w-full object-cover" />
                   {/* Caption below the image on touch screens, revealed on hover with a mouse. */}
                   <div className="bg-dutch-orange p-5 text-deep-black transition-transform duration-500 ease-out md:absolute md:inset-x-0 md:bottom-0 md:translate-y-full md:group-hover:translate-y-0 md:group-focus-visible:translate-y-0">
                     <p className="font-mono text-[11px] uppercase tracking-widest">{categoryLabel(project.category)}</p>
