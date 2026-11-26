@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Link2, Linkedin, Twitter, Pencil, Save, X } from "lucide-react";
 import { motion, useScroll } from "framer-motion";
@@ -10,65 +10,11 @@ import { toast } from "sonner";
 import profilePhoto from "@/assets/profile-photo.jpg";
 import { pick, useLanguage } from "@/i18n";
 import { isFrenchOnly, localizePost } from "@/i18n/content";
+import { extractHeadings } from "@/lib/markdown";
+import MarkdownEditor from "@/components/MarkdownEditor";
 
-const escapeHtml = (text: string) =>
-  text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-
-// The text is escaped first, so only the bold and code markup below can produce HTML.
-const inline = (text: string) =>
-  escapeHtml(text)
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground">$1</strong>')
-    .replace(/`(.*?)`/g, "<code>$1</code>");
-
-const headingId = (index: number) => `section-${index}`;
-
-const renderContent = (content: string) =>
-  content.split("\n\n").map((block, i) => {
-    if (block.startsWith("## ")) {
-      return (
-        <h2
-          key={i}
-          id={headingId(i)}
-          className="mt-14 mb-5 scroll-mt-28 text-2xl font-medium tracking-tight text-foreground"
-        >
-          {block.replace("## ", "")}
-        </h2>
-      );
-    }
-    if (block.startsWith("### ")) {
-      return (
-        <h3 key={i} className="mt-10 mb-3 font-heading text-xl font-semibold text-foreground">
-          {block.replace("### ", "")}
-        </h3>
-      );
-    }
-    if (block.startsWith("- ")) {
-      return (
-        <ul key={i} className="mb-6 list-disc space-y-2 pl-6 text-lg leading-[1.7] text-foreground/80 marker:text-foreground">
-          {block.split("\n").filter(Boolean).map((item, j) => (
-            <li key={j} dangerouslySetInnerHTML={{ __html: inline(item.replace(/^- /, "")) }} />
-          ))}
-        </ul>
-      );
-    }
-    if (block.startsWith("1. ")) {
-      return (
-        <ol key={i} className="mb-6 list-decimal space-y-2 pl-6 text-lg leading-[1.7] text-foreground/80 marker:font-semibold marker:text-foreground">
-          {block.split("\n").filter(Boolean).map((item, j) => (
-            <li key={j} dangerouslySetInnerHTML={{ __html: inline(item.replace(/^\d+\. /, "")) }} />
-          ))}
-        </ol>
-      );
-    }
-    return (
-      <p key={i} className="mb-6 text-lg leading-[1.8] text-foreground/80" dangerouslySetInnerHTML={{ __html: inline(block) }} />
-    );
-  });
+// Loaded with the article only: the Markdown and code colouring libraries stay out of the other pages.
+const RichContent = lazy(() => import("@/components/RichContent"));
 
 const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
   const { isAdmin } = useAdmin();
@@ -81,14 +27,7 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
   // Displayed in the visitor's language; the inline editor works on the French text.
   const shown = localizePost(post, lang);
 
-  const headings = useMemo(
-    () =>
-      shown.content
-        .split("\n\n")
-        .map((block, i) => ({ id: headingId(i), text: block.replace("## ", ""), isHeading: block.startsWith("## ") }))
-        .filter((h) => h.isHeading),
-    [shown.content],
-  );
+  const headings = useMemo(() => extractHeadings(shown.content), [shown.content]);
   const hasSummary = headings.length > 1 && !editing;
 
   // Highlight in the summary the section currently being read.
@@ -236,8 +175,8 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
                   <textarea id="excerpt" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="h-20 w-full rounded-none border border-border bg-white px-4 py-3 text-foreground" />
                 </div>
                 <div>
-                  <label htmlFor="content" className="mb-1 block text-sm font-medium text-foreground">Contenu (Markdown supporté)</label>
-                  <textarea id="content" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} className="h-[400px] w-full rounded-none border border-border bg-white px-4 py-3 font-mono text-sm text-foreground" />
+                  <label htmlFor="content" className="mb-1 block text-sm font-medium text-foreground">Contenu</label>
+                  <MarkdownEditor id="content" value={form.content} onChange={(content) => setForm({ ...form, content })} heightClass="h-[400px]" />
                 </div>
               </div>
             ) : (
@@ -247,7 +186,11 @@ const Article = ({ post, posts }: { post: BlogPost; posts: BlogPost[] }) => {
                     {t.blog.frenchOnly}
                   </p>
                 )}
-                <div lang={isFrenchOnly(post, lang) ? "fr" : undefined}>{renderContent(shown.content)}</div>
+                <div lang={isFrenchOnly(post, lang) ? "fr" : undefined}>
+                  <Suspense fallback={<p className="text-muted-foreground">{t.blog.loadingArticle}</p>}>
+                    <RichContent content={shown.content} />
+                  </Suspense>
+                </div>
               </div>
             )}
           </div>

@@ -163,15 +163,120 @@
     @apply underline decoration-foreground/40 underline-offset-4 transition-colors hover:text-dutch-orange hover:decoration-dutch-orange;
   }
 
-  /* Image that goes from grayscale to colour and zooms in slightly on hover of its .group. */
-  .img-reveal {
-    @apply grayscale transition-[filter,transform] duration-700 ease-out group-hover:scale-105 group-hover:grayscale-0;
-  }
-
-  /* Project and blog images stay in colour: only the slight zoom on hover of its .group. */
+  /* Images stay in colour: only a slight zoom on hover of its .group. */
   .img-zoom {
     @apply transition-transform duration-700 ease-out group-hover:scale-105;
   }
+}
+
+/* ===== Rich content: articles and free-form project pages (Markdown) ===== */
+@layer components {
+  .rich-content > :first-child {
+    @apply mt-0;
+  }
+  .rich-content h2 {
+    @apply mb-5 mt-14 scroll-mt-28 text-2xl font-medium tracking-tight text-foreground;
+  }
+  .rich-content h3 {
+    @apply mb-3 mt-10 font-heading text-xl font-semibold text-foreground;
+  }
+  .rich-content h4 {
+    @apply mb-2 mt-8 font-semibold text-foreground;
+  }
+  .rich-content p {
+    @apply mb-6 text-lg leading-[1.8] text-foreground/80;
+  }
+  .rich-content ul,
+  .rich-content ol {
+    @apply mb-6 space-y-2 pl-6 text-lg leading-[1.7] text-foreground/80;
+  }
+  .rich-content ul {
+    @apply list-disc marker:text-foreground;
+  }
+  .rich-content ol {
+    @apply list-decimal marker:font-semibold marker:text-foreground;
+  }
+  .rich-content li > p {
+    @apply mb-2;
+  }
+  .rich-content strong {
+    @apply font-semibold text-foreground;
+  }
+  .rich-content a {
+    @apply text-foreground underline decoration-dutch-orange underline-offset-4 transition-colors hover:text-dutch-orange;
+  }
+  .rich-content :not(pre) > code {
+    @apply bg-secondary px-1.5 py-0.5 font-mono text-[0.85em] text-foreground;
+  }
+  .rich-content blockquote {
+    @apply my-8 border-l-4 border-dutch-orange pl-5 italic;
+  }
+  .rich-content hr {
+    @apply my-12 border-foreground/15;
+  }
+  .rich-figure {
+    @apply my-8 block;
+  }
+  .rich-figure img {
+    @apply block w-full border border-foreground bg-secondary;
+  }
+  .rich-caption {
+    @apply mt-2 block font-mono text-xs text-muted-foreground;
+  }
+  .rich-table {
+    @apply my-8 overflow-x-auto;
+  }
+  .rich-table table {
+    @apply w-full border-collapse text-left text-base;
+  }
+  .rich-table th,
+  .rich-table td {
+    @apply border border-foreground/20 px-3 py-2 align-top;
+  }
+  .rich-table th {
+    @apply bg-secondary font-semibold text-foreground;
+  }
+  .code-block {
+    @apply my-8 overflow-hidden border border-foreground bg-deep-black;
+  }
+  .code-block-bar {
+    @apply flex items-center justify-between border-b border-off-white/10 px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-off-white/60;
+  }
+  .code-block pre {
+    @apply overflow-x-auto p-5 font-mono text-sm leading-relaxed text-off-white;
+  }
+}
+
+/* Code colours, readable on the black of the code blocks. */
+.code-block .hljs-keyword,
+.code-block .hljs-selector-tag,
+.code-block .hljs-built_in,
+.code-block .hljs-type { color: #FF7A45; }
+.code-block .hljs-string,
+.code-block .hljs-regexp,
+.code-block .hljs-addition { color: #8FD9A8; }
+.code-block .hljs-number,
+.code-block .hljs-literal,
+.code-block .hljs-symbol { color: #FFC93C; }
+.code-block .hljs-title,
+.code-block .hljs-section,
+.code-block .hljs-name { color: #8AB4FF; }
+.code-block .hljs-attr,
+.code-block .hljs-attribute,
+.code-block .hljs-property,
+.code-block .hljs-variable { color: #C4B5FD; }
+.code-block .hljs-meta,
+.code-block .hljs-decorator { color: #F0ABFC; }
+.code-block .hljs-comment,
+.code-block .hljs-quote { color: #8A8A85; font-style: italic; }
+.code-block .hljs-deletion { color: #FF8A8A; }
+.code-block .hljs-emphasis { font-style: italic; }
+.code-block .hljs-strong { font-weight: 700; }
+/* The global code style (grey background) is for inline code only. */
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
 }
 
 /* Code blocks styling */

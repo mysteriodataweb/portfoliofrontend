@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Search, Plus, Pencil, Archive, ArchiveRestore } from "lucide-react";
 import ImageUpload from "@/components/ImageUpload";
+import MarkdownEditor from "@/components/MarkdownEditor";
 import { useBlogPosts, useArchiveBlogPost, useUnarchiveBlogPost } from "@/hooks/use-blog";
 import type { BlogPost } from "@/hooks/use-blog";
 import { useAdmin } from "@/contexts/AdminContext";
@@ -299,14 +300,14 @@ const BlogPage = () => {
               <div><label className="text-sm font-medium">Tags (séparés par virgules)</label><Input value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="React, TypeScript, IA" /></div>
             </div>
             <div><label className="text-sm font-medium">Image</label><ImageUpload value={form.image} onChange={(url) => setForm({ ...form, image: url })} /></div>
-            <div><label className="text-sm font-medium">Contenu (Markdown supporté)</label><textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} className="w-full h-[300px] px-3 py-2 rounded-md border border-border bg-background text-foreground font-mono text-sm" /></div>
+            <div><label htmlFor="post-content" className="text-sm font-medium">Contenu</label><MarkdownEditor id="post-content" value={form.content} onChange={(content) => setForm({ ...form, content })} /></div>
 
             <fieldset className="space-y-4 border-t border-border pt-4">
               <legend className="text-sm font-semibold">Version anglaise</legend>
               <p className="text-xs text-muted-foreground">Affichée sur la version anglaise du site. Sans contenu anglais, l'article s'affiche en français avec une mention.</p>
               <div><label htmlFor="post-titleEn" className="text-sm font-medium">Titre (EN)</label><Input id="post-titleEn" lang="en" value={form.titleEn} onChange={(e) => setForm({ ...form, titleEn: e.target.value })} /></div>
               <div><label htmlFor="post-excerptEn" className="text-sm font-medium">Extrait (EN)</label><textarea id="post-excerptEn" lang="en" value={form.excerptEn} onChange={(e) => setForm({ ...form, excerptEn: e.target.value })} className="w-full h-20 px-3 py-2 rounded-md border border-border bg-background text-foreground" /></div>
-              <div><label htmlFor="post-contentEn" className="text-sm font-medium">Contenu (EN, Markdown supporté)</label><textarea id="post-contentEn" lang="en" value={form.contentEn} onChange={(e) => setForm({ ...form, contentEn: e.target.value })} className="w-full h-[300px] px-3 py-2 rounded-md border border-border bg-background text-foreground font-mono text-sm" /></div>
+              <div><label htmlFor="post-contentEn" className="text-sm font-medium">Contenu (EN)</label><MarkdownEditor id="post-contentEn" lang="en" value={form.contentEn} onChange={(contentEn) => setForm({ ...form, contentEn })} /></div>
             </fieldset>
           </div>
           <DialogFooter>

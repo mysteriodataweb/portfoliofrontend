@@ -4,6 +4,7 @@ import { ArrowRight, Plus, PencilSimple, Archive } from "@phosphor-icons/react";
 import { useProjects, useArchiveProject } from "@/hooks/use-projects";
 import { useAdmin } from "@/contexts/AdminContext";
 import ImageUpload from "@/components/ImageUpload";
+import MarkdownEditor from "@/components/MarkdownEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -18,6 +19,7 @@ const emptyProject = {
   image: "/placeholder.svg", techStack: "", demoUrl: "", githubUrl: "", date: new Date().toISOString().split("T")[0],
   featured: false, published: true, context: "", approach: "", results: "", challenges: "",
   titleEn: "", shortDescriptionEn: "", contextEn: "", approachEn: "", resultsEn: "", challengesEn: "",
+  content: "", contentEn: "",
 };
 
 // English version of the texts, shown to visitors who read the site in English (French when left empty).
@@ -79,6 +81,8 @@ const ProjectsPage = () => {
       results: project.results || "",
       challenges: project.challenges || "",
       ...Object.fromEntries(englishFields.map(({ key }) => [key, project[key] || ""])),
+      content: project.content || "",
+      contentEn: project.contentEn || "",
     });
     setShowDialog(true);
   };
@@ -259,6 +263,14 @@ const ProjectsPage = () => {
             <div><label className="text-sm font-medium">Résultats</label><textarea value={form.results} onChange={(e) => setForm({ ...form, results: e.target.value })} className="w-full h-24 px-3 py-2 rounded-md border border-border bg-background text-foreground" /></div>
             <div><label className="text-sm font-medium">Défis</label><textarea value={form.challenges} onChange={(e) => setForm({ ...form, challenges: e.target.value })} className="w-full h-24 px-3 py-2 rounded-md border border-border bg-background text-foreground" /></div>
 
+            <div className="border-t border-border pt-4">
+              <label htmlFor="project-content" className="text-sm font-medium">Contenu libre</label>
+              <p className="mb-2 text-xs text-muted-foreground">
+                Facultatif. Rempli, il remplace Contexte, Approche, Résultats et Défis sur la page du projet : écrivez comme un article, avec du code et des captures.
+              </p>
+              <MarkdownEditor id="project-content" value={form.content} onChange={(content) => setForm({ ...form, content })} />
+            </div>
+
             <fieldset className="space-y-4 border-t border-border pt-4">
               <legend className="text-sm font-semibold">Version anglaise</legend>
               <p className="text-xs text-muted-foreground">Affichée sur la version anglaise du site. Un champ vide affiche le texte français.</p>
@@ -272,6 +284,10 @@ const ProjectsPage = () => {
                   )}
                 </div>
               ))}
+              <div>
+                <label htmlFor="project-contentEn" className="text-sm font-medium">Contenu libre (EN)</label>
+                <MarkdownEditor id="project-contentEn" lang="en" value={form.contentEn} onChange={(contentEn) => setForm({ ...form, contentEn })} />
+              </div>
             </fieldset>
           </div>
           <DialogFooter>

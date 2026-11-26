@@ -15,6 +15,7 @@ export const localizeProject = (p: Project, lang: Lang): Project => ({
   approach: pick(lang, p.approach, p.approachEn),
   results: pick(lang, p.results, p.resultsEn),
   challenges: pick(lang, p.challenges, p.challengesEn),
+  content: pick(lang, p.content ?? "", p.contentEn),
 });
 
 /** True when the visitor reads in English but the article has no English body yet. */

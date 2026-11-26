@@ -18,6 +18,10 @@ export const en: Dict = {
     viewProject: "View project",
     loading: "Loading…",
     location: "Casablanca, Morocco",
+    copyCode: "Copy",
+    codeCopied: "Copied",
+    copyCodeFailed: "Couldn't copy the code",
+    code: "Code",
     switchLanguage: { label: "FR", aria: "Passer le site en français" },
   },
 

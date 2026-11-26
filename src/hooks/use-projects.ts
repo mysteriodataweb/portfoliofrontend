@@ -30,6 +30,9 @@ export interface Project {
   approachEn?: string | null;
   resultsEn?: string | null;
   challengesEn?: string | null;
+  /** Free-form page in Markdown, shown instead of the four sections above when filled in. */
+  content?: string | null;
+  contentEn?: string | null;
 }
 
 export function useProjects(category?: string) {

@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Github, ExternalLink, Pencil, Save, X } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
+import MarkdownEditor from "@/components/MarkdownEditor";
 import ContactLink from "@/components/ContactLink";
 import { useProject, useAllProjects } from "@/hooks/use-projects";
 import { track } from "@/lib/analytics";
@@ -12,6 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/api/client";
 import { toast } from "sonner";
+
+// Loaded only for a project written as free content: the Markdown libraries stay out of the other pages.
+const RichContent = lazy(() => import("@/components/RichContent"));
 
 const ProjectDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -39,7 +43,7 @@ const ProjectDetailPage = () => {
   // Shown in the visitor's language, and edited in it: on the English page the admin writes the English texts.
   const project = localizeProject(rawProject, lang);
   const projects = rawProjects.map((p) => localizeProject(p, lang));
-  const field = (name: "title" | "context" | "approach" | "results" | "challenges") => (lang === "en" ? `${name}En` : name);
+  const field = (name: "title" | "context" | "approach" | "results" | "challenges" | "content") => (lang === "en" ? `${name}En` : name);
 
   const startEdit = () => {
     const project = rawProject;
@@ -65,6 +69,8 @@ const ProjectDetailPage = () => {
       approachEn: project.approachEn || "",
       resultsEn: project.resultsEn || "",
       challengesEn: project.challengesEn || "",
+      content: project.content || "",
+      contentEn: project.contentEn || "",
     });
     setEditing(true);
   };
@@ -134,38 +140,59 @@ const ProjectDetailPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Main */}
             <div className="lg:col-span-2 space-y-12">
-              <AnimatedSection>
-                <h2 className="section-title text-foreground mb-4">{t.project.context}</h2>
-                {editing ? (
-                  <textarea value={form[field("context")]} onChange={(e) => setForm({ ...form, [field("context")]: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
-                ) : (
-                  <p className="text-muted-foreground leading-relaxed">{project.context}</p>
-                )}
-              </AnimatedSection>
-              <AnimatedSection>
-                <h2 className="section-title text-foreground mb-4">{t.project.approach}</h2>
-                {editing ? (
-                  <textarea value={form[field("approach")]} onChange={(e) => setForm({ ...form, [field("approach")]: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
-                ) : (
-                  <p className="text-muted-foreground leading-relaxed">{project.approach}</p>
-                )}
-              </AnimatedSection>
-              <AnimatedSection>
-                <h2 className="section-title text-foreground mb-4">{t.project.results}</h2>
-                {editing ? (
-                  <textarea value={form[field("results")]} onChange={(e) => setForm({ ...form, [field("results")]: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
-                ) : (
-                  <p className="text-muted-foreground leading-relaxed">{project.results}</p>
-                )}
-              </AnimatedSection>
-              <AnimatedSection>
-                <h2 className="section-title text-foreground mb-4">{t.project.challenges}</h2>
-                {editing ? (
-                  <textarea value={form[field("challenges")]} onChange={(e) => setForm({ ...form, [field("challenges")]: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
-                ) : (
-                  <p className="text-muted-foreground leading-relaxed">{project.challenges}</p>
-                )}
-              </AnimatedSection>
+              {editing && (
+                <div>
+                  <label htmlFor="project-free-content" className="mb-1 block text-sm font-medium text-foreground">Contenu libre</label>
+                  <p className="mb-2 text-xs text-muted-foreground">Facultatif. Rempli, il remplace les quatre sections ci-dessous sur la page.</p>
+                  <MarkdownEditor
+                    id="project-free-content"
+                    lang={lang}
+                    value={form[field("content")]}
+                    onChange={(value) => setForm({ ...form, [field("content")]: value })}
+                    heightClass="h-[400px]"
+                  />
+                </div>
+              )}
+              {!editing && project.content?.trim() ? (
+                <Suspense fallback={<p className="text-muted-foreground">{t.common.loading}</p>}>
+                  <RichContent content={project.content} />
+                </Suspense>
+              ) : (
+                <>
+                <AnimatedSection>
+                  <h2 className="section-title text-foreground mb-4">{t.project.context}</h2>
+                  {editing ? (
+                    <textarea value={form[field("context")]} onChange={(e) => setForm({ ...form, [field("context")]: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
+                  ) : (
+                    <p className="text-muted-foreground leading-relaxed">{project.context}</p>
+                  )}
+                </AnimatedSection>
+                <AnimatedSection>
+                  <h2 className="section-title text-foreground mb-4">{t.project.approach}</h2>
+                  {editing ? (
+                    <textarea value={form[field("approach")]} onChange={(e) => setForm({ ...form, [field("approach")]: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
+                  ) : (
+                    <p className="text-muted-foreground leading-relaxed">{project.approach}</p>
+                  )}
+                </AnimatedSection>
+                <AnimatedSection>
+                  <h2 className="section-title text-foreground mb-4">{t.project.results}</h2>
+                  {editing ? (
+                    <textarea value={form[field("results")]} onChange={(e) => setForm({ ...form, [field("results")]: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
+                  ) : (
+                    <p className="text-muted-foreground leading-relaxed">{project.results}</p>
+                  )}
+                </AnimatedSection>
+                <AnimatedSection>
+                  <h2 className="section-title text-foreground mb-4">{t.project.challenges}</h2>
+                  {editing ? (
+                    <textarea value={form[field("challenges")]} onChange={(e) => setForm({ ...form, [field("challenges")]: e.target.value })} className="w-full h-32 px-4 py-3 rounded-none border border-border bg-white text-foreground" />
+                  ) : (
+                    <p className="text-muted-foreground leading-relaxed">{project.challenges}</p>
+                  )}
+                </AnimatedSection>
+                </>
+              )}
             </div>
 
             {/* Sidebar */}

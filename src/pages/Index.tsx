@@ -161,7 +161,7 @@ const Index = () => {
             </Link>
           </div>
           <div className="hero-fade group hidden overflow-hidden border border-foreground md:col-span-2 md:block">
-            <img src={profilePhoto} alt="Alfred BIAM" className="img-reveal aspect-[4/5] w-full object-cover object-bottom" />
+            <img src={profilePhoto} alt="Alfred BIAM" className="img-zoom aspect-[4/5] w-full object-cover object-bottom" />
           </div>
         </div>
       </section>

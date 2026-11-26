@@ -17,6 +17,10 @@ export const fr = {
     viewProject: "Voir le projet",
     loading: "Chargement…",
     location: "Casablanca, Maroc",
+    copyCode: "Copier",
+    codeCopied: "Copié",
+    copyCodeFailed: "Impossible de copier le code",
+    code: "Code",
     switchLanguage: { label: "EN", aria: "Switch the site to English" },
   },
 
